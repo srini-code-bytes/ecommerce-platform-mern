@@ -1,11 +1,16 @@
+// To connect to the database
+
+// Import 
 const express = require("express");
 const mongoose = require("mongoose");
-const cookieParser = require("cookie-parser");
-const cors = require("cors");
+const cookieParser = require("cookie-parser");  // Why?
+const cors = require("cors"); // Why?
 const authRouter = require("./routes/auth/auth-routes");
 const { registerUser } = require("./controllers/auth/auth-controller");
 
-// create db connection
+const adminProductsRouter = require("./routes/admin/products-routes");
+
+// Create db connection
 // create a separate file for this and import that file here --better approach
 
 mongoose
@@ -16,7 +21,7 @@ mongoose
   .catch((error) => console.log("error"));
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8080; // Backend server will run at 8080
 
 app.use(
   cors({
@@ -40,7 +45,9 @@ app.use(express.json());
 
 app.use("/api/auth", authRouter);
 
+app.use("/api/admin/products", adminProductsRouter);
+
 // /api/auth/registerUser -> registerUser
 // /api/auth/loginUser -> loginUser 
 
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server is now running on PORT : ${PORT}`));

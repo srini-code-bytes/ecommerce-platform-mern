@@ -1,5 +1,5 @@
 import CommonForm from "@/components/common/form";
-import { registeredFormControls } from "@/config";
+import { registerFormControls } from "@/config";
 import { useToast } from "@/hooks/use-toast";
 import { registerUser } from "@/store/auth-slice";
 import React, { useState } from "react";
@@ -52,7 +52,7 @@ export const AuthRegister = () => {
         </Link>
       </div>
       <CommonForm
-        formControls={registeredFormControls}
+        formControls={registerFormControls}
         buttonText={"Sign Up"}
         formData={formData}
         setFormData={setFormData}

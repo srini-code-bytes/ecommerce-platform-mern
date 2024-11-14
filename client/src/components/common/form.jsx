@@ -1,8 +1,9 @@
 import { Label } from "@radix-ui/react-label";
-import { Select, SelectContent } from "@radix-ui/react-select";
+
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 function CommonForm({
   formControls,
@@ -13,6 +14,7 @@ function CommonForm({
 }) {
   //formData -- manage each and every value
   function renderInputsByComponentType(getControlItem) {
+    console.log(getControlItem.options);
     let element = null;
     const value = formData[getControlItem.name] || "";
     switch (getControlItem.componentType) {
@@ -47,15 +49,15 @@ function CommonForm({
             value={value}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder={getControlItem.placeholder} />
+              <SelectValue placeholder={getControlItem.label} />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white">
               {getControlItem.options && getControlItem.options.length > 0
                 ? getControlItem.options.map((optionItem) => (
                     <SelectItem
                       key={optionItem.id}
-                      value={optionItem.label}
-                    ></SelectItem>
+                      value={optionItem.id}
+                    >{optionItem.label}</SelectItem>
                   ))
                 : null}
             </SelectContent>
