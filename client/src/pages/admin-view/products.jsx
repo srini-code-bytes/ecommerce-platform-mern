@@ -8,7 +8,10 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { addProductFormElements } from "@/config";
-import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { addNewProduct, fetchAllProducts } from "@/store/admin/products-slice";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const initialFormData = {
   image: null,
@@ -21,18 +24,54 @@ const initialFormData = {
   totalStock: "",
 };
 
-function AdminProducts() {
+const AdminProducts = () => {
   const [openCreateProductsDialog, setOpenCreateProductsDialog] =
     useState(false);
 
   const [formData, setFormData] = useState(initialFormData);
 
   const [imageFile, setImageFile] = useState(null);
+  // has the image : uploadedImageUrl
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [imageLoadingState, setImageLoadingState] = useState(false);
 
-  function onSubmit() {
+  const dispatch = useDispatch();
 
+  const { toast } = useToast();
+
+  const { productList } = useSelector((state) => state.adminProducts);
+
+  useEffect(() => {
+    dispatch(fetchAllProducts());
+  }, [dispatch]);
+
+  console.log("productList ===> ", productList);
+  console.log("uploadedImageUrl ===>", uploadedImageUrl);
+
+  function onSubmit(event) {
+    event.preventDefault();
+    dispatch(
+      addNewProduct({
+        ...formData,
+        image: uploadedImageUrl,
+      })
+    ).then((data) => {
+      console.log(data);
+      if (data?.payload?.success) {
+        dispatch(fetchAllProducts);
+        setOpenCreateProductsDialog(false);
+        setImageFile(null);
+        setFormData(initialFormData);
+        toast({
+          title: "Product added successfully!",
+        });
+      }
+    }).catch((error) => {
+      console.log(error);
+      toast({
+        title : "Error adding a product"
+      })
+    });
   }
 
   console.log("formData", formData);
@@ -65,6 +104,7 @@ function AdminProducts() {
             uploadedImageUrl={uploadedImageUrl}
             setUploadedImageUrl={setUploadedImageUrl}
             setImageLoadingState={setImageLoadingState}
+            imageLoadingState={imageLoadingState}
           />
           <div className="py-6">
             <CommonForm
@@ -79,6 +119,6 @@ function AdminProducts() {
       </Sheet>
     </>
   );
-}
+};
 
 export default AdminProducts;

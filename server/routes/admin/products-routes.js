@@ -17,7 +17,7 @@ const router = express.Router();
 // The upload middleware processes the file, uploads it to Cloudinary, and attaches the result to the request object.
 
 router.post(
-  "/products/upload-image",
+  "/upload-image",
   upload.single("my_file"),
   handleImageUpload
 );

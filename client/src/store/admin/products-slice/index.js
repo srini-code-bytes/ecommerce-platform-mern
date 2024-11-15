@@ -1,4 +1,6 @@
-import {} from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
+
 
 const initialState = {
   isLoading: false,
@@ -61,7 +63,22 @@ const AdminProductsSlice = createSlice({
   name: "adminProducts",
   initialState,
   reducers: {},
-  // extraReducers: (builder) => {
-  //   builder.addCase
-  // },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchAllProducts.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchAllProducts.fulfilled, (state, action) => {
+        console.log(action.payload);
+        state.isLoading = false;
+        state.productList = action.payload.data;
+      })
+      .addCase(fetchAllProducts.rejected, (state, action) => {
+        console.log(action.payload);
+        state.isLoading = false;
+        state.productList = [];
+      });
+  },
 });
+
+export default AdminProductsSlice.reducer;
