@@ -108,9 +108,9 @@ const editProduct = async (req, res) => {
       (findProduct.description = description || findProduct.description),
       (findProduct.category = category || findProduct.category),
       (findProduct.brand = brand || findProduct.brand),
-      (findProduct.price = title || findProduct.price),
-      (findProduct.salePrice = title || findProduct.salePrice),
-      (findProduct.totalStock = title || findProduct.totalStock);
+      (findProduct.price = price === '' ? 0 : price || findProduct.price),
+      (findProduct.salePrice = salePrice === '' ? 0 : salePrice || findProduct.salePrice),
+      (findProduct.totalStock = totalStock || findProduct.totalStock);
 
     await findProduct.save();
 
@@ -131,15 +131,15 @@ const editProduct = async (req, res) => {
 const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const deleteProduct = await Product.findByIdAndUpdate(id);
+    const deleteProduct = await Product.findByIdAndDelete(id);
 
     if (!deleteProduct) {
-      return res.staus(404).json({
+      return res.status(404).json({
         success: false,
         message: "Product not found",
       });
     } else {
-      return res.staus(200).json({
+      return res.status(200).json({
         success: true,
         message: "Product deleted successfully",
       });

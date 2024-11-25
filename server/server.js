@@ -10,6 +10,8 @@ const { registerUser } = require("./controllers/auth/auth-controller");
 
 const adminProductsRouter = require("./routes/admin/products-routes");
 
+const shopProductsRouter = require('./routes/shop/products-routes')
+
 // Create db connection
 // create a separate file for this and import that file here --better approach
 
@@ -46,6 +48,8 @@ app.use(express.json());
 app.use("/api/auth", authRouter);
 
 app.use("/api/admin/products", adminProductsRouter);
+
+app.use("/api/shop/products", shopProductsRouter);
 
 // /api/auth/registerUser -> registerUser
 // /api/auth/loginUser -> loginUser 

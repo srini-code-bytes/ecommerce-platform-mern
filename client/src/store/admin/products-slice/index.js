@@ -35,9 +35,10 @@ export const fetchAllProducts = createAsyncThunk(
 
 export const editProduct = createAsyncThunk(
   "/products/editProduct",
-  async (id, formData) => {
+  async ({id, formData}) => {
+    console.log("id====>", typeof id, id)
     const result = await axios.put(
-      "http://localhost:8080/api/admin/products//edit/${id}",
+      `http://localhost:8080/api/admin/products/edit/${id}`,
       formData,
       {
         headers: {
@@ -53,7 +54,7 @@ export const deleteProduct = createAsyncThunk(
   "/products/deleteProduct",
   async (id) => {
     const result = await axios.delete(
-      "http://localhost:8080/api/admin/products/delete/${id}"
+      `http://localhost:8080/api/admin/products/delete/${id}`
     );
     return result?.data;
   }
