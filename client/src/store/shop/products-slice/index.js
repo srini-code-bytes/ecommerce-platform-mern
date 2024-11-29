@@ -11,10 +11,18 @@ const initialState = {
 // fetchAllFilteredProducts - since shopping page
 export const fetchAllFilteredProducts = createAsyncThunk(
   "/products/fetchAllProducts",
-  async () => {
+  async ({filterParams, sortParams}) => {
     console.log("fetchAllFilteredProducts ====>", fetchAllFilteredProducts)
+
+    const query = new URLSearchParams({
+      ...filterParams,
+      sortBy : sortParams
+
+    })
+    
+    console.log("query====>", query)
     const result = await axios.get(
-      "http://localhost:8080/api/shop/products/get"
+      `http://localhost:8080/api/shop/products/get?${query}`
     );
     console.log("result===>", result);
     return result?.data.data;
