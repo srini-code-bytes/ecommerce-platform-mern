@@ -3,11 +3,11 @@ import { Button } from "../ui/button";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Badge } from "@/components/ui/badge";
 
-function ShoppingProductTile({ product }) {
+function ShoppingProductTile({ product, handleGetProductDetails }) {
   console.log("Inside ShoppingProductTile===>");
   return (
     <Card className="w-full max-w-sm mx-auto rounded-[15px]">
-      {/* <> */}
+      <div onClick={() => handleGetProductDetails(product?._id)}>
         <div className="relative">
           <img
             src={product?.image}
@@ -48,7 +48,7 @@ function ShoppingProductTile({ product }) {
         <CardFooter>
           <Button className="w-full"> Add to Cart</Button>
         </CardFooter>
-      {/* <> */}
+      </div>
     </Card>
   );
 }

@@ -6,6 +6,7 @@ import axios from "axios";
 const initialState = {
   isLoading: false,
   productList: [],
+  productDetails : null
 };
 
 // fetchAllFilteredProducts - since shopping page
@@ -29,6 +30,20 @@ export const fetchAllFilteredProducts = createAsyncThunk(
   }
 );
 
+// to fetch the product details 
+export const fetchProductDetails = createAsyncThunk(
+  "/products/fetchProductDetails",
+  async (id) => {
+    console.log("fetchProductDetails ====>", fetchProductDetails)
+    
+    const result = await axios.get(
+      `http://localhost:8080/api/shop/products/get/${id}`
+    );
+    console.log("result===>", result);
+    return result?.data;
+  }
+);
+
 const shoppingProductsSlice = createSlice({
   name: "shoppingProducts",
   initialState,
@@ -45,6 +60,15 @@ const shoppingProductsSlice = createSlice({
         state.isLoading = false,
         state.productList = [];
     })
+    builder.addCase(fetchProductDetails.pending, (state, action) => {
+      state.isLoading = true
+  }).addCase(fetchProductDetails.fulfilled, (state, action) => {
+      state.isLoading = true,
+      state.productDetails = action.payload.data;
+  }).addCase(fetchProductDetails.rejected, (state, action) => {
+      state.isLoading = false,
+      state.productDetails = null;
+  })
   },
 });
 
