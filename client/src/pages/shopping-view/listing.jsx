@@ -29,6 +29,7 @@ function createSearchParamsHelper(filterParams) {
   }
 
   return queryParams.join("&");
+  console
 }
 
 function ShoppingListing() {

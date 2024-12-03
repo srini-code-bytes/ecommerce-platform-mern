@@ -7,6 +7,7 @@ import { Input } from "../ui/input";
 
 export function ProductDetailsDialog({ open, setOpen, productDetails }) {
   function handleDialogClose() {
+    console.log("Inside handleDialogClose");
     setOpen(false);
   }
   return (
