@@ -15,3 +15,25 @@ Route Handling: The /products/upload-image endpoint receives the request, with u
 Controller Processing: The handleImageUpload function converts the file to a base64-encoded string, uploads it to Cloudinary, and sends back the resulting URL and metadata in the response.
 Response Handling:
 The frontend receives the response, logs it, and updates the state with setUploadedImageUrl(response.data), making the image URL available for display or further use.
+
+Cart - backend flow
+
+//Model for Cart and Product 
+/server/models/Cart.js
+/server/models/Product.js
+- to create the schema on the mongoose
+
+//Controller 
+/server/controllers/cart-controller.js 
+- for all CRUD operations on the cart
+
+//Routing
+/server/routes/shop/cart-routes.js
+- for configuring different routes for cart ops
+
+// server.js
+
+- import the newly created route above
+
+Cart - FE flow
+

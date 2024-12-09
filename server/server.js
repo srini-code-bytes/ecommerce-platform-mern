@@ -12,6 +12,8 @@ const adminProductsRouter = require("./routes/admin/products-routes");
 
 const shopProductsRouter = require('./routes/shop/products-routes')
 
+const shopCartRouter = require('./routes/shop/cart-routes')
+
 // Create db connection
 // create a separate file for this and import that file here --better approach
 
@@ -50,6 +52,8 @@ app.use("/api/auth", authRouter);
 app.use("/api/admin/products", adminProductsRouter);
 
 app.use("/api/shop/products", shopProductsRouter);
+
+app.use("/api/shop/cart", shopCartRouter);
 
 // /api/auth/registerUser -> registerUser
 // /api/auth/loginUser -> loginUser 
