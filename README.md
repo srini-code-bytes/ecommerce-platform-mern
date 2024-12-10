@@ -1,39 +1,21 @@
 # react-learning-ecommerce
-Build a full stack E-Commerce application from scratch using MERN Stack.
+A full-stack e-commerce platform built with the MERN stack featuring dynamic product management, user authentication, and responsive design.
 
-#Upload Image to Cloudinary
+Frontend Tech Stack:
+	•	Framework: React 18, React Router DOM
+	•	State Management: Redux Toolkit
+	•	Styling: TailwindCSS, Radix UI, TailwindCSS Animate, Tailwind Merge
+	•	HTTP Requests: Axios
+	•	Icons: Lucide React
+	•	Build Tool: Vite
+	•	Code Quality: ESLint, PostCSS, Autoprefixer
 
-Frontend:
-
-1. The user selects an image file (imageFile), which triggers uploadImageToCloudinary() via the useEffect hook. (i.e) React will know this when the state of imageFile changes, thereby triggering useEffect()
-2. The FormData object is created, and the file is appended under "my_file".
-3. The image is sent in a POST request to the backend.
-
-Backend:
-
-Route Handling: The /products/upload-image endpoint receives the request, with upload.single("my_file") (multer) handling the file and attaching it to req.file.
-Controller Processing: The handleImageUpload function converts the file to a base64-encoded string, uploads it to Cloudinary, and sends back the resulting URL and metadata in the response.
-Response Handling:
-The frontend receives the response, logs it, and updates the state with setUploadedImageUrl(response.data), making the image URL available for display or further use.
-
-Cart - backend flow
-
-//Model for Cart and Product 
-/server/models/Cart.js
-/server/models/Product.js
-- to create the schema on the mongoose
-
-//Controller 
-/server/controllers/cart-controller.js 
-- for all CRUD operations on the cart
-
-//Routing
-/server/routes/shop/cart-routes.js
-- for configuring different routes for cart ops
-
-// server.js
-
-- import the newly created route above
-
-Cart - FE flow
-
+Backend Tech Stack:
+	•	Framework: Express.js
+	•	Database: MongoDB with Mongoose
+	•	Authentication & Security: bcryptjs, JSON Web Tokens (JWT), Cookie Parser
+	•	File Management: Multer
+	•	Cloud Integration: Cloudinary
+	•	Environment Management: dotenv
+	•	Cross-Origin Requests: CORS
+	•	Development Tool: Nodemon
