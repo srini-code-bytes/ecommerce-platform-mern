@@ -46,7 +46,9 @@ function ShoppingProductTile({ product, handleGetProductDetails }) {
           </div>
         </CardContent>
         <CardFooter>
-          <Button className="w-full"> Add to Cart</Button>
+          <Button className="w-full bg-black text-white rounded-[10px] hover:bg-gray-800 hover:shadow-lg transition-all duration-200">
+              Add to Cart
+            </Button>
         </CardFooter>
       </div>
     </Card>

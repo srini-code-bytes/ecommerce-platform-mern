@@ -14,6 +14,8 @@ import {
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { DropdownMenuSeparator } from "@radix-ui/react-dropdown-menu";
 import { logoutUser } from "@/store/auth-slice";
+import UserCartWrapper from "./cart-wrapper";
+import { useState } from "react";
 
 function MenuItems() {
   return (
@@ -35,10 +37,11 @@ function MenuItems() {
 
 function HeaderRightContent() {
   const { user } = useSelector((state) => state.auth);
+  const [openCartSheet, setopenCartSheet] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  function handleLogout(){
+  function handleLogout() {
     dispatch(logoutUser());
   }
 
@@ -46,10 +49,16 @@ function HeaderRightContent() {
   return (
 
     <div className="flex lg:items-center lg:flex-row flex-col gap-4">
-      <Button vairant="outline" size="icon">
-        <ShoppingCart className="w-6 h-6" />
-        <span className="sr-only">User cart</span>
-      </Button>
+      <Sheet open={openCartSheet} onOpenChange={() => setopenCartSheet(false)}>
+        <Button onClick={()=>setopenCartSheet(true)}variant="outline" size="icon">
+          <ShoppingCart className="w-6 h-6" />
+          <span className="sr-only">User cart</span>
+        </Button>
+
+        <UserCartWrapper />
+
+      </Sheet>
+
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -62,8 +71,8 @@ function HeaderRightContent() {
         <DropdownMenuContent side="right" className="w-56">
           <DropdownMenuLabel> Logged in as {user?.userName}</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          
-          <DropdownMenuItem onClick={()=>navigate('/shop/account')}>
+
+          <DropdownMenuItem onClick={() => navigate('/shop/account')}>
             <User className="mr-2 h-4 w-4" /> Account
           </DropdownMenuItem>
           <DropdownMenuSeparator />
@@ -100,10 +109,10 @@ function ShoppingHeader() {
             <MenuItems />
           </div>
 
-            <div className="hidden lg:block">
-              <HeaderRightContent />
-            </div>
-        
+          <div className="hidden lg:block">
+            <HeaderRightContent />
+          </div>
+
         </Sheet>
       </div>
     </header>
