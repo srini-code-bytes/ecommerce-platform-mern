@@ -3,7 +3,7 @@ import { Button } from "../ui/button";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Badge } from "@/components/ui/badge";
 
-function ShoppingProductTile({ product, handleGetProductDetails }) {
+function ShoppingProductTile({ product, handleGetProductDetails, handleAddToCart }) {
   console.log("Inside ShoppingProductTile===>");
   return (
     <Card className="w-full max-w-sm mx-auto rounded-[15px]">
@@ -32,9 +32,8 @@ function ShoppingProductTile({ product, handleGetProductDetails }) {
           </div>
           <div className="flex justify-between items-center mb-2">
             <span
-              className={`${
-                product?.salePrice > 0 ? "line-through" : ""
-              } text-lg font-semibold text-primary`}
+              className={`${product?.salePrice > 0 ? "line-through" : ""
+                } text-lg font-semibold text-primary`}
             >
               {product?.price}
             </span>
@@ -45,12 +44,13 @@ function ShoppingProductTile({ product, handleGetProductDetails }) {
             ) : null}
           </div>
         </CardContent>
-        <CardFooter>
-          <Button className="w-full bg-black text-white rounded-[10px] hover:bg-gray-800 hover:shadow-lg transition-all duration-200">
-              Add to Cart
-            </Button>
-        </CardFooter>
+
       </div>
+      <CardFooter>
+        <Button onClick={() => handleAddToCart(product?._id)} className="w-full bg-black text-white rounded-[10px] hover:bg-gray-800 hover:shadow-lg transition-all duration-200">
+          Add to Cart
+        </Button>
+      </CardFooter>
     </Card>
   );
 }

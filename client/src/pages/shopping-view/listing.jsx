@@ -11,6 +11,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { sortOptions } from "@/config";
+import { useToast } from "@/hooks/use-toast";
+import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
 import { fetchAllFilteredProducts, fetchProductDetails } from "@/store/shop/products-slice";
 import { ArrowUpDownIcon } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -38,10 +40,13 @@ function ShoppingListing() {
   // shopProducts -- check in store
   const { productList, productDetails } = useSelector((state) => state.shopProducts);
   // why?
+  const { user } = useSelector(state => state.auth)
+  
   const [filters, setFilters] = useState({});
   const [sort, setSort] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
+  const {toast} = useToast();
 
   function handleSort(value) {
     console.log("Inside handleSort()", value);
@@ -85,15 +90,31 @@ function ShoppingListing() {
     sessionStorage.setItem("filters", JSON.stringify(copyFilters));
   }
 
-  function handleGetProductDetails(getCurrentProductId){
+  function handleGetProductDetails(getCurrentProductId) {
     console.log("getCurrentProductId====>", getCurrentProductId)
     dispatch(fetchProductDetails(getCurrentProductId));
   }
 
-  useEffect(()=>{
-    if(productDetails !== null) setOpenDetailsDialog(true)
+  function handleAddToCart(getCurrentProductId) {
+    console.log("handleAddToCart => getCurrentProductId ====>", getCurrentProductId)
+    // Calling addToCart API
+    dispatch(addToCart({ userId: user?.id, productId: getCurrentProductId, quantity: 1 })).then(
+      data => {
+        if (data?.payload?.success) {
+          // Calling fetchCartItems API
+          dispatch(fetchCartItems(user?.id))
+          toast({
+            title : 'Product is added to cart'
+          })
+        }
+      }
+    )
+  }
 
-  },[productDetails])
+  useEffect(() => {
+    if (productDetails !== null) setOpenDetailsDialog(true)
+
+  }, [productDetails])
 
   useEffect(() => {
     setSort("price-lowtohigh");
@@ -108,8 +129,8 @@ function ShoppingListing() {
   }, [filters]);
 
   useEffect(() => {
-    if(filters !== null && sort !== null)
-    dispatch(fetchAllFilteredProducts({filterParams : filters, sortParams : sort})); //Shopping view
+    if (filters !== null && sort !== null)
+      dispatch(fetchAllFilteredProducts({ filterParams: filters, sortParams: sort })); //Shopping view
   }, [dispatch, sort, filters]);
 
   console.log("productDetails===>", productDetails);
@@ -154,12 +175,12 @@ function ShoppingListing() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
           {productList && productList.length > 0
             ? productList.map((productItem) => (
-                <ShoppingProductTile handleGetProductDetails={handleGetProductDetails} product={productItem} />
-              ))
+              <ShoppingProductTile handleGetProductDetails={handleGetProductDetails} product={productItem} handleAddToCart={handleAddToCart} />
+            ))
             : null}
         </div>
       </div>
-      <ProductDetailsDialog open={openDetailsDialog} setOpenDetailsDialog={setOpenDetailsDialog} productDetails={productDetails}/>
+      <ProductDetailsDialog open={openDetailsDialog} setOpenDetailsDialog={setOpenDetailsDialog} productDetails={productDetails} />
     </div>
   );
 }

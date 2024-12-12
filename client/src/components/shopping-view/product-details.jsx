@@ -4,12 +4,56 @@ import { Button } from "../ui/button";
 import { Dialog, DialogContent } from "../ui/dialog";
 import { Separator } from "../ui/separator";
 import { Input } from "../ui/input";
+import { useDispatch, useSelector } from "react-redux";
+import { useToast } from "@/hooks/use-toast";
+import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
 
 export function ProductDetailsDialog({ open, setOpen, productDetails }) {
+  console.log("productDetails====>", productDetails)
+
+  const dispatch = useDispatch();
+  const { user } = useSelector(state => state.auth);
+  const { toast } = useToast();
+
   function handleDialogClose() {
     console.log("Inside handleDialogClose");
     setOpen(false);
   }
+
+  function handleAddToCart(getCurrentProductId) {
+
+
+    console.log("handleAddToCart => getCurrentProductId ====>", getCurrentProductId)
+    // Calling addToCart API
+    dispatch(addToCart({ userId: user?.id, productId: getCurrentProductId, quantity: 1 })).then(
+      data => {
+        if (data?.payload?.success) {
+          // Calling fetchCartItems API
+          dispatch(fetchCartItems(user?.id))
+          toast({
+            title: 'Product is added to cart'
+          })
+        }
+      }
+    )
+  }
+
+  // function handleAddToCart(getCurrentProductId) {
+  //   console.log("handleAddToCart => getCurrentProductId ====>", getCurrentProductId)
+  //   // Calling addToCart API
+  //   dispatch(addToCart({ userId: user?.id, productId: getCurrentProductId, quantity: 1 })).then(
+  //     data => {
+  //       if (data?.payload?.success) {
+  //         // Calling fetchCartItems API
+  //         dispatch(fetchCartItems(user?.id))
+  //         toast({
+  //           title : 'Product is added to cart'
+  //         })
+  //       }
+  //     }
+  //   )
+  // }
+
   return (
     <Dialog open={open} onOpenChange={handleDialogClose}>
       <DialogContent className="grid grid-cols-2 gap-8 sm:p-12 max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw] bg-white">
@@ -32,9 +76,8 @@ export function ProductDetailsDialog({ open, setOpen, productDetails }) {
           </div>
           <div className="flex items-center justify-between">
             <p
-              className={`text-4xl font-bold text-primary ${
-                productDetails?.salePrice > 0 ? "line-through" : ""
-              }`}
+              className={`text-4xl font-bold text-primary ${productDetails?.salePrice > 0 ? "line-through" : ""
+                }`}
             >
               {productDetails?.price}
             </p>
@@ -55,7 +98,7 @@ export function ProductDetailsDialog({ open, setOpen, productDetails }) {
             <span className="text-muted-foreground">(4.5)</span>
           </div>
           <div className="mt-5 mb-5">
-            <Button className="w-full bg-black text-white rounded-[10px] hover:bg-gray-800 hover:shadow-lg transition-all duration-200">
+            <Button onClick={() => handleAddToCart(productDetails._id)} className="w-full bg-black text-white rounded-[10px] hover:bg-gray-800 hover:shadow-lg transition-all duration-200">
               Add to Cart
             </Button>
           </div>

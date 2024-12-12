@@ -73,7 +73,7 @@ const fetchCartItems = async (req, res) => {
 
         // Get cart based on path and select these properties
         const cart = await Cart.findOne({ userId }).populate({
-            path: 'item.productId',
+            path: 'items.productId',
             select: "image title price salePrice"
 
         })
@@ -87,7 +87,6 @@ const fetchCartItems = async (req, res) => {
 
         const validItems = cart.items.filter(productItem => productItem.productId);
 
-        // !!
         if (validItems.length < cart.items.length) {
             cart.items = validItems;
             await cart.save()
@@ -156,7 +155,7 @@ const updateCartItemQuantity = async (req, res) => {
         await cart.save();
 
         await cart.populate({
-            path: 'item.productId',
+            path: 'items.productId',
             select: "image title price salePrice"
         })
 
@@ -202,7 +201,7 @@ const deleteCartItem = async (req, res) => {
 
         // Get cart based on path and select these properties
         const cart = await Cart.findOne({ userId }).populate({
-            path: 'item.productId',
+            path: 'items.productId',
             select: "image title price salePrice"
 
         })
@@ -220,7 +219,7 @@ const deleteCartItem = async (req, res) => {
         await cart.save();
 
         await cart.populate({
-            path: 'item.productId',
+            path: 'items.productId',
             select: "image title price salePrice"
         })
 

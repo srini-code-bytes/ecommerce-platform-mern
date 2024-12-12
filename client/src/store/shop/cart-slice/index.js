@@ -11,18 +11,22 @@ const initialState = {
 export const addToCart = createAsyncThunk('cart/addToCart', async ({ userId, productId, quantity }) => {
 
     const response = await axios.post(
-        `http://localhost:8080/api/shop/cart/add`, {
+        "http://localhost:8080/api/shop/cart/add", {
         userId, productId, quantity
     }
     );
 
+    return response?.data;
+
 })
 
-export const fetchCartItems = createAsyncThunk('cart/fetchCartItems', async ({ userId }) => {
+export const fetchCartItems = createAsyncThunk('cart/fetchCartItems', async (userId) => {
 
     const response = await axios.get(
         `http://localhost:8080/api/shop/cart/get/${userId}`
     );
+
+    return response?.data;
 
 })
 
@@ -31,6 +35,8 @@ export const deleteCartItem = createAsyncThunk('cart/deleteCartItem', async ({ u
     const response = await axios.delete(
         `http://localhost:8080/api/shop/cart/${userId}/${productId}`
     );
+
+    return response.data;
 
 })
 
@@ -42,6 +48,8 @@ export const updateCartQuantity = createAsyncThunk('cart/updateCartItemQuantity'
     }
     );
 
+    return response.data;
+
 })
 
 const shoppingCartSlice = createSlice({
@@ -52,6 +60,8 @@ const shoppingCartSlice = createSlice({
         builder.addCase(addToCart.pending, (state) => {
             state.isLoading = true
         }).addCase(addToCart.fulfilled, (state, action) => {
+            console.log("action====>", action)
+            console.log("action.payload====>", action.payload.data)
             state.isLoading = false
             state.cartItems = action.payload.data
         }).addCase(addToCart.rejected, (state) => {
