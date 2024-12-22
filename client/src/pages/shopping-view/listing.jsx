@@ -180,7 +180,8 @@ function ShoppingListing() {
             : null}
         </div>
       </div>
-      <ProductDetailsDialog open={openDetailsDialog} setOpenDetailsDialog={setOpenDetailsDialog} productDetails={productDetails} />
+      {/* export function ProductDetailsDialog({ open, setOpen, productDetails }) { */}
+      <ProductDetailsDialog open={openDetailsDialog} setOpen={setOpenDetailsDialog} productDetails={productDetails} />
     </div>
   );
 }

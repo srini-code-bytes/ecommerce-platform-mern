@@ -7,6 +7,7 @@ import { Input } from "../ui/input";
 import { useDispatch, useSelector } from "react-redux";
 import { useToast } from "@/hooks/use-toast";
 import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
+import { setProductDetails } from "@/store/shop/products-slice";
 
 export function ProductDetailsDialog({ open, setOpen, productDetails }) {
   console.log("productDetails====>", productDetails)
@@ -17,7 +18,8 @@ export function ProductDetailsDialog({ open, setOpen, productDetails }) {
 
   function handleDialogClose() {
     console.log("Inside handleDialogClose");
-    setOpen(false);
+    setOpen(false); 
+    dispatch(setProductDetails()) // call method in store 
   }
 
   function handleAddToCart(getCurrentProductId) {
