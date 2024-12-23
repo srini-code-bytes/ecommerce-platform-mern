@@ -17,18 +17,34 @@ import { logoutUser } from "@/store/auth-slice";
 import UserCartWrapper from "./cart-wrapper";
 import { useEffect, useState } from "react";
 import { fetchCartItems } from "@/store/shop/cart-slice";
+import { Label } from "../ui/label";
 
 function MenuItems() {
+
+  const navigate = useNavigate();
+
+  function handleNavigation(getCurrentMenuItem) {
+    console.log("Inside handleNavigation() ===>")
+    console.log("getCurrentMenuItem===>", getCurrentMenuItem)
+    sessionStorage.removeItem("filters")
+    // better to give it as null always in stead of {}
+    const currentFilter = getCurrentMenuItem.id === "home" ? null : { category: [getCurrentMenuItem.id] }
+
+    sessionStorage.setItem("filters", JSON.stringify(currentFilter))
+
+    navigate(getCurrentMenuItem.path)
+
+  }
   return (
     <nav className="flex flex-col mb-3 lg:mb-0 lg:items-center gap-6 lg:flex-row">
       {shoppingViewHeaderMenuItems.map((menuItem) => (
-        <Link
-          className="text-sm font-medium"
+        <Label onClick={() => handleNavigation(menuItem)}
+          className="text-sm font-medium cursor-pointer"
           key={menuItem.id}
-          to={menuItem.path}
+          // to={menuItem.path}
         >
           {menuItem.label}
-        </Link>
+        </Label>
       ))}
     </nav>
   );

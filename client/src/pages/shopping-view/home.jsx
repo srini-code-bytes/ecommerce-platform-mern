@@ -7,9 +7,12 @@ import { Airplay, BabyIcon, ChevronLeftIcon, ChevronRightIcon, CloudLightning, H
 import { Card, CardContent } from '@/components/ui/card'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchAllFilteredProducts } from '@/store/shop/products-slice'
+import { fetchAllFilteredProducts, fetchProductDetails } from '@/store/shop/products-slice'
 import ShoppingProductTile from '@/components/shopping-view/product-tile'
 import { useNavigate } from 'react-router-dom'
+import { addToCart, fetchCartItems } from '@/store/shop/cart-slice'
+import { useToast } from '@/hooks/use-toast'
+import { ProductDetailsDialog } from '@/components/shopping-view/product-details'
 
 
 function ShoppingHome() {
@@ -18,23 +21,50 @@ function ShoppingHome() {
 
     const [currentSlide, setCurrentSlide] = useState(0);
 
-    const { productList } = useSelector(state => state.shopProducts)
+    const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
+
+    const { productList, productDetails } = useSelector(state => state.shopProducts)
+
+    const { user } = useSelector(state => state.auth)
 
     const dispatch = useDispatch()
 
     const navigate = useNavigate()
 
-    function handleNavigateToListingPage(getCurrentItem, section) {
-       sessionStorage.removeItem('filters')
+    const { toast } = useToast()
 
-       const currentFilter = {
-        [section] : [getCurrentItem.id]
-       }
+    function handleNavigateToListingPage(getCurrentItem, section) {
+        sessionStorage.removeItem('filters')
+
+        const currentFilter = {
+            [section]: [getCurrentItem.id]
+        }
 
         sessionStorage.setItem('filters', JSON.stringify(currentFilter))
         navigate('/shop/listing')
         // check function createSearchParamsHelper in listing  -> that's where we are going to concatenate with the URL 
 
+    }
+
+    function handleGetProductDetails(getCurrentProductId) {
+        console.log("getCurrentProductId====>", getCurrentProductId)
+        dispatch(fetchProductDetails(getCurrentProductId));
+    }
+
+    function handleAddToCart(getCurrentProductId) {
+        console.log("handleAddToCart => getCurrentProductId ====>", getCurrentProductId)
+        // Calling addToCart API
+        dispatch(addToCart({ userId: user?.id, productId: getCurrentProductId, quantity: 1 })).then(
+            data => {
+                if (data?.payload?.success) {
+                    // Calling fetchCartItems API
+                    dispatch(fetchCartItems(user?.id))
+                    toast({
+                        title: 'Product is added to cart'
+                    })
+                }
+            }
+        )
     }
 
     const categoriesWithIcon = [
@@ -68,6 +98,12 @@ function ShoppingHome() {
 
     console.log(productList)
 
+    useEffect(() => {
+
+        if (productDetails !== null) setOpenDetailsDialog(true)
+
+    }, [productDetails])
+
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -100,9 +136,9 @@ function ShoppingHome() {
                     </h2>
                     <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4'>
                         {
-                            categoriesWithIcon.map(categoryItem => <Card 
-                            onClick={() => handleNavigateToListingPage(categoryItem, 'category')}
-                            className="cursor-pointer hover:shadow-lg transition-shadow">
+                            categoriesWithIcon.map(categoryItem => <Card
+                                onClick={() => handleNavigateToListingPage(categoryItem, 'category')}
+                                className="cursor-pointer hover:shadow-lg transition-shadow">
                                 <CardContent className="flex flex-col items-center justify-center p-6">
                                     <categoryItem.icon className="w-12 h-12 mb-4 text-primary" />
                                     <span className="font-bold">{categoryItem.label}</span>
@@ -116,14 +152,14 @@ function ShoppingHome() {
                     </h2>
                     <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4'>
                         {
-                            brandsWithIcon.map(brandItem => <Card 
+                            brandsWithIcon.map(brandItem => <Card
                                 onClick={() => handleNavigateToListingPage(brandItem, 'brand')} className="cursor-pointer hover:shadow-lg transition-shadow">
                                 <CardContent className="flex flex-col items-center justify-center p-6">
                                     <brandItem.icon className="w-12 h-12 mb-4 text-primary" />
                                     <span className="font-bold">{brandItem.label}</span>
                                 </CardContent>
                             </Card>
-                        )}
+                            )}
                     </div>
                 </div>
             </section>
@@ -136,7 +172,8 @@ function ShoppingHome() {
                     <div className='grid grid-cols-1 
                     sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
                         {
-                            productList && productList.length > 0 ? productList.map(productItem => <ShoppingProductTile product={productItem}
+                            productList && productList.length > 0 ? productList.map(productItem => <ShoppingProductTile handleGetProductDetails={handleGetProductDetails} product={productItem}
+                                handleAddToCart={handleAddToCart}
                             />
                             )
                                 : null
@@ -144,6 +181,7 @@ function ShoppingHome() {
                     </div>
                 </div>
             </section>
+            <ProductDetailsDialog open={openDetailsDialog} setOpen={setOpenDetailsDialog} productDetails={productDetails} />
         </div>
     )
 }
