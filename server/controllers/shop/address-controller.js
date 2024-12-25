@@ -50,7 +50,7 @@ const fetchAllAddress = async (req, res) => {
         res.status(200).json({
             success: true,
             message: 'Address fetched successfully',
-            data: address
+            data: addressList
         });
 
     } catch (error) {
