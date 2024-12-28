@@ -9,6 +9,7 @@ const registerUser = async (req, res) => {
   console.log(req);
   try {
     const checkUser = await User.findOne({ email });
+   
     if (checkUser) {
       return res.json({
         success: false,
@@ -39,9 +40,13 @@ const registerUser = async (req, res) => {
 //login
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
-
+ 
   try {
     const checkUser = await User.findOne({ email });
+    console.log("**checkUser**", checkUser);
+    console.log("**checkUser id **", checkUser.id);
+    console.log("**checkUser _id **", checkUser._id);
+
     if (!checkUser) {
       return res.json({
         success: false,

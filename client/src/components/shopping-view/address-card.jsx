@@ -1,7 +1,8 @@
-import { Card, CardContent } from "../ui/card";
+import { Button } from "../ui/button";
+import { Card, CardContent, CardFooter } from "../ui/card";
 import { Label } from "../ui/label";
 
-function AddressCard({ addressInfo }) {
+function AddressCard({ addressInfo, handleDeleteAddress, handleEditAddress }) {
     return (
         <Card>
 
@@ -14,8 +15,16 @@ function AddressCard({ addressInfo }) {
 
             </CardContent>
 
+            <CardFooter className="p-3 flex mt-4 justify-between">
+                <Button onClick={() => handleEditAddress(addressInfo)} className=" bg-black text-white ml-64">Edit</Button>
+                <Button onClick={() => handleDeleteAddress(addressInfo)} className=" bg-black text-white">Delete</Button>
+            </CardFooter>
+
 
         </Card>
+
+
+
     )
 }
 

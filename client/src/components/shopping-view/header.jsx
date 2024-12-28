@@ -39,9 +39,9 @@ function MenuItems() {
     <nav className="flex flex-col mb-3 lg:mb-0 lg:items-center gap-6 lg:flex-row">
       {shoppingViewHeaderMenuItems.map((menuItem) => (
         <Label onClick={() => handleNavigation(menuItem)}
-          className="text-sm font-medium cursor-pointer"
+          className="text-md font-medium cursor-pointer hover:text-primary hover:bg-gray-100 hover:ring-2 hover:ring-gray-300 rounded-md transition duration-200"
           key={menuItem.id}
-          // to={menuItem.path}
+        // to={menuItem.path}
         >
           {menuItem.label}
         </Label>
@@ -78,7 +78,7 @@ function HeaderRightContent() {
           <span className="sr-only">User cart</span>
         </Button>
 
-        <UserCartWrapper cartItems={cartItems && cartItems?.items?.length > 0 ? cartItems.items : []} />
+        <UserCartWrapper setopenCartSheet={setopenCartSheet} cartItems={cartItems && cartItems?.items?.length > 0 ? cartItems.items : []} />
 
       </Sheet>
 
@@ -91,7 +91,7 @@ function HeaderRightContent() {
             </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
-        <DropdownMenuContent side="right" className="w-56">
+        <DropdownMenuContent side="right" className="w-56 bg-white">
           <DropdownMenuLabel> Logged in as {user?.userName}</DropdownMenuLabel>
           <DropdownMenuSeparator />
 
@@ -115,7 +115,7 @@ function ShoppingHeader() {
       <div className="flex h-16 items-center justify-between px-4 md:px-6">
         <Link to="/shop/home" className="flex items-center gap-2">
           <House className="h-6 w-6" />
-          <span className="font-bold">Ecommerce</span>
+          <span className="font-bold text-lg">Ecommerce</span>
         </Link>
         <Sheet>
           <SheetTrigger className="bg-white" asChild>

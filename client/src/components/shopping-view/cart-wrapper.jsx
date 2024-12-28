@@ -2,16 +2,19 @@ import { Separator } from "@radix-ui/react-dropdown-menu";
 import { Button } from "../ui/button";
 import { SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
 import UserCartItemsContent from "./cart-items-content";
+import { useNavigate } from "react-router-dom";
 
 
-function UserCartWrapper({ cartItems }) {
+function UserCartWrapper({ cartItems, setopenCartSheet }) {
+
+    const navigate = useNavigate();
 
     const totalCartAmount = cartItems && cartItems.length > 0 ?
         cartItems.reduce((sum, currentItem) => sum + (
             currentItem?.salePrice > 0 ? currentItem.salePrice : currentItem.price
-    ) * currentItem?.quantity, 0)
+        ) * currentItem?.quantity, 0)
 
-    : 0
+        : 0
 
 
 
@@ -41,7 +44,10 @@ function UserCartWrapper({ cartItems }) {
 
 
 
-        <Button className="w-full bg-black text-white rounded-[10px] hover:bg-gray-800 hover:shadow-lg transition-all duration-200 mt-4">
+        <Button onClick={() => {
+            navigate('/shop/checkout')
+            setopenCartSheet(false)
+        }} className="w-full bg-black text-white rounded-[10px] hover:bg-gray-800 hover:shadow-lg transition-all duration-200 mt-4">
             Checkout
         </Button>
 
