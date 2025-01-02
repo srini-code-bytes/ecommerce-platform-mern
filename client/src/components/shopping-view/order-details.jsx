@@ -1,13 +1,12 @@
-
 import { useState } from "react";
-import CommonForm from "../common/form";
 import { DialogContent } from "../ui/dialog";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
 
 
 
-function AdminOrderDetailsView() {
+function ShoppingOrderDetailsView() {
+
 
     const initialFormData = {
         status: ''
@@ -110,35 +109,13 @@ function AdminOrderDetailsView() {
                         </div>
                     </div>
 
-                    <div>
-                        <CommonForm
-                            formControls={[
-                                {
-                                    label: "Order Status",
-                                    name: "status",
-                                    componentType: "select",
-                                    options: [
-                                        { id: "pending", label: "Pending" },
-                                        { id: "inProcess", label: "In Process" },
-                                        { id: "inShipping", label: "In Shipping" },
-                                        { id: "delivered", label: "Delivered" },
-                                        { id: "rejected", label: "Rejected" },
-                                    ],
-                                },
-                            ]}
-                            formData={formData}
-                            setFormData={setFormData}
-                            buttonText={"Update Order Status"}
-                            onSubmit={handleUpdateStatus}
-                        />
-                    </div>
-
 
                 </div>
             </div>
 
         </DialogContent>
     );
+
 }
 
-export default AdminOrderDetailsView;
+export default ShoppingOrderDetailsView;

@@ -50,7 +50,6 @@ function AdminOrdersView() {
                 </Table>
             </CardContent>
             <Dialog open={openDetailsDialog} onOpenChange={setOpenDetailsDialog}>
-                {/* <AdminOrderDetailsView /> */}
                 <AdminOrderDetailsView />
             </Dialog>
 
