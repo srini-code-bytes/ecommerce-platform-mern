@@ -15,8 +15,8 @@ function AddressCard({ addressInfo, handleDeleteAddress, handleEditAddress }) {
 
             </CardContent>
 
-            <CardFooter className="p-3 flex mt-4 justify-between">
-                <Button onClick={() => handleEditAddress(addressInfo)} className=" bg-black text-white ml-64">Edit</Button>
+            <CardFooter className="p-3 flex mt-4 justify-end gap-2">
+                <Button onClick={() => handleEditAddress(addressInfo)} className=" bg-black text-white">Edit</Button>
                 <Button onClick={() => handleDeleteAddress(addressInfo)} className=" bg-black text-white">Delete</Button>
             </CardFooter>
 

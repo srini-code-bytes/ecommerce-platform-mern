@@ -17,16 +17,16 @@ The frontend receives the response, logs it, and updates the state with setUploa
 
 Cart - backend flow
 
-//Model for Cart and Product 
+// Model for Cart and Product 
 /server/models/Cart.js
 /server/models/Product.js
 - to create the schema on the mongoose
 
-//Controller 
+// Controller 
 /server/controllers/cart-controller.js 
 - for all CRUD operations on the cart
 
-//Routing
+// Routing
 /server/routes/shop/cart-routes.js
 - for configuring different routes for cart ops
 

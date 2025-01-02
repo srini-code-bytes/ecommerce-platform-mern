@@ -1,15 +1,20 @@
-
+import { useState } from "react";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Dialog } from "../ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
+import AdminOrderDetailsView from "./order-details";
 
 
-function ShoppingOrders() {
+function AdminOrdersView() {
+
+    const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
+
     return (
         <Card>
             <CardHeader>
                 <CardTitle>
-                    Order History
+                    All Orders
                 </CardTitle>
             </CardHeader>
             <CardContent>
@@ -33,15 +38,24 @@ function ShoppingOrders() {
                             <TableCell>In Progress</TableCell>
                             <TableCell>$1000</TableCell>
                             <TableCell>
-                                <Button className="bg-black text-white">View Details</Button>
+                                <Button onClick={() => setOpenDetailsDialog(true)} className="bg-black text-white">View Details</Button>
                             </TableCell>
-           
+
+
+
                         </TableRow>
+
+
                     </TableBody>
                 </Table>
             </CardContent>
+            <Dialog open={openDetailsDialog} onOpenChange={setOpenDetailsDialog}>
+                {/* <AdminOrderDetailsView /> */}
+                <AdminOrderDetailsView />
+            </Dialog>
+
         </Card>
     )
 }
 
-export default ShoppingOrders;
+export default AdminOrdersView;
