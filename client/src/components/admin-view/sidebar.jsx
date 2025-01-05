@@ -57,7 +57,7 @@ function AdminSideBar({ open, setOpen }) {
     <Fragment>
 
       {/* Sheet: A modal sidebar for small screens that opens from the left. */}
-      
+
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="left" className="w-64 bg-white">
           <div className="flex flex-col h-full">

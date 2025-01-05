@@ -26,6 +26,10 @@ function ShoppingOrderDetailsView() {
                 <div className="grid gap-2">
                     <div className="flex items-center mt-6 justify-between">
 
+                        <div className="text-center text-xl">
+                            Order Details
+                        </div>
+
                         <p className="font-medium">Order ID</p>
                         <Label>
                             123456

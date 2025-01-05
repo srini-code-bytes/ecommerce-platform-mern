@@ -7,7 +7,7 @@ function AdminHeader({ setOpen }) {
   const dispatch = useDispatch();
   function handleLogout() {
     dispatch(logoutUser());
-    
+
   }
   return (
     <header className="flex items-center justify-between px-4 py-3 bg-background border-b">
