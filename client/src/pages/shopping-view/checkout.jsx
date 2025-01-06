@@ -3,12 +3,17 @@ import img from '../../assets/account.jpg';
 import { useSelector } from 'react-redux';
 import UserCartItemsContent from '@/components/shopping-view/cart-items-content';
 import { Button } from '@/components/ui/button';
+import { useState } from 'react';
 
 function ShoppingCheckout() {
 
-    const { cartItems } = useSelector(state => state.shopCart)
+    const { cartItems } = useSelector((state) => state.shopCart)
+    const { user } = useSelector((state) => state.auth)
+    const [currentSelectedAddress, setCurrentSelectedAddress] = useState(null);
 
     console.log("cartItems====>", cartItems)
+
+    console.log("currentSelectedAddress====>", currentSelectedAddress)
 
     const totalCartAmount = cartItems && cartItems.items && cartItems.items.length > 0 ?
         cartItems.items.reduce((sum, currentItem) => sum + (
@@ -16,6 +21,47 @@ function ShoppingCheckout() {
         ) * currentItem?.quantity, 0)
 
         : 0
+
+    function handleInitiatePaypalPayment() {
+
+        const orderData = {
+
+            userId: user.id,
+            cartItems: cartItems.items.map(singleCartItem => ({
+                productId: singleCartItem?.productId,
+                title: singleCartItem?.title,
+                price: singleCartItem?.price,
+                salePrice: singleCartItem?.salePrice > 0 ? singleCartItem?.salePrice : singleCartItem?.price,
+                image: singleCartItem?.image,
+                quantity: singleCartItem?.quantity
+            })),
+            addressInfo: {
+                // fetch the id from the address table to addressId
+                addressId: currentSelectedAddress?._id,
+                address: currentSelectedAddress?.address,
+                city: currentSelectedAddress?.city,
+                pincode: currentSelectedAddress?.pincode,
+                phone: currentSelectedAddress?.phone,
+                notes: currentSelectedAddress?.notes,
+            },
+            orderStatus: 'pending',
+            paymentMethod: 'paypal',
+            paymentStatus: 'pending',
+            totalAmount: totalCartAmount,
+            orderDate: new Date(),
+            orderUpdateDate: new Date(),
+            paymentId: '',
+            payerId: ''
+
+        }
+
+        console.log("orderData====>", orderData)
+
+
+
+    }
+
+
 
 
     return (
@@ -33,9 +79,9 @@ function ShoppingCheckout() {
             <div className='grid grid-cols-1 sm:grid-cols-2 
             gap-5 mt-5 p-5'>
 
-                <Address />
-                
-                
+                <Address setCurrentSelectedAddress={setCurrentSelectedAddress} />
+
+
                 <div className='flex flex-col gap-4'>
                     {
                         cartItems && cartItems.items && cartItems.items.length > 0 ?
@@ -48,7 +94,7 @@ function ShoppingCheckout() {
                         </div>
                     </div>
                     <div>
-                        <Button className="w-full bg-black text-white">Checkout with PayPal</Button>
+                        <Button onClick={handleInitiatePaypalPayment} className="w-full bg-black text-white">Checkout with PayPal</Button>
                     </div>
 
                 </div>

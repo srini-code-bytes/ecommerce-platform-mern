@@ -4,6 +4,7 @@ const Order = require('../../models/Order');
 
 const paypal = require('../../helpers/paypal');
 
+// Controller -> import the controller in routes -> import the routes in server.js -> Create a slice order-slice -> import the slice in store.js
 
 const createOrder = async (req, res) => {
     try {
