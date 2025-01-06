@@ -172,13 +172,19 @@ function ShoppingHome() {
                     <div className='grid grid-cols-1 
                     sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
                         {
-                            productList && productList.length > 0 ? productList.map(productItem => <ShoppingProductTile handleGetProductDetails={handleGetProductDetails} product={productItem}
-                                handleAddToCart={handleAddToCart}
-                            />
-                            )
-                                : null
+                            productList && productList.length > 0 ? productList.map((productItem) => (
+                                <div
+                                    key={productItem.id} // Add a unique key
+                                    className="transition-transform transform hover:scale-105 hover:shadow-lg"
+                                >
+                                    <ShoppingProductTile handleGetProductDetails={handleGetProductDetails} product={productItem}
+                                        handleAddToCart={handleAddToCart}
+                                    />
+                                    </div>
+                                    ))
+                                    : null
                         }
-                    </div>
+                                </div>
                 </div>
             </section>
             <ProductDetailsDialog open={openDetailsDialog} setOpen={setOpenDetailsDialog} productDetails={productDetails} />
