@@ -1,15 +1,20 @@
 import Address from '@/components/shopping-view/address';
 import img from '../../assets/account.jpg';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import UserCartItemsContent from '@/components/shopping-view/cart-items-content';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+import { createNewOrder } from '@/store/shop/order-slice';
 
 function ShoppingCheckout() {
 
     const { cartItems } = useSelector((state) => state.shopCart)
     const { user } = useSelector((state) => state.auth)
     const [currentSelectedAddress, setCurrentSelectedAddress] = useState(null);
+    const [isPaymentStart, setIsPaymentStart] = useState(false);
+    const { approvalURL } = useSelector((state) => state.shopOrder)
+
+    const dispatch = useDispatch();
 
     console.log("cartItems====>", cartItems)
 
@@ -30,8 +35,10 @@ function ShoppingCheckout() {
             cartItems: cartItems.items.map(singleCartItem => ({
                 productId: singleCartItem?.productId,
                 title: singleCartItem?.title,
-                price: singleCartItem?.price,
-                salePrice: singleCartItem?.salePrice > 0 ? singleCartItem?.salePrice : singleCartItem?.price,
+                price:
+                    singleCartItem?.salePrice > 0
+                        ? singleCartItem?.salePrice
+                        : singleCartItem?.price,
                 image: singleCartItem?.image,
                 quantity: singleCartItem?.quantity
             })),
@@ -57,12 +64,23 @@ function ShoppingCheckout() {
 
         console.log("orderData====>", orderData)
 
+        dispatch(createNewOrder(orderData)).then(
+            (data) => {
+                console.log(data)
 
+                if (data?.payload?.success) {
+                    setIsPaymentStart(true);
 
+                } else {
+                    setIsPaymentStart(false);
+                }
+            }
+        )
     }
 
-
-
+    if (approvalURL) {
+        window.location.href = approvalURL;
+    }
 
     return (
         <div className="flex flex-col">

@@ -1,5 +1,3 @@
-// const { payment } = require("paypal-rest-sdk");
-
 const Order = require('../../models/Order');
 
 const paypal = require('../../helpers/paypal');
@@ -10,7 +8,9 @@ const createOrder = async (req, res) => {
     try {
 
 
-        const { userId, addressInfo, orderStatus, paymentMethod, paymentStatus, totalAmount, orderDate, orderUpdateDate, paymentId, payerId } = req.body;
+        const { userId, addressInfo, orderStatus, paymentMethod, paymentStatus, totalAmount, orderDate, orderUpdateDate, paymentId, payerId, cartItems } = req.body;
+
+        
 
         // Create a payment JSON
 
@@ -25,7 +25,7 @@ const createOrder = async (req, res) => {
 
             redirect_urls: {
                 return_url: 'http://localhost:5173/shop/paypal-return',
-                cancel_url: 'http://localhost:8080/shop/paypal-cancel'
+                cancel_url: 'http://localhost:5173/shop/paypal-cancel'
             },
 
             // The transactions array contains the list of items that the user is purchasing.
@@ -33,7 +33,7 @@ const createOrder = async (req, res) => {
             transactions: [
                 {
                     item_list: {
-                        items: cartItems.map(item => ({
+                        items: cartItems.map((item) => ({
                             name: item.title,
                             sku: item.productId,
                             price: item.price.toFixed(2),
@@ -50,11 +50,13 @@ const createOrder = async (req, res) => {
             ]
         }
 
+        console.log(JSON.stringify(create_payment_json, null, 2));
+
         // Create a payment instance with the create_payment_json
 
-        paypal.payment.create(create_payment_json, async function (error, paymentInfo) {
+        paypal.payment.create(create_payment_json, async (error, paymentInfo) => {
             if (error) {
-                console.log(error);
+                console.log(error.response.details);
 
                 return res.status(500).json({
                     success: false,
@@ -79,7 +81,7 @@ const createOrder = async (req, res) => {
 
                 // Redirect the user to the approvalURL
 
-                const approvalURL = paymentInfo.links.find(link => link.rel === 'approval_url').href;
+                const approvalURL = paymentInfo.links.find((link) => link.rel === 'approval_url').href;
 
                 // Send the approvalURL to the client
 
