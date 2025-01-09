@@ -1,5 +1,7 @@
 const Order = require('../../models/Order');
 
+const Cart = require('../../models/Cart');
+
 const paypal = require('../../helpers/paypal');
 
 // Controller -> import the controller in routes -> import the routes in server.js -> Create a slice order-slice -> import the slice in store.js
@@ -8,9 +10,9 @@ const createOrder = async (req, res) => {
     try {
 
 
-        const { userId, addressInfo, orderStatus, paymentMethod, paymentStatus, totalAmount, orderDate, orderUpdateDate, paymentId, payerId, cartItems } = req.body;
+        const { userId, addressInfo, orderStatus, paymentMethod, paymentStatus, totalAmount, orderDate, orderUpdateDate, paymentId, payerId, cartItems, cartId } = req.body;
 
-        
+
 
         // Create a payment JSON
 
@@ -20,7 +22,7 @@ const createOrder = async (req, res) => {
             payer: {
                 payment_method: 'paypal'
             },
-            
+
             // The redirect_urls object contains the URLs that the user will be redirected to after the payment is completed.
 
             redirect_urls: {
@@ -65,6 +67,7 @@ const createOrder = async (req, res) => {
             } else {
                 const newlyCreatedOrder = new Order({
                     userId,
+                    cartId,
                     cartItems,
                     addressInfo,
                     orderStatus,
@@ -106,6 +109,32 @@ const createOrder = async (req, res) => {
 
 const capturePayment = async (req, res) => {
     try {
+        const { payerId, paymentId, orderId } = req.body;
+
+        const order = await Order.findById(orderId);
+
+        if (!order) {
+            res.status(404).json({
+                success: false,
+                message: 'Order cannot be found'
+            })
+        }
+
+        order.paymentStatus = 'paid',
+        order.orderStatus = 'confirmed',
+        order.paymentId = paymentId,
+        order.payerId = payerId;
+
+        const getCartId = order.cartId;
+        await Cart.findByIdAndDelete(getCartId);
+
+        await order.save();
+
+        res.status(200).json({
+            success: true,
+            message : 'order confirmed',
+            data : order
+        })
 
     } catch (e) {
         console.log(e);

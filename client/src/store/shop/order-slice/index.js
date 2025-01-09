@@ -10,14 +10,22 @@ const initialState = {
     orderId: null
 }
 
-export const createNewOrder = createAsyncThunk('/order/createNewOrder', 
+export const createNewOrder = createAsyncThunk('/order/createNewOrder',
     async (orderData) => {
 
-    const response = await axios.post('http://localhost:8080/api/shop/order/create', orderData)
+        const response = await axios.post('http://localhost:8080/api/shop/order/create', orderData)
 
-    return response.data;
+        return response.data;
 
-})
+    })
+
+export const capturePayment = createAsyncThunk('/order/capturePayment',
+    async ( {payerId, paymentId, orderId}) => {
+        const response = await axios.post('http://localhost:8080/api/shop/order/capture', { payerId, paymentId, orderId })
+
+        return response.data;
+
+    })
 
 const shoppingOrderSlice = createSlice({
     name: 'shoppingOrderSlice',
@@ -30,6 +38,10 @@ const shoppingOrderSlice = createSlice({
             state.isLoading = false;
             state.approvalURL = action.payload.approvalURL
             state.orderId = action.payload.orderId
+            sessionStorage.setItem(
+                "currentOrderId",
+                JSON.stringify(action.payload.orderId)
+            )
         }).addCase(createNewOrder.rejected, (state) => {
             state.isLoading = false;
             state.approvalURL = null;
