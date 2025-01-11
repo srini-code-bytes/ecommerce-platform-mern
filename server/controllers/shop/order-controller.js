@@ -121,9 +121,9 @@ const capturePayment = async (req, res) => {
         }
 
         order.paymentStatus = 'paid',
-        order.orderStatus = 'confirmed',
-        order.paymentId = paymentId,
-        order.payerId = payerId;
+            order.orderStatus = 'confirmed',
+            order.paymentId = paymentId,
+            order.payerId = payerId;
 
         const getCartId = order.cartId;
         await Cart.findByIdAndDelete(getCartId);
@@ -132,8 +132,8 @@ const capturePayment = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message : 'order confirmed',
-            data : order
+            message: 'order confirmed',
+            data: order
         })
 
     } catch (e) {
@@ -146,4 +146,65 @@ const capturePayment = async (req, res) => {
     }
 }
 
-module.exports = { createOrder, capturePayment }
+const getAllOrdersByUser = async (req, res) => {
+    try {
+
+        const { userId } = req.params;
+
+        const orders = await Order.findById({ userId });
+
+        if (!orders.length) {
+            res.status(404).json({
+                success: false,
+                message: 'No orders found!'
+            })
+
+        }
+
+        res.status(200).json({
+            success: true,
+            data: orders,
+        })
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({
+            success: false,
+            message: 'Some error occured!'
+        })
+
+    }
+}
+
+const getOrderDetails = async (req, res) => {
+    try {
+
+        const { id } = req.params;
+
+        const order = await Order.findById(id);
+
+        if (!order) {
+            res.status(404).json({
+                success: false,
+                message: 'Order not found!'
+            })
+
+        }
+
+        res.status(200).json({
+            success: true,
+            data: order,
+        })
+
+
+
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({
+            success: false,
+            message: 'Some error occured!'
+        })
+
+    }
+}
+
+module.exports = { createOrder, capturePayment, getAllOrdersByUser, getOrderDetails }
