@@ -6,7 +6,7 @@ import { Dialog } from "../ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import ShoppingOrderDetailsView from "./order-details";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllOrdersByUserId } from "@/store/shop/order-slice";
+import { getAllOrdersByUserId, getOrderDetails, resetOrderDetails } from "@/store/shop/order-slice";
 import { Badge } from "../ui/badge";
 
 
@@ -15,7 +15,20 @@ function ShoppingOrders() {
     const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
     const dispatch = useDispatch();
     const { user } = useSelector((state) => state.auth);
-    const { orderList } = useSelector((state => state.shopOrder))
+    const { orderList, orderDetails } = useSelector((state => state.shopOrder))
+
+    function handleFetchOrderDetails(getId){
+        dispatch(getOrderDetails(getId))
+    }
+
+    useEffect(() => {
+        if(orderDetails != null) {
+            setOpenDetailsDialog(true)
+        }
+    }, [orderDetails])
+
+    console.log("orderDetails====>",orderDetails )
+
 
     useEffect(() => {
         dispatch(getAllOrdersByUserId(user?.id))
@@ -70,10 +83,14 @@ function ShoppingOrders() {
                                         <TableCell>{orderItem?.totalAmount}</TableCell>
 
                                         <TableCell>
-                                            <Dialog open={openDetailsDialog} onOpenChange={setOpenDetailsDialog}>
-                                                <Button onClick={() => setOpenDetailsDialog(true)} className="bg-black text-white">View Details</Button>
+                                            <Dialog open={openDetailsDialog} onOpenChange= {() =>{
+                                                setOpenDetailsDialog(false)
+                                                dispatch(resetOrderDetails())
+                                            }}
+                                            >
+                                                <Button onClick={() => handleFetchOrderDetails(orderItem?._id)} className="bg-black text-white">View Details</Button>
 
-                                                <ShoppingOrderDetailsView />
+                                                <ShoppingOrderDetailsView orderDetails={orderDetails}/>
 
                                             </Dialog>
 

@@ -5,7 +5,9 @@ import { Separator } from "../ui/separator";
 
 
 
-function ShoppingOrderDetailsView() {
+function ShoppingOrderDetailsView({ orderDetails }) {
+
+    console.log("orderDetails===>", orderDetails)
 
 
     const initialFormData = {
@@ -32,7 +34,7 @@ function ShoppingOrderDetailsView() {
 
                         <p className="font-medium">Order ID</p>
                         <Label>
-                            123456
+                            {orderDetails?._id}
                         </Label>
                     </div>
 
@@ -40,7 +42,7 @@ function ShoppingOrderDetailsView() {
 
                         <p className="font-medium">Order Date</p>
                         <Label>
-                            2/1/2025
+                            {orderDetails?.orderDate.split("T")[0]}
                         </Label>
                     </div>
 
@@ -48,7 +50,8 @@ function ShoppingOrderDetailsView() {
 
                         <p className="font-medium">Order Price</p>
                         <Label>
-                            $500
+                            {orderDetails?.totalAmount}
+
                         </Label>
                     </div>
 
@@ -56,7 +59,7 @@ function ShoppingOrderDetailsView() {
 
                         <p className="font-medium">Payment method</p>
                         <Label>
-                            Paypal
+                            {orderDetails?.paymentMethod.charAt(0).toUpperCase() + orderDetails?.paymentMethod.slice(1)}
                         </Label>
                     </div>
 
@@ -64,7 +67,7 @@ function ShoppingOrderDetailsView() {
 
                         <p className="font-medium">Payment status</p>
                         <Label>
-                            Paid
+                            {orderDetails?.paymentStatus.charAt(0).toUpperCase() + orderDetails?.paymentStatus.slice(1)}
                         </Label>
                     </div>
 
@@ -72,7 +75,7 @@ function ShoppingOrderDetailsView() {
 
                         <p className="font-medium mb-2">Order Status</p>
                         <Label>
-                            Confirmed
+                            {orderDetails?.orderStatus.charAt(0).toUpperCase() + orderDetails?.orderStatus.slice(1)}
                         </Label>
                     </div>
 
@@ -85,11 +88,15 @@ function ShoppingOrderDetailsView() {
                             </div>
 
                             <ul className="grid-gap-3">
-                                <li className="flex items-center justify-between  text-gray-500">
-                                    <span>Product One</span>
-                                    <span>Price</span>
-                                    <span>Quantity</span>
+                                {orderDetails?.cartItems && orderDetails?.cartItems.length > 0 ?  orderDetails.cartItems.map((item) => (
+                                    <li className="flex items-center justify-between  text-gray-500">
+                                    <span>Title : {item?.title}</span>
+                                    <span>Quantity : {item?.quantity}</span>
+                                    <span>Price : {item?.price}</span>
                                 </li>
+                                )
+                                ) : null}
+                                
                             </ul>
                         </div>
                     </div>
