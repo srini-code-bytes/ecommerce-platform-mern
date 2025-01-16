@@ -2,10 +2,13 @@ import { useState } from "react";
 import { DialogContent } from "../ui/dialog";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
+import { useSelector } from "react-redux";
 
 
 
 function ShoppingOrderDetailsView({ orderDetails }) {
+
+    const { user } = useSelector((state) => state.auth)
 
     console.log("orderDetails===>", orderDetails)
 
@@ -88,15 +91,15 @@ function ShoppingOrderDetailsView({ orderDetails }) {
                             </div>
 
                             <ul className="grid-gap-3">
-                                {orderDetails?.cartItems && orderDetails?.cartItems.length > 0 ?  orderDetails.cartItems.map((item) => (
+                                {orderDetails?.cartItems && orderDetails?.cartItems.length > 0 ? orderDetails.cartItems.map((item) => (
                                     <li className="flex items-center justify-between  text-gray-500">
-                                    <span>Title : {item?.title}</span>
-                                    <span>Quantity : {item?.quantity}</span>
-                                    <span>Price : {item?.price}</span>
-                                </li>
+                                        <span>Title : {item?.title}</span>
+                                        <span>Quantity : {item?.quantity}</span>
+                                        <span>Price : {item?.price}</span>
+                                    </li>
                                 )
                                 ) : null}
-                                
+
                             </ul>
                         </div>
                     </div>
@@ -108,12 +111,12 @@ function ShoppingOrderDetailsView({ orderDetails }) {
                             </div>
 
                             <div className="grid gap-0.5 text-gray-500">
-                                <span>Virat Kohli</span>
-                                <span>Delhi</span>
-                                <span>India</span>
-                                <span>ABC123</span>
-                                <span>0619942004</span>
-                                <span>Notes</span>
+                                <span>{user?.userName}</span>
+                                <span>{orderDetails?.addressInfo.address}</span>
+                                <span>{orderDetails?.addressInfo.city}</span>
+                                <span>{orderDetails?.addressInfo.phone}</span>
+                                <span>{orderDetails?.addressInfo.pincode}</span>
+                                <span>{orderDetails?.addressInfo.notes}</span>
 
 
                             </div>

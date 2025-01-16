@@ -18,6 +18,8 @@ const shopAddressRouter = require('./routes/shop/address-routes')
 
 const shopOrderRouter = require('./routes/shop/order-routes')
 
+const adminOrderRouter = require('./routes/admin/order-routes')
+
 // Create db connection
 // create a separate file for this and import that file here --better approach
 
@@ -54,6 +56,8 @@ app.use(express.json());
 app.use("/api/auth", authRouter);
 
 app.use("/api/admin/products", adminProductsRouter);
+
+app.use("/api/admin/orders", adminOrderRouter);
 
 app.use("/api/shop/products", shopProductsRouter);
 

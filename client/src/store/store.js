@@ -5,8 +5,14 @@ import shopProductsSlice from "./shop/products-slice";
 import shopCartSlice from "./shop/cart-slice"
 import shopAddressSlice from "./shop/address-slice"
 import shopOrderSlice from "./shop/order-slice"
+import adminOrderSlice from "./admin/order-slice"
+// const devTools =
+//   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__();
+
 
 export const store = configureStore({
+
+
   //Combine reducers into a global reducer
   reducer: {
     auth: authReducer,
@@ -14,8 +20,10 @@ export const store = configureStore({
     shopProducts: shopProductsSlice,
     shopCart: shopCartSlice,
     shopAddress: shopAddressSlice,
-    shopOrder: shopOrderSlice
+    shopOrder: shopOrderSlice,
+    adminOrder: adminOrderSlice
   },
+  devTools : process.env.NODE_ENV !== 'production'
 });
 
 export default store;
