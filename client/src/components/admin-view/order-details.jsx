@@ -26,6 +26,8 @@ function AdminOrderDetailsView() {
             <div className="grid gap-6">
                 <div className="grid gap-2">
 
+                    {/* TO-DO */}
+
                     <div className="text-center text-xl">
                         Order Details
                     </div>
