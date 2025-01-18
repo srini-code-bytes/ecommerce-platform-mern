@@ -7,7 +7,7 @@ import { Separator } from "../ui/separator";
 
 
 
-function AdminOrderDetailsView() {
+function AdminOrderDetailsView({ orderDetails }) {
 
     const initialFormData = {
         status: ''

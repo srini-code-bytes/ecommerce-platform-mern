@@ -32,6 +32,9 @@ const adminOrderSlice = createSlice({
     name: 'adminOrderSlice',
     initialState,
     reducers: {
+        resetOrderDetailsForAdmin : (state) => {
+            state.orderDetails = null
+        }
     },
     extraReducers: (builder) => {
         builder.addCase(getAllOrdersForAdmin.pending, (state) => {
@@ -58,5 +61,7 @@ const adminOrderSlice = createSlice({
 
 
 });
+
+export const resetOrderDetailsForAdmin = adminOrderSlice.actions;
 
 export default adminOrderSlice.reducer;
