@@ -1,4 +1,4 @@
-# react-learning-ecommerce
+# ecommerce-platform-mern
 A full-stack e-commerce platform built with the MERN stack featuring dynamic product management, user authentication, and responsive design.
 
 Frontend Tech Stack:
