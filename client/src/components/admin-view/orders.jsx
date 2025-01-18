@@ -18,6 +18,7 @@ function AdminOrdersView() {
     const dispatch = useDispatch()
 
     function handleFetchOrderDetails(getId) {
+        setOpenDetailsDialog(true);
         dispatch(getOrderDetailsForAdmin(getId))
     }
 

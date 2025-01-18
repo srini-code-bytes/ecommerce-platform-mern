@@ -9,6 +9,8 @@ import { Separator } from "../ui/separator";
 
 function AdminOrderDetailsView({ orderDetails }) {
 
+     console.log("orderDetails====>", orderDetails)
+
     const initialFormData = {
         status: ''
 

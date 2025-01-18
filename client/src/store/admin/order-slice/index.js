@@ -20,13 +20,22 @@ export const getAllOrdersForAdmin = createAsyncThunk('/orders/getAllOrdersByUser
 
     })
 
-export const getOrderDetailsForAdmin = createAsyncThunk('/orders/getOrderDetails',
-    async (id) => {
-        const response = await axios.get(`http://localhost:8080/api/admin/orders/details/${id}`)
-
-        return response.data;
-
-    })
+    export const getOrderDetailsForAdmin = createAsyncThunk(
+        '/orders/getOrderDetailsForAdmin',
+        async (id) => {
+          try {
+            console.log("Fetching details for ID:", id);
+            const response = await axios.get(
+              `http://localhost:8080/api/admin/orders/details/${id}`
+            );
+            console.log("API response:", response);
+            return response.data;
+          } catch (error) {
+            console.error("API error:", error);
+            throw error;
+          }
+        }
+      );
 
 const adminOrderSlice = createSlice({
     name: 'adminOrderSlice',

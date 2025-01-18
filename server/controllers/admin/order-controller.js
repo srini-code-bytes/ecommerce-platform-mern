@@ -36,7 +36,11 @@ const getOrderDetailsForAdmin = async (req, res) => {
 
         const { id } = req.params;
 
+        console.log("id", id)
+
         const order = await Order.findById(id);
+
+        console.log("order", order)
 
         if (!order) {
             return res.status(404).json({
