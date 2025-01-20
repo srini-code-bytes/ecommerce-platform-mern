@@ -83,7 +83,7 @@ function AdminOrdersView() {
                                                     handleFetchOrderDetails(orderItem?._id)
                                                 } className="bg-black text-white">View Details</Button>
 
-                                                <AdminOrderDetailsView orderDetails={orderDetails} />
+                                                <AdminOrderDetailsView orderDetails={orderItem} />
                                             </Dialog>
                                         </TableCell>
 
