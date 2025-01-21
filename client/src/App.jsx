@@ -24,9 +24,6 @@ import PaymentSuccessPage from "./pages/shopping-view/payment-success"
 
 function App() {
 
-  // const isAuthenticated = false;
-  // const user = null;
-
   const {isAuthenticated, user, isLoading} = useSelector(state => state.auth)
   const dispatch = useDispatch();
 

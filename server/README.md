@@ -12,7 +12,7 @@
     "nodemon": "^3.1.7"
   }
   
-Contains useful packages for backend development:
+Contains packages for backend development:
 	•	bcryptjs: For hashing passwords.
 	•	cloudinary: For managing cloud-based image storage.
 	•	cookie-parser: For parsing cookies.
@@ -23,3 +23,41 @@ Contains useful packages for backend development:
 	•	mongoose: For MongoDB object modeling.
 	•	multer: For handling file uploads.
 	•	nodemon: For development workflow improvements.
+
+  TERMINAL SETUP : 
+
+  npm init
+
+  -> package name: server (imp)
+  -> 1.0.0(as it is)
+  -> description
+  -> entry point(index.js) 
+  -> test command
+  -> git repo
+  -> author -> my name (imp)
+
+  package.json will be created on the backend(server) now
+
+  TERMINAL -> server -> INSTALL the above PACKAGES.
+
+  1. CREATE ACCOUNT ON MONGODB
+  2. NAME YOUR PROJECT -> CREATE PROJECT
+  3. CREATE CLUSTER -> FREE VERSION -> GIVE NAME, PROVIDER, REGION
+  4. CREATE DEPLOYMENT
+  5. CONNECT TO CLUSTER -> ADD A CONNECTION IP ADDRESS & CREATE A DB USER
+  6. CHOOSE CONNECTION -> MONGODB FOR VSCODE
+  7. NETWORK ACCESS -> CHECK IF IP ADDRESS IS WHITELISTED; just for now ALLOW ACCESS FROM ANYWHERE
+
+  CLICK ON CONNECT -> MONGODB FOR VSCODE
+
+  TAKE THE URL ending with .net/ 
+
+  Go to server.js - Set up mongodb connection & run the server 
+
+  Go to package.json and include the following script:
+
+"scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "server.js", -----> ENTRY POINT
+    "dev": "nodemon server.js" ----> RUN THE SERVER AUTOMATICALLY(to get updated data); say which file to run
+  },

@@ -1,4 +1,6 @@
 
+client - frontend folder
+server - backend folder
 
 #Upload Image to Cloudinary
 

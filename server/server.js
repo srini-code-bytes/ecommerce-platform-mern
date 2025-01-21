@@ -1,9 +1,14 @@
+// MAIN ENTRY POINT 
 // To connect to the database
 
-// Import 
+// All require are imports
 const express = require("express");
 const mongoose = require("mongoose");
-const cookieParser = require("cookie-parser");  // Why?
+
+// To parse the cookie
+const cookieParser = require("cookie-parser");  
+
+// To allow cross-origin requests
 const cors = require("cors"); // Why?
 const authRouter = require("./routes/auth/auth-routes");
 const { registerUser } = require("./controllers/auth/auth-controller");
@@ -20,21 +25,25 @@ const shopOrderRouter = require('./routes/shop/order-routes')
 
 const adminOrderRouter = require('./routes/admin/order-routes')
 
-// Create db connection
+// Create database connection
 // create a separate file for this and import that file here --better approach
+
+// take the below url from mongodb; make sure to give the password that you created in mongodb
 
 mongoose
   .connect(
     "mongodb+srv://sriniv33613:sriniv336132024@cluster0.vj57d.mongodb.net/"
   )
-  .then(() => console.log("Mongo db is connected"))
+  .then(() => console.log("Yayyyy! Mongo db is connected"))
   .catch((error) => console.log("error"));
 
-const app = express();
-const PORT = process.env.PORT || 8080; // Backend server will run at 8080
+const app = express(); // CREATE THE EXPRESS APP
+const PORT = process.env.PORT || 8080; // Backend server will run on 8080
 
+// To allow cross-origin requests
 app.use(
   cors({
+    // Mention that you want client side to be running on port 5173
     origin: "http://localhost:5173",
     methods: ["GET", "POST", "DELETE", "PUT"],
     allowedHeaders: [
@@ -50,6 +59,7 @@ app.use(
 
 //To parse the cookie that we send from frontend
 app.use(cookieParser());
+
 // To get the response from backend in standard json format
 app.use(express.json());
 
@@ -70,4 +80,5 @@ app.use("/api/shop/order", shopOrderRouter);
 // /api/auth/registerUser -> registerUser
 // /api/auth/loginUser -> loginUser 
 
+// Run the server
 app.listen(PORT, () => console.log(`Server is now running on PORT : ${PORT}`));

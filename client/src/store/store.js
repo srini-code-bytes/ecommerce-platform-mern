@@ -1,3 +1,5 @@
+
+
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./auth-slice";
 import adminProductsSlice from "./admin/products-slice";
@@ -6,8 +8,6 @@ import shopCartSlice from "./shop/cart-slice"
 import shopAddressSlice from "./shop/address-slice"
 import shopOrderSlice from "./shop/order-slice"
 import adminOrderSlice from "./admin/order-slice"
-// const devTools =
-//   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__();
 
 
 export const store = configureStore({
