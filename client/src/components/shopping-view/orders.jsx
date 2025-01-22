@@ -90,7 +90,7 @@ function ShoppingOrders() {
                                             >
                                                 <Button onClick={() => handleFetchOrderDetails(orderItem?._id)} className="bg-black text-white">View Details</Button>
 
-                                                <ShoppingOrderDetailsView orderDetails={orderDetails}/>
+                                                <ShoppingOrderDetailsView orderDetails={orderItem}/>
 
                                             </Dialog>
 

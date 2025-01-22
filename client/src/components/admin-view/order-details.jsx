@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 
 function AdminOrderDetailsView({ orderDetails }) {
 
-    console.log("**orderDetails**", orderDetails)
+    console.log("**AdminOrderDetailsView orderDetails**", orderDetails)
 
     const { user } = useSelector((state) => state.auth)
 
@@ -21,8 +21,10 @@ function AdminOrderDetailsView({ orderDetails }) {
 
     const [formData, setFormData] = useState(initialFormData);
 
-    function handleUpdateStatus() {
+    function handleUpdateStatus(event) {
         event.preventDefault();
+        console.log("handleUpdateStatus formdata====>", formData)
+
 
     }
 
