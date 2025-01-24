@@ -4,7 +4,9 @@ import CommonForm from "../common/form";
 import { DialogContent } from "../ui/dialog";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useToast } from "@/hooks/use-toast";
+import { getAllOrdersForAdmin, getOrderDetailsForAdmin, updateOrderStatus } from "@/store/admin/order-slice";
 
 
 
@@ -13,6 +15,8 @@ function AdminOrderDetailsView({ orderDetails }) {
     console.log("**AdminOrderDetailsView orderDetails**", orderDetails)
 
     const { user } = useSelector((state) => state.auth)
+    const dispatch = useDispatch();
+    const { toast } = useToast()
 
     const initialFormData = {
         status: ''
@@ -24,8 +28,26 @@ function AdminOrderDetailsView({ orderDetails }) {
     function handleUpdateStatus(event) {
         event.preventDefault();
         console.log("handleUpdateStatus formdata====>", formData)
+        const { status } = formData;
 
+        dispatch(updateOrderStatus({
+            id: orderDetails?._id,
+            orderStatus: status // coming from form data
+        })).then((data) => {
+            if (data?.payload?.success) {
+                // To refresh order status in the order details dialog box
+                dispatch(getOrderDetailsForAdmin(orderDetails?._id))
+                // To refresh order status in the order list(All orders list)
+                dispatch(getAllOrdersForAdmin())
 
+                setFormData(initialFormData)
+
+                toast({
+                    title: data?.payload?.message,
+                })
+            }
+
+        })
     }
 
     // return (
@@ -169,7 +191,7 @@ function AdminOrderDetailsView({ orderDetails }) {
         <DialogContent className="sm:max-w-[600px] bg-white">
             <div className="grid gap-6">
                 <div className="text-center text-2xl font-bold mt-4">Order Details</div>
-    
+
                 {/* Order Info */}
                 <div className="grid gap-4">
                     {[
@@ -186,9 +208,9 @@ function AdminOrderDetailsView({ orderDetails }) {
                         </div>
                     ))}
                 </div>
-    
+
                 <Separator className="bg-gray-600 mt-4" />
-    
+
                 {/* Order Details Table */}
                 <div>
                     <div className="text-lg font-medium mb-2">Order Details</div>
@@ -217,9 +239,9 @@ function AdminOrderDetailsView({ orderDetails }) {
                         <p className="text-lg font-medium">No items in the cart.</p>
                     )}
                 </div>
-    
+
                 <Separator className="bg-gray-900 mt-4" />
-    
+
                 {/* Shipping Info */}
                 <div>
                     <div className="text-lg font-medium mb-2">Shipping Info</div>
@@ -236,7 +258,7 @@ function AdminOrderDetailsView({ orderDetails }) {
                         ))}
                     </div>
                 </div>
-    
+
                 {/* Order Status Form */}
                 <div>
                     <CommonForm
@@ -263,12 +285,12 @@ function AdminOrderDetailsView({ orderDetails }) {
             </div>
         </DialogContent>
     );
-    
+
     // Helper function to capitalize strings
     function capitalize(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
-    
+
 }
 
 export default AdminOrderDetailsView;

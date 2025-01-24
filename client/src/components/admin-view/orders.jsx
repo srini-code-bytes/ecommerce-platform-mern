@@ -18,8 +18,10 @@ function AdminOrdersView() {
     const dispatch = useDispatch()
 
     function handleFetchOrderDetails(getId) {
+        console.log("**getId**", getId)
         setOpenDetailsDialog(true);
         dispatch(getOrderDetailsForAdmin(getId))
+       
     }
 
     useEffect(() => {
@@ -83,7 +85,7 @@ function AdminOrdersView() {
                                                     handleFetchOrderDetails(orderItem?._id)
                                                 } className="bg-black text-white">View Details</Button>
 
-                                                <AdminOrderDetailsView orderDetails={orderItem} />
+                                                {orderDetails && <AdminOrderDetailsView orderDetails={orderDetails} />}
                                             </Dialog>
                                         </TableCell>
 
