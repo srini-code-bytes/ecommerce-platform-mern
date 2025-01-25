@@ -27,8 +27,11 @@ function MenuItems() {
     console.log("Inside handleNavigation() ===>")
     console.log("getCurrentMenuItem===>", getCurrentMenuItem)
     sessionStorage.removeItem("filters")
+
     // better to give it as null always in stead of {}
     const currentFilter = getCurrentMenuItem.id === "home" ? null : { category: [getCurrentMenuItem.id] }
+
+    console.log("currentFilter===>", currentFilter)
 
     sessionStorage.setItem("filters", JSON.stringify(currentFilter))
 

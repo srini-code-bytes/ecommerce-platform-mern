@@ -31,7 +31,6 @@ function createSearchParamsHelper(filterParams) {
   }
 
   return queryParams.join("&");
-  console
 }
 
 function ShoppingListing() {
@@ -49,6 +48,7 @@ function ShoppingListing() {
   const {toast} = useToast();
 
   const categorySearchParam = searchParams.get("category");
+  console.log("categorySearchParam===>", categorySearchParam)
 
   function handleSort(value) {
     console.log("Inside handleSort()", value);
@@ -125,6 +125,12 @@ function ShoppingListing() {
   // refresh the page when the category changes
 
   useEffect(() => {
+    if(categorySearchParam === "products"){
+      dispatch(fetchAllFilteredProducts({ sortParams: sort }));
+    }
+  }, [categorySearchParam]);
+
+  useEffect(() => {
     if (filters && Object.keys(filters).length > 0) {
       const createQueryString = createSearchParamsHelper(filters);
       setSearchParams(new URLSearchParams(createQueryString));
@@ -132,7 +138,7 @@ function ShoppingListing() {
   }, [filters]);
 
   useEffect(() => {
-    if (filters !== null && sort !== null)
+    if (filters !== null && sort !== null && categorySearchParam !== "products")
       dispatch(fetchAllFilteredProducts({ filterParams: filters, sortParams: sort })); //Shopping view
   }, [dispatch, sort, filters]);
 

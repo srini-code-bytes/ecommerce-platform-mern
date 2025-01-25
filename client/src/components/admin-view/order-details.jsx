@@ -10,7 +10,7 @@ import { getAllOrdersForAdmin, getOrderDetailsForAdmin, updateOrderStatus } from
 
 
 
-function AdminOrderDetailsView({ orderDetails }) {
+function AdminOrderDetailsView({ orderDetails, setOpenDetailsDialog }) {
 
     console.log("**AdminOrderDetailsView orderDetails**", orderDetails)
 
@@ -42,8 +42,10 @@ function AdminOrderDetailsView({ orderDetails }) {
 
                 setFormData(initialFormData)
 
+                setOpenDetailsDialog(false)
+
                 toast({
-                    title: data?.payload?.message,
+                    title: data?.payload?.message
                 })
             }
 
