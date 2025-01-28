@@ -4,6 +4,8 @@ const Cart = require('../../models/Cart');
 
 const paypal = require('../../helpers/paypal');
 
+const Product = require('../../models/Product');
+
 // Controller -> import the controller in routes -> import the routes in server.js -> Create a slice order-slice -> import the slice in store.js
 
 const createOrder = async (req, res) => {
@@ -124,6 +126,23 @@ const capturePayment = async (req, res) => {
             order.orderStatus = 'confirmed',
             order.paymentId = paymentId,
             order.payerId = payerId;
+
+        // Update the total stock based on the quantity of the product in the cart
+
+        for(let item of order.cartItems){
+            let product = await Product.findById(item.productId)
+
+            if(!product){
+                res.status(404).json({
+                    success : false,
+                    message: `Not enough stock for this product ${item.title}`
+                })
+            }
+
+            product.totalStock -= item.quantity;
+            await product.save();
+
+        }
 
         const getCartId = order.cartId;
         await Cart.findByIdAndDelete(getCartId);

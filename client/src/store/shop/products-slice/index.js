@@ -21,7 +21,7 @@ export const fetchAllFilteredProducts = createAsyncThunk(
 
     })
     
-    console.log("query====>", query)
+    console.log("**fetchAllFilteredProducts query====>", query)
     const result = await axios.get(
       `http://localhost:8080/api/shop/products/get?${query}`
     );

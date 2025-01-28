@@ -6,10 +6,16 @@ import { toast, useToast } from "@/hooks/use-toast";
 
 function UserCartItemsContent({ cartItem }) {
     const { user } = useSelector(state => state.auth)
+    const { productList } = useSelector((state) => state.shopProducts);
+    const filteredProduct = productList?.find(item => item._id === cartItem?.productId)
+    const outOfStock = filteredProduct?.totalStock === 0 || filteredProduct?.totalStock === cartItem?.quantity
 
     const dispatch = useDispatch()
 
     const { toast } = useToast();
+
+    console.log("UserCartItemsContent productList===>", productList);
+
 
     function handleCartItemDelete(getCartItem) {
         // const { userId, productId } = req.params;
@@ -54,7 +60,7 @@ function UserCartItemsContent({ cartItem }) {
 
             <span className="font-semibold pl-2">{cartItem?.quantity}</span>
 
-            <Button onClick={() => handleUpdateQuantity(cartItem, 'plus')} variant="outline" className="h-8 w-8 rounded-full ml-2" size="icon">
+            <Button disabled={outOfStock} onClick={() => handleUpdateQuantity(cartItem, 'plus')} variant="outline" className="h-8 w-8 rounded-full ml-2" size="icon">
                 <Plus className="w-4 h-4" />
 
             </Button>

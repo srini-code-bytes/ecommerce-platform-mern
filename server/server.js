@@ -25,6 +25,8 @@ const shopOrderRouter = require('./routes/shop/order-routes')
 
 const adminOrderRouter = require('./routes/admin/order-routes')
 
+const shopSearchRouter = require('./routes/shop/search-routes')
+
 // Create database connection
 // create a separate file for this and import that file here --better approach
 
@@ -76,6 +78,8 @@ app.use("/api/shop/cart", shopCartRouter);
 app.use("/api/shop/address", shopAddressRouter);
 
 app.use("/api/shop/order", shopOrderRouter);
+
+app.use("/api/shop/search", shopSearchRouter);
 
 // /api/auth/registerUser -> registerUser
 // /api/auth/loginUser -> loginUser 

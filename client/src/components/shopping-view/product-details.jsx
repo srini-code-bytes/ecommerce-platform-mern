@@ -14,11 +14,21 @@ export function ProductDetailsDialog({ open, setOpen, productDetails }) {
 
   const dispatch = useDispatch();
   const { user } = useSelector(state => state.auth);
+  const { cartItems } = useSelector(state => state.shopCart)
   const { toast } = useToast();
+
+  console.log("cartItems====>", cartItems)
+
+  const filteredProduct = cartItems?.items?.find(item => item.productId === productDetails?._id)
+  const outOfStock = productDetails?.totalStock === 0 || filteredProduct?.quantity === productDetails?.totalStock
+
+  console.log("filteredProduct====>", filteredProduct)
+
+
 
   function handleDialogClose() {
     console.log("Inside handleDialogClose");
-    setOpen(false); 
+    setOpen(false);
     dispatch(setProductDetails()) // call method in store 
   }
 
@@ -100,9 +110,18 @@ export function ProductDetailsDialog({ open, setOpen, productDetails }) {
             <span className="text-muted-foreground">(4.5)</span>
           </div>
           <div className="mt-5 mb-5">
-            <Button onClick={() => handleAddToCart(productDetails._id)} className="w-full bg-black text-white rounded-[10px] hover:bg-gray-800 hover:shadow-lg transition-all duration-200">
-              Add to Cart
-            </Button>
+
+            {
+                outOfStock ?
+                <Button disabled className="w-full bg-black text-white rounded-[10px] hover:bg-gray-800 hover:shadow-lg transition-all duration-200">
+                  Out of Stock
+                </Button>
+                :
+                <Button onClick={() => handleAddToCart(productDetails?._id)} className="w-full bg-black text-white rounded-[10px] hover:bg-gray-800 hover:shadow-lg transition-all duration-200">
+                  Add to Cart
+                </Button>
+            }
+            
           </div>
           <Separator className="bg-gray-200" />
           <div className="max-h-[300px] overflow-auto">

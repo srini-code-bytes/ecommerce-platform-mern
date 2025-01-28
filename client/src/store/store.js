@@ -8,6 +8,7 @@ import shopCartSlice from "./shop/cart-slice"
 import shopAddressSlice from "./shop/address-slice"
 import shopOrderSlice from "./shop/order-slice"
 import adminOrderSlice from "./admin/order-slice"
+import shopSearchSlice from "./shop/search-slice"
 
 
 export const store = configureStore({
@@ -21,7 +22,8 @@ export const store = configureStore({
     shopCart: shopCartSlice,
     shopAddress: shopAddressSlice,
     shopOrder: shopOrderSlice,
-    adminOrder: adminOrderSlice
+    adminOrder: adminOrderSlice,
+    shopSearch: shopSearchSlice
   },
   devTools : process.env.NODE_ENV !== 'production'
 });
