@@ -2,7 +2,7 @@
 
 const express = require("express");
 
-//every route will have a separate controller
+// every route will have a separate controller
 
 const {
     searchProducts
@@ -10,6 +10,7 @@ const {
 
 const router = express.Router();
 
-router.get("/:keyword", searchProducts);
+// router.get("/:keyword", searchProducts);
+router.get("/", searchProducts);
 
 module.exports = router;

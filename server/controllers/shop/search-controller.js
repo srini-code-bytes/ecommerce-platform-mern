@@ -3,16 +3,22 @@ const Product = require('../../models/Product')
 const searchProducts = async (req, res) => {
     try {
 
-        const { keyword } = req.params;
-        if (!keyword || keyword !== 'string') {
+        // const { keyword } = req.params;
+        const { searchTerm } = req.query;
+        
+        console.log("searchProducts searchTerm===>", typeof searchTerm)
+
+        if (!searchTerm || typeof searchTerm !== 'string') {
             res.status(400).json({
                 success: false,
-                message: 'Keyword is required and must be a string'
+                message: 'searchTerm is required and must be a string'
             })
         }
 
         // Create a reg expression
-        const regEx = new RegExp(keyword, 'i')
+        const regEx = new RegExp(searchTerm, 'i')
+
+        console.log("searchProducts regEx===>", regEx)
 
 
         const createSearchQuery = {
@@ -24,8 +30,12 @@ const searchProducts = async (req, res) => {
             ]
         }
 
+        console.log("searchProducts createSearchQuery===>", createSearchQuery)
+
         // search in db - for the above fields
         const searchResults = await Product.find(createSearchQuery)
+
+        console.log("searchProducts searchResults===>", searchResults)
 
         res.status(200).json({
             success: true,
