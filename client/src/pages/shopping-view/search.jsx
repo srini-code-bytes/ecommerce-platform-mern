@@ -19,6 +19,7 @@ function SearchProducts() {
     const { user } = useSelector(state => state.auth)
     const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
     const { productDetails } = useSelector((state) => state.shopProducts);
+    console.log(" SearchProducts() productDetails===>", productDetails)
 
 
     const dispatch = useDispatch()
@@ -48,8 +49,8 @@ function SearchProducts() {
 
     useEffect(() => {
         if (productDetails !== null) setOpenDetailsDialog(true)
-    
-      }, [productDetails])
+
+    }, [productDetails])
 
     useEffect(() => {
         console.log("keyword===>", keyword)
@@ -89,6 +90,8 @@ function SearchProducts() {
                 }
 
             </div>
+            {/* Best practice is to keep the dialog at the end */}
+
             <ProductDetailsDialog open={openDetailsDialog} setOpen={setOpenDetailsDialog} productDetails={productDetails} />
         </div>
     )
