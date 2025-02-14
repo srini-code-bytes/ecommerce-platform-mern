@@ -9,7 +9,7 @@ import AddressCard from "./address-card";
 import { useToast } from "@/hooks/use-toast";
 
 
-function Address({ setCurrentSelectedAddress }) {
+function Address({ setCurrentSelectedAddress, selectedId }) {
 
     const initialAddressFormData = {
         address: "",
@@ -142,7 +142,7 @@ function Address({ setCurrentSelectedAddress }) {
                 {
                     addressList && addressList.length > 0 ?
                         addressList?.map((singleAddress) =>
-                            <AddressCard handleDeleteAddress={handleDeleteAddress}
+                            <AddressCard selectedId={selectedId} handleDeleteAddress={handleDeleteAddress}
                                 handleEditAddress={handleEditAddress}
                                 setCurrentSelectedAddress = {setCurrentSelectedAddress}
 

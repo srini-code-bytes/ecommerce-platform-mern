@@ -11,7 +11,7 @@ function ShoppingProductTile({ product, handleGetProductDetails, handleAddToCart
 
   const filteredProduct = cartItems?.items?.find(item => item.productId === product?._id)
   const outOfStock = product?.totalStock === 0 || filteredProduct?.quantity === product?.totalStock
-  const stockLeft = product?.totalStock - filteredProduct?.quantity
+  const stockLeft = cartItems.length > 0 ? product?.totalStock - filteredProduct?.quantity : product?.totalStock
 
   return (
     <Card className="w-full max-w-sm mx-auto rounded-[15px]">

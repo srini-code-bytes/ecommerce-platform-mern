@@ -59,6 +59,8 @@ function HeaderRightContent() {
   const { user } = useSelector((state) => state.auth);
   const [openCartSheet, setopenCartSheet] = useState(false);
   const { cartItems } = useSelector(state => state.shopCart)
+  const totalQuantity = cartItems?.items?.reduce((acc, item) => acc + (item.quantity || 1), 0);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -70,15 +72,20 @@ function HeaderRightContent() {
     dispatch(fetchCartItems(user?.id))
   }, [dispatch])
 
-
+  console.log("**cartItems", cartItems)
+  
   console.log("userrr====>", user)
   return (
-
+    // Need to show the number of items in the cart
     <div className="flex lg:items-center lg:flex-row flex-col gap-4">
       <Sheet open={openCartSheet} onOpenChange={() => setopenCartSheet(false)}>
-        <Button onClick={() => setopenCartSheet(true)} variant="outline" size="icon">
+        <Button onClick={() => setopenCartSheet(true)} size="icon" className="relative"
+          >
           <ShoppingCart className="w-6 h-6" />
           <span className="sr-only">User cart</span>
+          <span className="absolute top-[-5px] right-[2px] text-md font-bold">
+            {totalQuantity}
+          </span>
         </Button>
 
         <UserCartWrapper setopenCartSheet={setopenCartSheet} cartItems={cartItems && cartItems?.items?.length > 0 ? cartItems.items : []} />

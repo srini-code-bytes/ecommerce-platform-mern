@@ -1,81 +1,154 @@
 const Order = require('../../models/Order')
 const Product = require('../../models/Product')
 const ProductReview = require('../../models/Review')
+const mongoose = require("mongoose");
 
-await Product.findByIdAndUpdate(
-    {
-        _id: productId,
-        averageReview: averageReview
-    }
-)
+// const addProductReview = async (req, res) => {
+//     try {
+//         // Get fields from Review.js model
+//         const { productId,
+//             userId,
+//             userName,
+//             rating,
+//             reviewMessage } = req.body;
 
+//         // Find order 
+//         const order = await Order.findOne({
+//             userId,
+//             "cartItems.productId": productId,
+//             orderStatus: "confirmed"
+//         })
+
+//         // Check if order exists
+//         if (!order) {
+//             return res.status(403).json({
+//                 success: false,
+//                 message: "Order not found",
+//             })
+//         }
+
+//         // Check if a review already exists
+//         const checkExistingReview = await ProductReview.findOne({
+//             userId,
+//             productId,
+//         })
+
+
+//         if (checkExistingReview) {
+//             return res.status(400).json({
+//                 success: false,
+//                 message: "You have already reviewed this product"
+//             })
+//         }
+
+//         const newReview = await ProductReview.create({
+//             productId,
+//             userId,
+//             userName,
+//             rating,
+//             reviewMessage
+//         })
+
+//         await newReview.save()
+
+//         const reviews = await ProductReview.find({
+//             productId: productId
+//         })
+
+//         const totalReviewsLength = reviews.length;
+
+//         const averageRating = reviews.reduce((sum, reviewItem) => sum + reviewItem.rating, 0) / totalReviewsLength;
+
+//         await Product.findByIdAndUpdate(productId, { averageRating });
+
+//         res.status(201).json({
+//         success: true,
+//         data: newReview,
+//         });
+
+//     } catch (e) {
+//         console.log(e);
+//         res.status(500).json({
+//             success: false,
+//             message: 'Error'
+//         })
+//     }
+// }
 
 const addProductReview = async (req, res) => {
+    const session = await mongoose.startSession(); // Start a session
+    session.startTransaction(); // Start a transaction
+
     try {
-        // Get fields from Review.js model
-        const { productId,
-            userId,
-            userName,
-            rating,
-            reviewMessage } = req.body;
+        const { productId, userId, userName, rating, reviewMessage } = req.body;
 
-        // Find order 
+        // Find order
         const order = await Order.findOne({
-            userId: userId,
+            userId,
             "cartItems.productId": productId,
-            orderStatus: "delivered"
-        })
+            orderStatus: "confirmed"
+        }).session(session); // Use session
 
-        // Check if order exists
         if (!order) {
+            await session.abortTransaction(); // Rollback
+            session.endSession();
             return res.status(403).json({
                 success: false,
-                message: "Order not found"
-            })
+                message: "Order not found",
+            });
         }
 
         // Check if a review already exists
         const checkExistingReview = await ProductReview.findOne({
-            userId: userId,
-            productId: productId
-        })
-
+            userId,
+            productId,
+        }).session(session);
 
         if (checkExistingReview) {
+            await session.abortTransaction(); // Rollback
+            session.endSession();
             return res.status(400).json({
                 success: false,
                 message: "You have already reviewed this product"
-            })
+            });
         }
 
-        const newReview = await ProductReview.create({
+        // Create and save review
+        const newReview = await ProductReview.create([{
             productId,
             userId,
             userName,
             rating,
             reviewMessage
-        })
+        }], { session });
 
-        await newReview.save()
-
-        const reviews = await ProductReview.find({
-            productId: productId
-        })
-
+        // Get all reviews for the product
+        const reviews = await ProductReview.find({ productId }).session(session);
         const totalReviewsLength = reviews.length;
         const averageRating = reviews.reduce((sum, reviewItem) => sum + reviewItem.rating, 0) / totalReviewsLength;
 
+        // Update product's average rating
+        await Product.findByIdAndUpdate(productId, { averageRating }, { session });
 
+        // Commit transaction
+        await session.commitTransaction();
+        session.endSession();
 
+        res.status(201).json({
+            success: true,
+            data: newReview,
+        });
 
     } catch (e) {
         console.log(e);
+        await session.abortTransaction(); // Rollback on error
+        session.endSession();
         res.status(500).json({
             success: false,
             message: 'Error'
-        })
+        });
     }
-}
+};
 
 const getProductReviews = async (req, res) => {
     try {

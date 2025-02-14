@@ -16,7 +16,6 @@ import { ProductDetailsDialog } from '@/components/shopping-view/product-details
 
 
 function ShoppingHome() {
-
     const slides = [bannerOne, bannerTwo, bannerThree]
 
     const [currentSlide, setCurrentSlide] = useState(0);
@@ -180,11 +179,11 @@ function ShoppingHome() {
                                     <ShoppingProductTile handleGetProductDetails={handleGetProductDetails} product={productItem}
                                         handleAddToCart={handleAddToCart}
                                     />
-                                    </div>
-                                    ))
-                                    : null
-                        }
                                 </div>
+                            ))
+                                : null
+                        }
+                    </div>
                 </div>
             </section>
             <ProductDetailsDialog open={openDetailsDialog} setOpen={setOpenDetailsDialog} productDetails={productDetails} />

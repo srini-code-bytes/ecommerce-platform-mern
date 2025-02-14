@@ -1,17 +1,17 @@
-
-
-
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 
 const initialState = {
+    isLoading: false,
+    reviews: []
 }
 
 export const addProductReview = createAsyncThunk('/review/addProductReview',
     async (reviewData) => {
+        console.log("reviewData", reviewData)
 
-        const response = await axios.post(`http://localhost:8080/api/shop/review/add-review`,reviewData)
+        const response = await axios.post(`http://localhost:8080/api/shop/review/add-review`, reviewData)
 
         return response.data;
 
@@ -19,36 +19,30 @@ export const addProductReview = createAsyncThunk('/review/addProductReview',
 )
 
 export const getProductReviews = createAsyncThunk('/review/getProductReviews',
-        async (productId) => {
-    
-            const response = await axios.get(`http://localhost:8080/api/shop/review/${productId}`)
-    
-            return response.data;
-    
-        }
+    async (productId) => {
+
+        const response = await axios.get(`http://localhost:8080/api/shop/review/${productId}`)
+        return response.data;
+    }
 )
 
 const shoppingReviewSlice = createSlice({
     name: 'shoppingReviewSlice',
     initialState,
-    reducers: { 
-        resetSearchResults  : (state) => {
-            state.searchResults = []
-        }
-    },
+    reducers: {},
     extraReducers: (builder) => {
-        builder.addCase(getSearchResults.pending, (state) => {
+        builder.addCase(getProductReviews.pending, (state) => {
             state.isLoading = true;
-        }).addCase(getSearchResults.fulfilled, (state, action) => {
+        }).addCase(getProductReviews.fulfilled, (state, action) => {
             state.isLoading = false;
-            state.searchResults = action.payload.data;
-        }).addCase(getSearchResults.rejected, (state) => {
+            state.reviews = action.payload.data;
+        }).addCase(getProductReviews.rejected, (state) => {
             state.isLoading = false;
-            state.searchResults = []
+            state.reviews = []
         })
     },
 });
 
-export const { resetSearchResults } = shoppingSearchSlice.actions;
 
-export default shoppingSearchSlice.reducer;
+
+export default shoppingReviewSlice.reducer;

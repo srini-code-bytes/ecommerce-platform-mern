@@ -31,8 +31,8 @@ function ShoppingCheckout() {
 
     function handleInitiatePaypalPayment() {
 
-        console.log("cartItems===>", cartItems)
-        console.log("currentSelectedAddress", currentSelectedAddress)
+        console.log("handleInitiatePaypalPayment() cartItems===>", cartItems)
+        console.log("handleInitiatePaypalPayment() currentSelectedAddress", currentSelectedAddress)
 
         if (currentSelectedAddress === null) {
             toast({
@@ -124,7 +124,7 @@ function ShoppingCheckout() {
             <div className='grid grid-cols-1 sm:grid-cols-2 
             gap-5 mt-5 p-5'>
 
-                <Address setCurrentSelectedAddress={setCurrentSelectedAddress} />
+                <Address selectedId={currentSelectedAddress} setCurrentSelectedAddress={setCurrentSelectedAddress} />
 
 
                 <div className='flex flex-col gap-4'>
@@ -139,19 +139,18 @@ function ShoppingCheckout() {
                         </div>
                     </div>
                     <div>
-                        <Button onClick={handleInitiatePaypalPayment} className="w-full bg-black text-white">Checkout with PayPal</Button>
+                        <Button
+                            onClick={handleInitiatePaypalPayment}
+                            className="w-full bg-black text-white flex items-center justify-center disabled:opacity-50"
+                            disabled={isPaymentStart}
+                            loading={isPaymentStart}
+
+                        >
+                            Checkout with Paypal
+                        </Button>
                     </div>
-
                 </div>
-
-
-
-
-
-
             </div>
-
-
         </div>
     )
 }
