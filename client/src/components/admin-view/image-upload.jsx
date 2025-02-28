@@ -14,13 +14,21 @@ function ProductImageUpload({
   setUploadedImageUrl,
   setImageLoadingState,
   isEditMode,
+  isCustomStyling = false,
+  setImagePreview
 }) {
   const inputRef = useRef(null);
 
   function handleImageFileChange(event) {
+    console.log("** Inside handleImageFileChange **");
     console.log(event.target.files);
     const selectedFile = event.target.files?.[0];
-    if (selectedFile) setImageFile(selectedFile);
+    console.log("** Inside handleImageFileChange selectedFile **", selectedFile);
+    if (selectedFile) {
+      setImageFile(selectedFile);
+      setImagePreview(URL.createObjectURL(selectedFile))
+    }
+      
   }
 
   function handleDragOver(event) {
@@ -41,21 +49,28 @@ function ProductImageUpload({
     if (droppedFile) {
       setImageFile(droppedFile);
     }
-    console.log(droppedFile);
+    console.log("** Inside handleDrop **", droppedFile);
   }
 
   async function uploadImageToCloudinary() {
     setImageLoadingState(true);
     const data = new FormData();
     data.append("my_file", imageFile); // FormData object is created, and the file is appended under "my_file"
-    const response = await axios.post(
-      "http://localhost:8080/api/admin/products/upload-image",
-      data
-    );
-    console.log("response.data", response.data);
-    if (response.data.success) {
-      setUploadedImageUrl(response.data.result.url);
-      setImageLoadingState(false);
+    try{
+      const response = await axios.post(
+        "http://localhost:8080/api/admin/products/upload-image",
+        data
+      );
+      console.log("response.data", response.data);
+      if (response.data.success) {
+        setUploadedImageUrl(response.data.result.url);
+      } else {
+        console.error("Error uploading image:", response.data)
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error)
+    } finally {
+      setImageLoadingState(false)
     }
   }
 
@@ -66,7 +81,9 @@ function ProductImageUpload({
   }, [imageFile]); // it will re-run whenever imageFile changes.
 
   return (
-    <div className="w-full max-w-md mx-auto mt-4">
+    <div className={`w-full mt-4 ${isCustomStyling ? 
+      '' : 'max-w-md mx-auto'
+    }`}>
       <Label className="text-lg font-semibold mb-2 block">Upload Image</Label>
 
       <div

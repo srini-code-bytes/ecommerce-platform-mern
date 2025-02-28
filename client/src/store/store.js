@@ -10,6 +10,7 @@ import shopOrderSlice from "./shop/order-slice"
 import adminOrderSlice from "./admin/order-slice"
 import shopSearchSlice from "./shop/search-slice"
 import shopReviewSlice from "./shop/review-slice"
+import commonFeatureSlice from "./common-slice"
 
 export const store = configureStore({
 
@@ -24,7 +25,8 @@ export const store = configureStore({
     shopOrder: shopOrderSlice,
     adminOrder: adminOrderSlice,
     shopSearch: shopSearchSlice,
-    shopReview: shopReviewSlice
+    shopReview: shopReviewSlice,
+    commonFeature: commonFeatureSlice,
   },
   devTools : process.env.NODE_ENV !== 'production'
 });
