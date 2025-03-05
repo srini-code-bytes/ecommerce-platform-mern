@@ -19,16 +19,22 @@ function ProductImageUpload({
 }) {
   const inputRef = useRef(null);
 
+
   function handleImageFileChange(event) {
-    console.log("** Inside handleImageFileChange **");
-    console.log(event.target.files);
     const selectedFile = event.target.files?.[0];
-    console.log("** Inside handleImageFileChange selectedFile **", selectedFile);
+    console.log("** handleImageFileChange selectedFile **", selectedFile)
+
+    // Not feasible with the current backend implementation as the URL changes dynamically 
+    // If it is still required, need to store the hash value in the db & modify & validate in the backend
+    // Checking duplicate isn't feasible
+
     if (selectedFile) {
       setImageFile(selectedFile);
       setImagePreview(URL.createObjectURL(selectedFile))
+      console.log(" ** URL.createObjectURL(selectedFile) ** ", URL.createObjectURL(selectedFile))
     }
       
+    // try to show value in file reader
   }
 
   function handleDragOver(event) {
