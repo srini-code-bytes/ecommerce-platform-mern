@@ -11,9 +11,9 @@ import { fetchAllFilteredProducts, fetchProductDetails } from '@/store/shop/prod
 import ShoppingProductTile from '@/components/shopping-view/product-tile'
 import { useNavigate } from 'react-router-dom'
 import { addToCart, fetchCartItems } from '@/store/shop/cart-slice'
-import { useToast } from '@/hooks/use-toast'
 import { ProductDetailsDialog } from '@/components/shopping-view/product-details'
 import { getFeatureImages } from '@/store/common-slice'
+import { useSnackbar } from '@/context/SnackbarContext'
 
 
 function ShoppingHome() {
@@ -33,7 +33,7 @@ function ShoppingHome() {
 
     const navigate = useNavigate()
 
-    const { toast } = useToast()
+    const { showSnackbar } = useSnackbar();
 
     function handleNavigateToListingPage(getCurrentItem, section) {
         sessionStorage.removeItem('filters')
@@ -61,8 +61,10 @@ function ShoppingHome() {
                 if (data?.payload?.success) {
                     // Calling fetchCartItems API
                     dispatch(fetchCartItems(user?.id))
-                    toast({
-                        title: 'Product is added to cart'
+
+                    showSnackbar({
+                        message : "Product is added to cart",
+                        severity : "success"
                     })
                 }
             }

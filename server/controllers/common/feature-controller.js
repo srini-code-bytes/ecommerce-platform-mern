@@ -1,19 +1,22 @@
 
-const Feature = require("../../models/Feature"); // model
+const ImageCollection = require("../../models/Feature"); // model
 
 const addFeatureImage = async (req, res) => {
     try {
-        const { image } = req.body;
-        const featureImages = new Feature({
-            image
-        })
+        console.log("req.user", req.user)
+        const uploadedBy = "Srini";
+        console.log("uploadedBy", uploadedBy)
+        const { images } = req.body;
 
-        await featureImages.save();
+        const newImageCollection = new ImageCollection({
+            images,
+            updatedBy: uploadedBy
+        })
+        await newImageCollection.save();
         res.status(201).json({
             success: true,
-            data: featureImages
+            data: newImageCollection
         })
-
     } catch (e) {
         console.log("addFeatureImage() e:", e);
         res.status(500).json({
@@ -24,15 +27,12 @@ const addFeatureImage = async (req, res) => {
 }
 
 const getFeatureImages = async (req, res) => {
-
     try {
-        const images = await Feature.find({})
-
+        const imageCollection = await ImageCollection.find();
         res.status(200).json({
             success: true,
-            data: images
+            data: imageCollection // Returns the array of images
         })
-
     } catch (e) {
         console.log("getFeatureImages() e : ", e)
         res.status(500).json({
@@ -40,28 +40,32 @@ const getFeatureImages = async (req, res) => {
             message: "Some error occured"
         })
     }
-
 }
 
 const deleteFeatureImage = async (req, res) => {
-
     try {
-        const { id } = req.params;
-
-        if (!id) {
+        const { public_id } = req.params;
+        if (!public_id) {
             return res.status(400).json({
                 success: false,
-                message: "Image ID is required"
+                message: "Image public_id is required"
             })
         }
-        const deletedImage = await Feature.findByIdAndDelete(id);
-        if (!deletedImage) {
+        const imageCollection = await ImageCollection.findOne({ "images.public_id": public_id });
+        console.log("imageCollection ====>", imageCollection)
+        if (!imageCollection) {
             return res.status(404).json({
                 success: false,
                 message: "Image not found"
             })
         }
-        console.log("Image deleted successfully:", deletedImage); 
+        
+        imageCollection.images = imageCollection.images.filter((image) => image.public_id !== public_id);
+        if (imageCollection.images.length === 0) {
+            await ImageCollection.findByIdAndDelete(imageCollection._id);
+        } else {
+            await imageCollection.save()
+        }
         res.status(200).json({
             success: true,
             message: "Image deleted successfully"
@@ -73,9 +77,7 @@ const deleteFeatureImage = async (req, res) => {
             message: "Server error"
         })
     }
-
 }
-
 
 module.exports = { addFeatureImage, getFeatureImages, deleteFeatureImage }
 

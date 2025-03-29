@@ -2,7 +2,7 @@ import { Minus, Plus, Trash } from "lucide-react";
 import { Button } from "../ui/button";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteCartItem, updateCartQuantity } from "@/store/shop/cart-slice";
-import { toast, useToast } from "@/hooks/use-toast";
+import { useSnackbar } from "@/context/SnackbarContext";
 
 function UserCartItemsContent({ cartItem }) {
     const { user } = useSelector(state => state.auth)
@@ -12,7 +12,7 @@ function UserCartItemsContent({ cartItem }) {
 
     const dispatch = useDispatch()
 
-    const { toast } = useToast();
+    const { showSnackbar } = useSnackbar();
 
     console.log("UserCartItemsContent productList===>", productList);
 
@@ -21,9 +21,11 @@ function UserCartItemsContent({ cartItem }) {
         // const { userId, productId } = req.params;
         dispatch(deleteCartItem({ userId: user?.id, productId: getCartItem.productId })).then(data => {
             if (data?.payload?.success) {
-                toast({
-                    title: 'Cart item is deleted successfully'
-                })
+
+                showSnackbar({
+                    message : "Cart item is deleted successfully",
+                    severity : "success"
+                  })
             }
         })
 
@@ -41,9 +43,12 @@ function UserCartItemsContent({ cartItem }) {
 
         })).then(data => {
             if (data?.payload?.success) {
-                toast({
-                    title: 'Cart item is updated successfully'
-                })
+
+                showSnackbar({
+                    message : "Cart item is updated successfully",
+                    severity : "success"
+                  })
+                
             }
         })
     }

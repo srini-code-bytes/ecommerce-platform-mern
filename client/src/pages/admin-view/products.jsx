@@ -9,7 +9,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { addProductFormElements } from "@/config";
-import { useToast } from "@/hooks/use-toast";
+import { useSnackbar } from "@/context/SnackbarContext";
 import {
   addNewProduct,
   deleteProduct,
@@ -45,7 +45,7 @@ const AdminProducts = () => {
 
   const dispatch = useDispatch();
 
-  const { toast } = useToast();
+  const { showSnackbar } = useSnackbar();
 
   const { productList } = useSelector((state) => state.adminProducts);
 
@@ -103,16 +103,18 @@ const AdminProducts = () => {
               setOpenCreateProductsDialog(false);
               setImageFile(null);
               setFormData(initialFormData);
-              toast({
-                title: "Product added successfully!",
-              });
+              showSnackbar({
+                message: "Product added successfully!",
+                severity : "success"
+              })
             }
           })
           .catch((error) => {
             console.log(error);
-            toast({
-              title: "Error adding a product",
-            });
+            showSnackbar({
+              message: "Error adding a product",
+              severity : "error"
+            })
           });
   }
 

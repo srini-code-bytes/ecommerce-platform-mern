@@ -5,7 +5,7 @@ import { DialogContent } from "../ui/dialog";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
 import { useDispatch, useSelector } from "react-redux";
-import { useToast } from "@/hooks/use-toast";
+import { useSnackbar } from "@/context/SnackbarContext";
 import { getAllOrdersForAdmin, getOrderDetailsForAdmin, updateOrderStatus } from "@/store/admin/order-slice";
 
 
@@ -16,7 +16,7 @@ function AdminOrderDetailsView({ orderDetails, setOpenDetailsDialog }) {
 
     const { user } = useSelector((state) => state.auth)
     const dispatch = useDispatch();
-    const { toast } = useToast()
+    const { showSnackbar } = useSnackbar();
 
     const initialFormData = {
         status: ''
@@ -44,8 +44,12 @@ function AdminOrderDetailsView({ orderDetails, setOpenDetailsDialog }) {
 
                 setOpenDetailsDialog(false)
 
-                toast({
-                    title: data?.payload?.message
+                // toast({
+                //     title: data?.payload?.message
+                // })
+                showSnackbar({
+                    message : data?.payload?.message,
+                    severity : "success",
                 })
             }
 

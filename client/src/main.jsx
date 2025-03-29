@@ -4,7 +4,7 @@ import App from './App.jsx'
 import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { store } from "./store/store.js"
-import { Toaster } from './components/ui/toaster'
+import { SnackbarProvider } from './context/SnackbarContext'
 
 createRoot(document.getElementById('root')).render(
   // Wrap the App component with BrowserRouter to enable routing
@@ -12,8 +12,9 @@ createRoot(document.getElementById('root')).render(
     {/* // The Provider component is a wrapper around the App component. 
     // It provides the store to the App component. */}
     <Provider store={store}>
-      <App />
-      <Toaster />
+      <SnackbarProvider>
+        <App />
+      </SnackbarProvider>
     </Provider>
   </BrowserRouter>
 );

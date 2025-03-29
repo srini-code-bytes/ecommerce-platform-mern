@@ -1,6 +1,6 @@
 import CommonForm from "@/components/common/form";
 import { loginFormControls } from "@/config";
-import { useToast } from "@/hooks/use-toast";
+import { useSnackbar } from "@/context/SnackbarContext";
 import { loginUser } from "@/store/auth-slice";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -15,7 +15,7 @@ export const AuthLogin = () => {
 
   const [formData, setFormData] = useState(initialState);
   const dispatch = useDispatch();
-  const {toast} = useToast();
+  const { showSnackbar } = useSnackbar(); 
 
   function onSubmit(event){
     event.preventDefault()
@@ -23,14 +23,15 @@ export const AuthLogin = () => {
     {
       console.log("Login data ===> ", data)
       if(data?.payload?.success){
-        toast({
-          title : data?.payload?.message,
-        });
+        showSnackbar({
+          message : data?.payload?.message,
+          severity : "success"
+        })
       } else{
-        toast({
-          title : data?.payload?.message,
-          variant : "destructive"
-        });
+        showSnackbar({
+          message : data?.payload?.message,
+          severity : "error"
+        })
       }
     });
 

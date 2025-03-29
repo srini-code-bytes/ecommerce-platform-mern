@@ -7,6 +7,6 @@ const router = express.Router();
 
 router.post("/add-feature-image", addFeatureImage)
 router.get("/get-feature-images", getFeatureImages)
-router.delete("/delete-feature-image/:id", deleteFeatureImage)
+router.delete("/delete-feature-image/:public_id", deleteFeatureImage)
 
 module.exports = router;

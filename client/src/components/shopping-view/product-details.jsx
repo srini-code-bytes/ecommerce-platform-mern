@@ -5,7 +5,7 @@ import { Dialog, DialogContent } from "../ui/dialog";
 import { Separator } from "../ui/separator";
 import { Input } from "../ui/input";
 import { useDispatch, useSelector } from "react-redux";
-import { useToast } from "@/hooks/use-toast";
+import { useSnackbar } from "@/context/SnackbarContext";
 import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
 import { setProductDetails } from "@/store/shop/products-slice";
 import { Label } from "../ui/label";
@@ -23,7 +23,7 @@ export function ProductDetailsDialog({ open, setOpen, productDetails }) {
   const { user } = useSelector(state => state.auth);
   const { cartItems } = useSelector(state => state.shopCart)
   const { reviews } = useSelector(state => state.shopReview)
-  const { toast } = useToast();
+  const { showSnackbar } = useSnackbar();
 
   console.log("cartItems====>", cartItems)
 
@@ -56,8 +56,9 @@ export function ProductDetailsDialog({ open, setOpen, productDetails }) {
       if (data?.payload?.success) {
         dispatch(getProductReviews(productDetails?._id))
         handleDialogClose()
-        toast({
-          title: "Review added successfully"
+        showSnackbar({
+          message : "Review added successfully",
+          severity : "success"
         })
 
       }
@@ -82,9 +83,11 @@ export function ProductDetailsDialog({ open, setOpen, productDetails }) {
         if (data?.payload?.success) {
           // Calling fetchCartItems API
           dispatch(fetchCartItems(user?.id))
-          toast({
-            title: 'Product is added to cart'
+          showSnackbar({
+            message : "Product is added to cart",
+            severity : "success"         
           })
+
         }
       }
     )

@@ -1,14 +1,17 @@
 const express = require("express");
 
 const {
-  handleImageUpload,
+  // handleImageUpload,
+  handleMultipleImageUpload,
   addProduct,
   editProduct,
   fetchAllProducts,
   deleteProduct,
 } = require("../../controllers/admin/products-controller");
+const multer = require("multer");
 
-const { upload } = require("../../helpers/cloudinary");
+// const { upload } = require("../../helpers/cloudinary");
+const upload = multer({storage : multer.memoryStorage()})
 
 const router = express.Router();
 
@@ -16,11 +19,17 @@ const router = express.Router();
 
 // The upload middleware processes the file, uploads it to Cloudinary, and attaches the result to the request object.
 
+// router.post(
+//   "/upload-image",
+//   upload.single("my_file"),
+//   handleImageUpload
+// );
+
 router.post(
-  "/upload-image",
-  upload.single("my_file"),
-  handleImageUpload
-);
+  "/upload-images",
+  upload.array("my_files", 10), 
+  handleMultipleImageUpload
+)
 
 router.post("/add", addProduct);
 router.put("/edit/:id", editProduct);

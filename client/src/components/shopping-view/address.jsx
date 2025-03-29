@@ -4,9 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { addressFormControls } from "@/config";
 import { useDispatch, useSelector } from "react-redux";
 import { addNewAddress, deleteAddress, editAddress, fetchAllAddresses } from "@/store/shop/address-slice";
-
 import AddressCard from "./address-card";
-import { useToast } from "@/hooks/use-toast";
+import { useSnackbar } from "@/context/SnackbarContext";
 
 
 function Address({ setCurrentSelectedAddress, selectedId }) {
@@ -29,20 +28,18 @@ function Address({ setCurrentSelectedAddress, selectedId }) {
 
     const { addressList } = useSelector((state) => state.shopAddress);
 
-    const { toast } = useToast();
+    const { showSnackbar } = useSnackbar();
 
     function handleManageAddress(event) {
         event.preventDefault();
 
-
         if (addressList.length >= 3 && currentEditedId === null) {
             setFormData(initialAddressFormData);
-            toast({
-                title: "You can add max 3 addresses only",
-                variant: "destructive"
-            })
 
-
+            showSnackbar({
+                message : "You can add max 3 addresses only",
+                severity : "error"                
+              })
             return;
         }
         console.log("** formData=====> handleManageAddress ", formData);
@@ -58,9 +55,11 @@ function Address({ setCurrentSelectedAddress, selectedId }) {
                     dispatch(fetchAllAddresses(user?.id));
                     setFormData(initialAddressFormData);
                     setCurrentEditedId(null);
-                    toast({
-                        title: "Address Updated Successfully",
+                    showSnackbar({
+                        message : "Address Updated Successfully",
+                        severity : "success"
                     })
+
                 }
 
             }) :
@@ -73,8 +72,9 @@ function Address({ setCurrentSelectedAddress, selectedId }) {
                 if (data?.payload?.success) {
                     dispatch(fetchAllAddresses(user?.id));
                     setFormData(initialAddressFormData);
-                    toast({
-                        title: "Address Added Successfully",
+                    showSnackbar({
+                        message : "Address Added Successfully",
+                        severity : "success"
                     })
                 }
 
@@ -118,9 +118,12 @@ function Address({ setCurrentSelectedAddress, selectedId }) {
                 if (data?.payload?.success) {
                     dispatch(fetchAllAddresses(user?.id));
                     setFormData(initialAddressFormData);
-                    toast({
-                        title: "Address deleted Successfully",
+
+                    showSnackbar({
+                        message : "Address deleted Successfully",
+                        severity : "success"
                     })
+                    
                 }
             })
     }

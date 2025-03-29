@@ -1,8 +1,14 @@
-
 const mongoose = require('mongoose');
 
 const FeatureSchema = new mongoose.Schema({
-    image : String
-}, {timestamps : true})
+    public_id: { type: String, index: true }, // ✅ Used for Cloudinary deletions
+    url: { type: String }, // ✅ Optional but useful
+    secure_url: { type: String }, // ✅ Use secure URL if available
+});
 
-module.exports = mongoose.model('Feature', FeatureSchema)
+const ImageCollectionSchema = new mongoose.Schema({
+    images : [FeatureSchema],
+    createdAt : {type : Date, default : Date.now},
+})
+
+module.exports = mongoose.model('ImageCollection', ImageCollectionSchema);

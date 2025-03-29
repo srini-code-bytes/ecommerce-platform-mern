@@ -5,16 +5,15 @@ import UserCartItemsContent from '@/components/shopping-view/cart-items-content'
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { createNewOrder } from '@/store/shop/order-slice';
-import { useToast } from '@/hooks/use-toast';
+import { useSnackbar } from '@/context/SnackbarContext';
 
 function ShoppingCheckout() {
-
     const { cartItems } = useSelector((state) => state.shopCart)
     const { user } = useSelector((state) => state.auth)
     const [currentSelectedAddress, setCurrentSelectedAddress] = useState(null);
     const [isPaymentStart, setIsPaymentStart] = useState(false);
     const { approvalURL } = useSelector((state) => state.shopOrder)
-    const { toast } = useToast();
+    const {showSnackbar} = useSnackbar();
 
     const dispatch = useDispatch();
 
@@ -35,20 +34,18 @@ function ShoppingCheckout() {
         console.log("handleInitiatePaypalPayment() currentSelectedAddress", currentSelectedAddress)
 
         if (currentSelectedAddress === null) {
-            toast({
-                title: 'Please select an address',
-                variant: 'destructive',
+            showSnackbar({
+                message : 'Please select an address',
+                severity : 'error'
             })
 
             return;
-
-
         }
 
         if (cartItems.length === 0) {
-            toast({
-                title: 'Cart is empty, please add items to the cart',
-                variant: 'destructive',
+            showSnackbar({
+                message : 'Cart is empty, please add items to the cart',
+                severity : 'error'
             })
 
             return;

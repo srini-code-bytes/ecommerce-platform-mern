@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import axios from "axios";
 
-
 const initialState = {
     isLoading: false,
     featureImageList: [],
@@ -18,16 +17,26 @@ export const getFeatureImages = createAsyncThunk(
 
 export const addFeatureImage = createAsyncThunk(
     "/common/addFeatureImage",
-    async (image) => {
-        const response = await axios.post('http://localhost:8080/api/common/feature-images/add-feature-image', { image });
-        return response.data;
+    async (images, { rejectWithValue }) => {
+        try {
+            const response = await axios.post('http://localhost:8080/api/common/feature-images/add-feature-image', { images });
+            console.log("** addFeatureImage ** ", response.data)
+
+            if (!response.data.success) {
+                return rejectWithValue(response.data.error || "Failed to add the image")
+            }
+            return response.data;
+
+        } catch (error) {
+            return rejectWithValue(error.response?.data || "Server error")
+        }
     }
 )
 
 export const deleteFeatureImage = createAsyncThunk(
     "/common/deleteFeatureImage",
-    async (imageId) => {
-        const response = await axios.delete(`http://localhost:8080/api/common/feature-images/delete-feature-image/${imageId}`)
+    async (public_id) => {
+        const response = await axios.delete(`http://localhost:8080/api/common/feature-images/delete-feature-image/${public_id}`)
         return response.data;
     }
 )
@@ -38,12 +47,28 @@ const commonSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
+            .addCase(addFeatureImage.pending, (state) => {
+                state.isLoading = false;
+            })
+            .addCase(addFeatureImage.fulfilled, (state, action) => {
+                state.isLoading = true;
+                const newImages = action.payload.data;
+                state.featureImageList = newImages;
+                state.isLoading = false;
+
+            })
+            .addCase(addFeatureImage.rejected, (state) => {
+                state.isLoading = false;
+                state.featureImageList = [];
+            })
             .addCase(getFeatureImages.pending, (state) => {
                 state.isLoading = false;
             })
             .addCase(getFeatureImages.fulfilled, (state, action) => {
                 state.isLoading = true;
-                state.featureImageList = action.payload.data;
+                const newImages = action.payload.data;
+                state.featureImageList = newImages;
+                state.isLoading = false;
             })
             .addCase(getFeatureImages.rejected, (state) => {
                 state.isLoading = false;
@@ -54,11 +79,8 @@ const commonSlice = createSlice({
                 state.error = null;
             })
             .addCase(deleteFeatureImage.fulfilled, (state, action) => {
-                console.log("**deleteFeatureImage.fulfilled action.payload**", action.payload)
                 state.isLoading = false;
-                if (action.payload) {
-                    state.featureImageList = state.featureImageList.filter((image) => image.id !== action.payload.id);
-                }
+
             })
             .addCase(deleteFeatureImage.rejected, (state, action) => {
                 state.isLoading = false;

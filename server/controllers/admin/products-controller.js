@@ -1,29 +1,67 @@
 const { imageUploadUtil } = require("../../helpers/cloudinary");
 const Product = require("../../models/Product");
 
-const handleImageUpload = async (req, res) => {
-  try {
-    // Change file to b64
-    const b64 = Buffer.from(req.file.buffer).toString("base64");
-    const url = "data:" + req.file.mimetype + ";base64," + b64;
+// const handleImageUpload = async (req, res) => {
+//   try {
+//     // Change file to b64
+//     const b64 = Buffer.from(req.file.buffer).toString("base64");
+//     const url = "data:" + req.file.mimetype + ";base64," + b64;
 
-    const result = await imageUploadUtil(url);
+//     const result = await imageUploadUtil(url);
 
-    console.log("result", result);
+//     console.log("result", result);
 
-    res.json({
-      success: true,
-      result,
-    });
-  } catch (error) {
-    res.json({
-      success: false,
-      message: "Error occured",
-    });
-  }
-};
+//     res.json({
+//       success: true,
+//       result,
+//     });
+//   } catch (error) {
+//     res.json({
+//       success: false,
+//       message: "Error occured",
+//     });
+//   }
+// };
 
 // ADD PRODUCT
+
+const handleMultipleImageUpload = async (req, res) => {
+  try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No images uploaded"
+      })
+    }
+    // convert each file to base64 and then upload it to cloudinary    
+    const uploadPromises = req.files.map(async (file) => {
+      const b64 = Buffer.from(file.buffer).toString("base64");
+      const url = "data:" + file.mimetype + ";base64," + b64;
+      return await imageUploadUtil(url);
+    })
+
+    const results = await Promise.all(uploadPromises);
+    console.log("** Uploaded images **", results)
+
+    if (!results || results.length === 0) {
+      return res.status(500).json({
+        success: false,
+        message: "All images failed to upload"
+      })
+    }
+
+    return res.status(201).json({
+      success: true,
+      images: results,
+    })
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      error: "Error occured"
+    })
+  }
+}
 
 const addProduct = async (req, res) => {
   try {
@@ -154,7 +192,8 @@ const deleteProduct = async (req, res) => {
 };
 
 module.exports = {
-  handleImageUpload,
+  // handleImageUpload,
+  handleMultipleImageUpload,
   addProduct,
   fetchAllProducts,
   editProduct,

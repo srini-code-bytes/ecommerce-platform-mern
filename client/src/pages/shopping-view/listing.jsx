@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { sortOptions } from "@/config";
-import { useToast } from "@/hooks/use-toast";
+import { useSnackbar } from "@/context/SnackbarContext";
 import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
 import { fetchAllFilteredProducts, fetchProductDetails } from "@/store/shop/products-slice";
 import { ArrowUpDownIcon } from "lucide-react";
@@ -45,7 +45,7 @@ function ShoppingListing() {
   const [sort, setSort] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
-  const {toast} = useToast();
+  const { showSnackbar } = useSnackbar();
 
   const categorySearchParam = searchParams.get("category");
   console.log("categorySearchParam===>", categorySearchParam)
@@ -105,8 +105,10 @@ function ShoppingListing() {
         if (data?.payload?.success) {
           // Calling fetchCartItems API
           dispatch(fetchCartItems(user?.id))
-          toast({
-            title : 'Product is added to cart'
+
+          showSnackbar({
+            message: "Product is added to cart",
+            severity: "success"
           })
         }
       }
