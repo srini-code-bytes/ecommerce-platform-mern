@@ -28,16 +28,33 @@ const addFeatureImage = async (req, res) => {
 
 const getFeatureImages = async (req, res) => {
     try {
+        const currentPage = parseInt(req.query.page) || 1;
+        const imageLimitPerPage = parseInt(req.query.limit) || 3;
+        const startIndex = (currentPage - 1) * imageLimitPerPage;
+        const endIndex = currentPage * imageLimitPerPage;
+
         const imageCollection = await ImageCollection.find();
+
+        const allImages = imageCollection.reduce((acc, collection) => acc.concat(collection.images), [])
+
+        const totalImages = allImages.length;
+        const totalPages = Math.ceil(totalImages / imageLimitPerPage);
+
+        const currentImages = allImages.slice(startIndex, endIndex)
+        
         res.status(200).json({
             success: true,
-            data: imageCollection // Returns the array of images
+            data: currentImages,
+            page: currentPage, 
+            limit: imageLimitPerPage,
+            totalImages,
+            totalPages 
         })
     } catch (e) {
         console.log("getFeatureImages() e : ", e)
         res.status(500).json({
             success: false,
-            message: "Some error occured"
+            message: "Error fetching images"
         })
     }
 }

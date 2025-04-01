@@ -192,11 +192,7 @@ function AdminDashboard() {
 
       <button onClick={handleNextPage} disabled={currentPage === totalPages} className="px-4 py-2 bg-gray-200 text-black rounded disabled:opacity-50">Next
       </button>
-
     </div>
-
-
-
   </div>
 }
 
