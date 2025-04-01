@@ -45,7 +45,7 @@ function AdminDashboard() {
   function handleUploadFeatureImages() {
     setImageLoadingState(true)
     console.log("** uploadedImageUrl **", uploadedImageUrl);
-    dispatch(addFeatureImage(uploadedImageUrl.images))
+    dispatch(addFeatureImage(uploadedImageUrl))
       .then((data) => {
         console.log("handleUploadFeatureImages()", data);
         if (data?.payload?.success) {

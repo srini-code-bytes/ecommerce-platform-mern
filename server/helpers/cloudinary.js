@@ -1,5 +1,6 @@
 const cloudinary = require("cloudinary").v2;
 const multer = require("multer");
+const {CloudinaryStorage} = require("multer-storage-cloudinary");
 
 require("dotenv").config();
 
@@ -10,23 +11,16 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Created storage using Multer
-const storage = new multer.memoryStorage();
+// Configure multer-storage-cloudinary
+// 
+const cloudinaryStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    allowed_formats: ['jpg', 'png', 'jpeg'], // Allowed formats
+    transformation: [{ width: 500, height: 500, crop: 'limit' }] // Optional transformations
+  }
+})
 
-// Cloudinary Upload: cloudinary.uploader.upload uploads the file to Cloudinary. 
-// The option resource_type: 'auto' lets Cloudinary handle various file types (e.g., image, video, raw files).
+const upload = multer({storage:cloudinaryStorage}).array('my_files', 10); // store the image url in the cloudinary
 
-async function imageUploadUtil(file) {
-
-    const result = await cloudinary.uploader.upload(file, {
-        resource_type : 'auto'
-    })
-
-    console.log("result", result);
-
-    return result;
-}
-
-const upload = multer({storage}); // store the image url in the cloudinary
-
-module.exports = {upload, imageUploadUtil};
+module.exports = {upload};

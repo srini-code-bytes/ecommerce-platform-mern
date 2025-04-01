@@ -1,4 +1,4 @@
-const { imageUploadUtil } = require("../../helpers/cloudinary");
+const { imageUploadUtil, upload } = require("../../helpers/cloudinary");
 const Product = require("../../models/Product");
 
 // const handleImageUpload = async (req, res) => {
@@ -25,34 +25,75 @@ const Product = require("../../models/Product");
 
 // ADD PRODUCT
 
-const handleMultipleImageUpload = async (req, res) => {
+// const handleMultipleImageUpload = async (req, res) => {
+//   console.log("Files received:", req.files);
+//   try {
+//     if (!req.files || req.files.length === 0) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "No images uploaded"
+//       })
+//     }
+//     // convert each file to base64 and then upload it to cloudinary    
+//     const uploadPromises = req.files.map(async (file) => {
+//       const b64 = Buffer.from(file.buffer).toString("base64");
+//       const url = "data:" + file.mimetype + ";base64," + b64;
+//       // return await imageUploadUtil(url);
+
+//     })
+
+//     const results = await Promise.all(uploadPromises);
+//     console.log("** Uploaded images **", results)
+
+//     if (!results || results.length === 0) {
+//       return res.status(500).json({
+//         success: false,
+//         message: "All images failed to upload"
+//       })
+//     }
+
+//     return res.status(201).json({
+//       success: true,
+//       images: results,
+//     })
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).json({
+//       success: false,
+//       error: "Error occured"
+//     })
+//   }
+// }
+
+const uploadImage = async (req, res) => {
   try {
-    if (!req.files || req.files.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "No images uploaded"
+    await new Promise((resolve, reject) => {
+      upload(req, res, (error) => {
+        if(error){
+          console.log("** uploadImage error ** ", error)
+          reject(error);
+        } else {
+          resolve();
+        }
       })
-    }
-    // convert each file to base64 and then upload it to cloudinary    
-    const uploadPromises = req.files.map(async (file) => {
-      const b64 = Buffer.from(file.buffer).toString("base64");
-      const url = "data:" + file.mimetype + ";base64," + b64;
-      return await imageUploadUtil(url);
     })
 
-    const results = await Promise.all(uploadPromises);
-    console.log("** Uploaded images **", results)
-
-    if (!results || results.length === 0) {
-      return res.status(500).json({
+    if(!req.files || req.files.length === 0) {
+      return res.status(400).json({
         success: false,
-        message: "All images failed to upload"
-      })
+        message: "No file uploaded"
+      });
     }
 
-    return res.status(201).json({
-      success: true,
-      images: results,
+    const uploadedFiles = req.files.map((file) => ({
+      url: file.path,
+      public_id: file.filename
+    }))
+
+    res.json({
+      message : "File uploaded success",
+      files: uploadedFiles,
+      success: true
     })
   } catch (error) {
     console.log(error);
@@ -193,7 +234,7 @@ const deleteProduct = async (req, res) => {
 
 module.exports = {
   // handleImageUpload,
-  handleMultipleImageUpload,
+  uploadImage, // This handles the upload of multiple images using multer and cloudinary
   addProduct,
   fetchAllProducts,
   editProduct,

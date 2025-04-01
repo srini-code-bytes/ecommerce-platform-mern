@@ -23,7 +23,6 @@ function ProductImageUpload({
   const inputRef = useRef(null);
   const { showSnackbar } = useSnackbar()
 
-
   function handleImageFileChange(event) {
     const allowedImageUploadFileTypes = ["image/jpeg", "image/jpg", "image/png"];
     const maxFileSize = 5 * 1024 * 1024;
@@ -106,7 +105,7 @@ function ProductImageUpload({
       if (response.data.success) {
         // setUploadedImageUrl(response.data.result.url);
         console.log("response.data", response.data);
-        setUploadedImageUrl(response.data)
+        setUploadedImageUrl(response.data.files)
       } else {
         console.error("Error uploading image:", response.data)
       }

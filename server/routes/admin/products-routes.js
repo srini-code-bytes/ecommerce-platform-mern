@@ -2,7 +2,8 @@ const express = require("express");
 
 const {
   // handleImageUpload,
-  handleMultipleImageUpload,
+  // handleMultipleImageUpload,
+  uploadImage,
   addProduct,
   editProduct,
   fetchAllProducts,
@@ -27,8 +28,8 @@ const router = express.Router();
 
 router.post(
   "/upload-images",
-  upload.array("my_files", 10), 
-  handleMultipleImageUpload
+  // upload.array("my_files", 10), 
+  uploadImage
 )
 
 router.post("/add", addProduct);

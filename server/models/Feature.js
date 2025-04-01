@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const FeatureSchema = new mongoose.Schema({
     public_id: { type: String, index: true }, // ✅ Used for Cloudinary deletions
     url: { type: String }, // ✅ Optional but useful
-    secure_url: { type: String }, // ✅ Use secure URL if available
 });
 
 const ImageCollectionSchema = new mongoose.Schema({
