@@ -12,7 +12,6 @@ cloudinary.config({
 });
 
 // Configure multer-storage-cloudinary
-// 
 const cloudinaryStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
@@ -21,6 +20,6 @@ const cloudinaryStorage = new CloudinaryStorage({
   }
 })
 
-const upload = multer({storage:cloudinaryStorage}).array('my_files', 10); // store the image url in the cloudinary
+const upload = multer({storage:cloudinaryStorage, limits : {fileSize : 500 * 1024}}).array('my_files', 10); // store the image url in the cloudinary
 
 module.exports = {upload};

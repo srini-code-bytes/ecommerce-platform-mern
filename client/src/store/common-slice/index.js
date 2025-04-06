@@ -4,13 +4,19 @@ import axios from "axios";
 const initialState = {
     isLoading: false,
     featureImageList: [],
-    error: null
+    error: null,
+    limit : 3,
+    page : 1,
+    totalImages : 0,
+    totalPages : 0
 }
 
 export const getFeatureImages = createAsyncThunk(
     "/common/getFeatureImages",
-    async () => {
-        const response = await axios.get('http://localhost:8080/api/common/feature-images/get-feature-images');
+    async ({currentPage, limit}) => {
+        console.log("**async thunkkkk limit**", limit)
+        const response = await axios.get(`http://localhost:8080/api/common/feature-images/get-feature-images?page=${currentPage}&limit=${limit}`);
+        console.log(" getFeatureImages ===> response.data", response.data)
         return response.data;
     }
 )
@@ -66,9 +72,13 @@ const commonSlice = createSlice({
             })
             .addCase(getFeatureImages.fulfilled, (state, action) => {
                 state.isLoading = true;
-                const newImages = action.payload.data;
-                state.featureImageList = newImages;
+                const allImages = action.payload.data;
+                state.featureImageList = allImages;
                 state.isLoading = false;
+                state.page = action.payload.page;
+                state.limit = action.payload.limit;
+                state.totalImages = action.payload.totalImages;
+                state.totalPages = action.payload.totalPages;
             })
             .addCase(getFeatureImages.rejected, (state) => {
                 state.isLoading = false;

@@ -1,3 +1,4 @@
+const multer = require("multer");
 const { imageUploadUtil, upload } = require("../../helpers/cloudinary");
 const Product = require("../../models/Product");
 
@@ -69,7 +70,10 @@ const uploadImage = async (req, res) => {
   try {
     await new Promise((resolve, reject) => {
       upload(req, res, (error) => {
-        if(error){
+        if(error instanceof multer.MulterError && error.code === "LIMIT_FILE_SIZE"){ 
+          console.log("** uploadImage multer error ** ", error)
+          return reject('Error : Image size cannot exceed 500kb');
+        } else if(error){
           console.log("** uploadImage error ** ", error)
           reject(error);
         } else {

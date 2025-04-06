@@ -16,19 +16,16 @@ function AdminDashboard() {
   const [isDeleting, setIsDeleting] = useState(false);
   const dispatch = useDispatch();
   const { showSnackbar } = useSnackbar();
+  const currentPageFromRedux = useSelector((state => state.commonFeature.page));
 
   // Pagination 
   const [currentPage, setCurrentPage] = useState(1);
-  const showImagesPerPage = 3;
-  const allImages = featureImageList?.length > 0 && featureImageList?.flatMap((collection) => collection.images)
-  const totalImages = allImages.length || 0;
-  const totalPages = Math.ceil(totalImages / showImagesPerPage);
-  const startIndex = (currentPage - 1) * showImagesPerPage;
-  const currentImages = allImages.length > 0 && allImages.slice(startIndex, startIndex + showImagesPerPage);
 
-  console.log("allImages", allImages)
+  // const allImages = featureImageList?.length > 0 && featureImageList?.flatMap((collection) => collection)
+  const { totalImages, totalPages } = useSelector((state) => state.commonFeature);
+  const limit = 5; // always handle the limit in the frontend
+
   console.log("** featureImageList **", featureImageList)
-  console.log("currentImages ====>", currentImages)
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -49,10 +46,10 @@ function AdminDashboard() {
       .then((data) => {
         console.log("handleUploadFeatureImages()", data);
         if (data?.payload?.success) {
-          dispatch(getFeatureImages())
+          dispatch(getFeatureImages({currentPage,limit}))
           showSnackbar({
-            message : "Image(s) uploaded successfully",
-            severity : "success"        
+            message: "Image(s) uploaded successfully",
+            severity: "success"
           })
           setImageFile([])
           setUploadedImageUrl([])
@@ -76,14 +73,14 @@ function AdminDashboard() {
     dispatch(deleteFeatureImage(deleteImageId))
       .then((data) => {
         if (data?.payload?.success) {
-          dispatch(getFeatureImages())
+          dispatch(getFeatureImages({currentPage,limit}))
           setDeleteImageId("");
           showSnackbar({
-            message : "Image deleted successfully",
-            severity : "success"            
+            message: "Image deleted successfully",
+            severity: "success"
           })
 
-          if (currentPage > 1 && currentImages.length === 1) {
+          if (currentPage > 1 && featureImageList.length === 1) {
             setCurrentPage(currentPage - 1)
           }
         }
@@ -104,8 +101,10 @@ function AdminDashboard() {
   }
 
   useEffect(() => {
-    dispatch(getFeatureImages())
-  }, [dispatch]
+    if(limit && currentPage){
+      dispatch(getFeatureImages({currentPage,limit}))
+    }
+  }, [dispatch, currentPage, limit]
   )
 
   useEffect(() => {
@@ -121,9 +120,9 @@ function AdminDashboard() {
     if (totalImages === 0) {
       setCurrentPage(1)
     } else if (currentPage > totalPages) {
-      setCurrentPage(totalPages)
+      setCurrentPage(currentPageFromRedux)
     }
-  })
+  }, [totalImages, totalPages, currentPage, currentPageFromRedux])
 
   return <div>
     <ProductImageUpload
@@ -137,14 +136,6 @@ function AdminDashboard() {
       setImagePreview={setImagePreview}
       imagePreview={imagePreview}
     />
-{/* 
-    {imagePreview && (
-      <div className="relative mt-5">
-        <img src={imagePreview} alt="Preview" className="w-full h-[300px] object-cover rounded-t-lg" />
-        <button onClick={handleResetPreview} className="absolute top-0 right-0 bg-red-500 text-white px-2 py-1 
-        rounded-full">x</button>
-      </div>
-    )} */}
 
     <Button onClick={handleUploadFeatureImages}
       className="bg-black text-white mt-5 w-full"
@@ -153,10 +144,9 @@ function AdminDashboard() {
       {imageLoadingState ? "Uploading..." : "Upload"}
     </Button>
 
-    {/* Fetch the images based on the current page */}
     <div className="flex flex-col gap-4 mt-5">
-      {currentImages.length > 0
-        ? currentImages.map((featureImgItem) =>
+      {featureImageList.length > 0
+        ? featureImageList.map((featureImgItem) =>
         (
           <div className="relative">
             <img

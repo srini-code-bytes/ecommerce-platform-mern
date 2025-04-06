@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { FileIcon, UploadCloudIcon, XIcon } from "lucide-react";
@@ -21,44 +21,59 @@ function ProductImageUpload({
   setImagePreview
 }) {
   const inputRef = useRef(null);
+  const [error, setError] = useState(false);
+  const [currentPreviewImage, setCurrentPreviewImage] = useState(null);
+  const [currentImage, setCurrentImage] = useState(null);
   const { showSnackbar } = useSnackbar()
 
   function handleImageFileChange(event) {
-    const allowedImageUploadFileTypes = ["image/jpeg", "image/jpg", "image/png"];
-    const maxFileSize = 5 * 1024 * 1024;
     const selectedFiles = Array.from(event.target.files);
     console.log("** handleImageFileChange selectedFiles **", selectedFiles)
-
-    const validFiles = selectedFiles.filter((file) => {
-      if(!isValidFileType(file, allowedImageUploadFileTypes)) {
-        console.log("** INVALIDDDDDD ** ");
-        showSnackbar({
-          message : "Invalid file type, only jpg, png & jpeg are allowed.",
-          severity : "error"
-        })
-        return false;
-      }
-      if(!isValidFileSize(file, maxFileSize)){
-        showSnackbar({
-          message: "File exceeds 5 MB limit.",
-          severity : "error"
-        })
-        return false;
-      }
-      return true;
-    })
+    // const validFiles = selectedFiles.filter((file) => {
+    //   if(!isValidFileType(file, allowedImageUploadFileTypes)) {
+    //     console.log("** INVALIDDDDDD ** ");
+    //     showSnackbar({
+    //       message : "Invalid file type, only jpg, png & jpeg are allowed.",
+    //       severity : "error"
+    //     })
+    //     return false;
+    //   }
+    //   if(!isValidFileSize(file, maxFileSize)){
+    //     showSnackbar({
+    //       message: "File exceeds 5 MB limit.",
+    //       severity : "error"
+    //     })
+    //     return false;
+    //   }
+    //   return true;
+    // })
 
     // Not feasible with the current backend implementation as the URL changes dynamically 
     // If it is still required, need to store the hash value in the db & modify & validate in the backend
     // Checking duplicate isn't feasible
 
-    if (validFiles && validFiles.length > 0) {
-      setImageFile(validFiles);
-      const previews = validFiles.map((file) => URL.createObjectURL(file));
-      setImagePreview(previews);
-    }
+    // if (validFiles && validFiles.length > 0) {
+
+      const previews = selectedFiles.map((file) => URL.createObjectURL(file));
+      // if(!error){
+        // console.log("** Inside handleImageFileChange error **", error);
+        setImageFile(selectedFiles);
+        setCurrentImage(selectedFiles);
+        // setImagePreview(previews);
+        setCurrentPreviewImage(previews);
+      // }
+    // }
 
   }
+  console.log("** handleImageFileChange currentImage **", currentImage)
+  console.log("** handleImageFileChange currentPreviewImage **", currentPreviewImage)
+
+  // useEffect(() => {
+  //   if(!error){
+  //     setImageFile(selectedFiles);
+  //     setImagePreview(previews);
+  //   }
+  // }, [error])
 
   function handleDragOver(event) {
     event.preventDefault(); // recommended
@@ -101,26 +116,41 @@ function ProductImageUpload({
         "http://localhost:8080/api/admin/products/upload-images",
         data
       );
-      console.log("response.data", response.data);
-      if (response.data.success) {
         // setUploadedImageUrl(response.data.result.url);
         console.log("response.data", response.data);
         setUploadedImageUrl(response.data.files)
-      } else {
-        console.error("Error uploading image:", response.data)
-      }
+        setError(false)
+        showSnackbar({
+          message: "Image(s) loaded successfully",
+          severity: "success"
+        })
+        setImageLoadingState(false)
     } catch (error) {
       console.error("Error uploading image:", error)
-    } finally {
+      setError(true)
+      showSnackbar({
+        message: "Error uploading image",
+        severity: "error"
+      })
       setImageLoadingState(false)
-    }
+    } 
   }
 
   useEffect(() => {
     if (imageFile !== null) {
+    // if (currentImage) {
+      console.log("** Inside useEffect **", imageFile);
       uploadImageToCloudinary();
     }
   }, [imageFile]); // it will re-run whenever imageFile changes.
+
+  useEffect(() => {
+    if(!error && currentPreviewImage && currentImage){
+      setImageFile(currentImage);
+      setImagePreview(currentPreviewImage);
+    }
+
+  }, [currentPreviewImage, currentImage, error])
 
   return (
     <div className={`w-full mt-4 ${isCustomStyling ?
