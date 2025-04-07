@@ -54,14 +54,14 @@ function ProductImageUpload({
 
     // if (validFiles && validFiles.length > 0) {
 
-      const previews = selectedFiles.map((file) => URL.createObjectURL(file));
-      // if(!error){
-        // console.log("** Inside handleImageFileChange error **", error);
-        setImageFile(selectedFiles);
-        setCurrentImage(selectedFiles);
-        // setImagePreview(previews);
-        setCurrentPreviewImage(previews);
-      // }
+    const previews = selectedFiles.map((file) => URL.createObjectURL(file));
+    // if(!error){
+    // console.log("** Inside handleImageFileChange error **", error);
+    setImageFile(selectedFiles);
+    setCurrentImage(selectedFiles);
+    // setImagePreview(previews);
+    setCurrentPreviewImage(previews);
+    // }
     // }
 
   }
@@ -116,15 +116,15 @@ function ProductImageUpload({
         "http://localhost:8080/api/admin/products/upload-images",
         data
       );
-        // setUploadedImageUrl(response.data.result.url);
-        console.log("response.data", response.data);
-        setUploadedImageUrl(response.data.files)
-        setError(false)
-        showSnackbar({
-          message: "Image(s) loaded successfully",
-          severity: "success"
-        })
-        setImageLoadingState(false)
+      // setUploadedImageUrl(response.data.result.url);
+      console.log("response.data", response.data);
+      setUploadedImageUrl(response.data.files)
+      setError(false)
+      showSnackbar({
+        message: "Image(s) loaded successfully",
+        severity: "success"
+      })
+      setImageLoadingState(false)
     } catch (error) {
       console.error("Error uploading image:", error)
       setError(true)
@@ -133,19 +133,19 @@ function ProductImageUpload({
         severity: "error"
       })
       setImageLoadingState(false)
-    } 
+    }
   }
 
   useEffect(() => {
     if (imageFile !== null) {
-    // if (currentImage) {
+      // if (currentImage) {
       console.log("** Inside useEffect **", imageFile);
       uploadImageToCloudinary();
     }
   }, [imageFile]); // it will re-run whenever imageFile changes.
 
   useEffect(() => {
-    if(!error && currentPreviewImage && currentImage){
+    if (!error && currentPreviewImage && currentImage) {
       setImageFile(currentImage);
       setImagePreview(currentPreviewImage);
     }
@@ -176,7 +176,7 @@ function ProductImageUpload({
           />
         </div>
 
-        {imageFile.length ===0 ? (
+        {imageFile.length === 0 ? (
           <Label
             htmlFor="image-upload"
             className={` ${isEditMode ? `cursor-not-allowed` : ""
@@ -197,11 +197,11 @@ function ProductImageUpload({
             <div className="flex flex-wrap gap-4 justify-center items-center">
               {imageFile.map((file, index) => (
                 <div key={index} className="flex flex-col items-center justify-center">
-                  
+
                   <img src={imagePreview[index]} alt="Preview" className="w-64 h-64 object-cover" />
                   <p className="text-lg">{file.name}</p>
-                  <button className="mt-2 text-red-500 hover:text-red-700" onClick={()=> handleRemoveImage(index)}>
-                  Remove
+                  <button className="mt-2 text-red-500 hover:text-red-700" onClick={() => handleRemoveImage(index)}>
+                    Remove
                   </button>
                 </div>
               ))}

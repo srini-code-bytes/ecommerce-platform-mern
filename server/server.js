@@ -6,7 +6,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 
 // To parse the cookie
-const cookieParser = require("cookie-parser");  
+const cookieParser = require("cookie-parser");
 
 // To allow cross-origin requests
 const cors = require("cors"); // Why?
@@ -24,6 +24,8 @@ const shopAddressRouter = require('./routes/shop/address-routes')
 const shopOrderRouter = require('./routes/shop/order-routes')
 
 const adminOrderRouter = require('./routes/admin/order-routes')
+
+const adminUsersRouter = require("./routes/admin/user-routes")
 
 const shopSearchRouter = require('./routes/shop/search-routes')
 
@@ -74,6 +76,8 @@ app.use("/api/auth", authRouter);
 app.use("/api/admin/products", adminProductsRouter);
 
 app.use("/api/admin/orders", adminOrderRouter);
+
+app.use("/api/admin/users", adminUsersRouter);
 
 app.use("/api/shop/products", shopProductsRouter);
 
