@@ -11,6 +11,7 @@ import adminOrderSlice from "./admin/order-slice"
 import shopSearchSlice from "./shop/search-slice"
 import shopReviewSlice from "./shop/review-slice"
 import commonFeatureSlice from "./common-slice"
+import AllUsersSlice from "./admin/user-slice"
 
 export const store = configureStore({
 
@@ -19,6 +20,7 @@ export const store = configureStore({
   reducer: {
     auth: authReducer,
     adminProducts: adminProductsSlice,
+    adminAllUsers : AllUsersSlice,
     shopProducts: shopProductsSlice,
     shopCart: shopCartSlice,
     shopAddress: shopAddressSlice,
