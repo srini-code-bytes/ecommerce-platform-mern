@@ -40,9 +40,9 @@ const commonFeatureImagesRouter = require('./routes/common/feature-routes')
 
 mongoose
   .connect(
-    "mongodb+srv://sriniv33613:sriniv336132024@cluster0.vj57d.mongodb.net/"
+    "mongodb+srv://sriniv33613:sriniv336132024@cluster0.vj57d.mongodb.net/eCommerce-db-mern?retryWrites=true&w=majority",
   )
-  .then(() => console.log("Yayyyy! Mongo db is connected"))
+  .then(() => console.log("Mongodb is now connected"))
   .catch((error) => console.log("error"));
 
 const app = express(); // CREATE THE EXPRESS APP

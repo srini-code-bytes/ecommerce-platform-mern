@@ -6,8 +6,17 @@ const Order = require('../../models/Order')
 
 const getAllOrdersByAllUsers = async (req, res) => {
     try {
+        const currentPage = parseInt(req.query.page) || 1;
+        const orderLimitPerPage = parseInt(req.query.limit) || 10;
+        const skip = (currentPage - 1) * orderLimitPerPage;
+        const totalOrders = await Order.countDocuments();
+        const totalPages = Math.ceil(totalOrders / orderLimitPerPage);
+        const orders = await Order.find({}).skip(skip).limit(orderLimitPerPage);
+        console.log("orders", orders);
 
-        const orders = await Order.find({});
+        // .sort({
+        //     orderDate: -1
+        // })
 
         if (!orders.length) {
             res.status(404).json({
@@ -20,6 +29,10 @@ const getAllOrdersByAllUsers = async (req, res) => {
         res.status(200).json({
             success: true,
             data: orders,
+            page: currentPage,
+            limit: orderLimitPerPage,
+            totalOrders, 
+            totalPages
         })
     } catch (e) {
         console.log(e);

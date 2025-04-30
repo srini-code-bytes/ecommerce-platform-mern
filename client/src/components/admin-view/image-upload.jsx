@@ -139,13 +139,15 @@ function ProductImageUpload({
   useEffect(() => {
     if (imageFile !== null) {
       // if (currentImage) {
-      console.log("** Inside useEffect **", imageFile);
+      // console.log("** Inside useEffect imageFile **", imageFile);
       uploadImageToCloudinary();
     }
   }, [imageFile]); // it will re-run whenever imageFile changes.
 
+  console.log("** OUTSIDE useEffect imageFile **", imageFile);
+
   useEffect(() => {
-    if (!error && currentPreviewImage && currentImage) {
+    if (!error && currentPreviewImage && currentImage && setImagePreview) {
       setImageFile(currentImage);
       setImagePreview(currentPreviewImage);
     }
@@ -176,7 +178,7 @@ function ProductImageUpload({
           />
         </div>
 
-        {imageFile.length === 0 ? (
+        {!imageFile || imageFile?.length === 0 ? (
           <Label
             htmlFor="image-upload"
             className={` ${isEditMode ? `cursor-not-allowed` : ""
@@ -186,19 +188,20 @@ function ProductImageUpload({
 
             <span>Drag & drop to upload an image</span>
           </Label>
-        ) : imageLoadingState ? (
-          <Skeleton className="h-10 bg-gray-100" />
         ) : (
           <div className="flex items-center">
-            <div className="flex items-center">
+            {imageLoadingState ? <div className="flex items-center">
               <FileIcon className="w-8 text-primary mr-2 h-8" />
             </div>
+              :
+
+              <Skeleton className="h-10 bg-gray-100" />}
 
             <div className="flex flex-wrap gap-4 justify-center items-center">
-              {imageFile.map((file, index) => (
+              {imageFile && imageFile.length > 0 && imageFile?.map((file, index) => (
                 <div key={index} className="flex flex-col items-center justify-center">
 
-                  <img src={imagePreview[index]} alt="Preview" className="w-64 h-64 object-cover" />
+                  {imagePreview?.length > 0 && <img src={imagePreview[index]} alt="Preview" className="w-64 h-64 object-cover" />}
                   <p className="text-lg">{file.name}</p>
                   <button className="mt-2 text-red-500 hover:text-red-700" onClick={() => handleRemoveImage(index)}>
                     Remove
@@ -206,16 +209,6 @@ function ProductImageUpload({
                 </div>
               ))}
             </div>
-
-            {/* <Button
-              variant="ghost"
-              size="icon"
-              className="text-muted-foreground hover:text-foreground"
-              onClick={handleRemoveImage}
-            >
-              <XIcon className="w-4 h-4" />
-              <span className="sr-only">Remove File</span>
-            </Button> */}
           </div>
         )}
       </div>

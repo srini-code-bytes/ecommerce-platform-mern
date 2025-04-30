@@ -1,9 +1,23 @@
 import React, { useEffect } from 'react';
 import Draggable from 'react-draggable';
 
+/**
+ * A modal component for confirming the deletion of an image.
+ *
+ * Props:
+ *   - isOpen: Boolean indicating whether the modal is open.
+ *   - onClose: Function to call when the modal is closed.
+ *   - onConfirm: Function to call when the deletion is confirmed.
+ *   - isDeleting: Boolean indicating whether the deletion is in progress.
+ *   - setDeleteImageId: Function to reset the image ID to be deleted.
+ *
+ * When the modal is open, it displays a confirmation message and two buttons: 
+ * "Cancel" to close the modal, and "Delete" to confirm the deletion. The modal is draggable.
+ */
+
 function DeleteConfirmationModal({ isOpen, onClose, onConfirm, isDeleting, setDeleteImageId }) {
 
-    if (!isOpen) return null;
+    if (!isOpen) return null;   
 
     useEffect(() => {
         return () => {

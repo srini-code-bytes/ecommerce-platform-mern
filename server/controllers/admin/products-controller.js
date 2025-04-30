@@ -150,10 +150,15 @@ const addProduct = async (req, res) => {
 
 const fetchAllProducts = async (req, res) => {
   try {
-    const listOfProducts = await Product.find({});
+    const page  = req.query.page || 1;
+    const limit = req.query.limit || 8;
+    const skip = (page-1) * limit;
+    const products = await Product.find().skip(skip).limit(limit);
+    const total = await Product.countDocuments();
     res.status(200).json({
       success: true,
-      data: listOfProducts,
+      products,
+      hasMore : skip + products.length < total
     });
   } catch (e) {
     console.log(e);

@@ -3,21 +3,22 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-
-
-
 const initialState = {
   isLoading: false,
   orderList: [],
-  orderDetails: null
+  orderDetails: null,
+  error: null,
+  limit: 0,
+  page: 0,
+  totalOrders: 0,
+  totalPages: 0
 }
 
 export const getAllOrdersForAdmin = createAsyncThunk('/orders/getAllOrdersByUserId',
-  async () => {
-    const response = await axios.get("http://localhost:8080/api/admin/orders/get")
-
+  async ({ currentPage, limit }) => {
+    console.log("getAllOrdersForAdmin currentPage && limit", currentPage, limit)
+    const response = await axios.get(`http://localhost:8080/api/admin/orders/get?page=${currentPage}&limit=${limit}`)
     return response.data;
-
   })
 
 export const getOrderDetailsForAdmin = createAsyncThunk(
@@ -71,11 +72,17 @@ const adminOrderSlice = createSlice({
       state.isLoading = true;
     }).addCase(getAllOrdersForAdmin.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.orderList = action.payload.data;
-
-    }).addCase(getAllOrdersForAdmin.rejected, (state) => {
+      const allOrders = action.payload.data;
+      state.orderList = allOrders;
+      state.isLoading = false;
+      state.totalOrders = action.payload.totalOrders;
+      state.totalPages = action.payload.totalPages;
+      state.page = action.payload.page;
+      state.limit = action.payload.limit;
+    }).addCase(getAllOrdersForAdmin.rejected, (state, action) => {
       state.isLoading = false;
       state.orderList = []
+      state.error = action.payload || "Failed to fetch all orders";
     }).addCase(getOrderDetailsForAdmin.pending, (state) => {
       state.isLoading = true;
     }).addCase(getOrderDetailsForAdmin.fulfilled, (state, action) => {
@@ -87,9 +94,6 @@ const adminOrderSlice = createSlice({
       state.orderDetails = null;
     })
   },
-
-
-
 });
 
 export const resetOrderDetailsForAdmin = adminOrderSlice.actions;

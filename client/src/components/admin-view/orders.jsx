@@ -13,7 +13,23 @@ function AdminOrdersView() {
 
     const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
 
-    const { orderList, orderDetails } = useSelector((state) => state.adminOrder)
+    const { orderList, orderDetails, totalOrders, totalPages } = useSelector((state) => state.adminOrder)
+
+    // Pagination 
+    const [currentPage, setCurrentPage] = useState(1);
+    const limit = 10;
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    }
+
+    const handlePrevPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    }
 
     const dispatch = useDispatch()
 
@@ -21,14 +37,13 @@ function AdminOrdersView() {
         console.log("**getId**", getId)
         setOpenDetailsDialog(true);
         dispatch(getOrderDetailsForAdmin(getId))
-       
     }
 
     useEffect(() => {
-        dispatch(getAllOrdersForAdmin());
-    }, [dispatch]);
+        dispatch(getAllOrdersForAdmin({currentPage, limit}));
+    }, [dispatch, currentPage, limit]);
 
-    console.log("admin orderList===>", orderList)
+    console.log("admin orderList===>", orderList, totalOrders, totalPages)
 
     return (
         <Card>
@@ -52,7 +67,6 @@ function AdminOrdersView() {
                     </TableHeader>
 
                     <TableBody>
-
                         {
                             orderList && orderList.length > 0
                                 ? orderList.map((orderItem) => (
@@ -85,24 +99,25 @@ function AdminOrdersView() {
                                                     handleFetchOrderDetails(orderItem?._id)
                                                 } className="bg-black text-white">View Details</Button>
 
-                                                {orderDetails && <AdminOrderDetailsView orderDetails={orderDetails} setOpenDetailsDialog={setOpenDetailsDialog}/>}
+                                                {orderDetails && <AdminOrderDetailsView orderDetails={orderDetails} setOpenDetailsDialog={setOpenDetailsDialog} />}
                                             </Dialog>
                                         </TableCell>
-
-
-
                                     </TableRow>
-
                                 )) : null
                         }
-
-
-
                     </TableBody>
+
                 </Table>
+                <div className="flex justify-between items-center mt-5">
+                        <button onClick={handlePrevPage} disabled={currentPage === 1} className="px-4 py-2 rounded bg-gray-200 text-black disabled:opacity-50">Previous
+                        </button>
+
+                        <p className="text-sm"> Page {currentPage} of {totalPages} </p>
+
+                        <button onClick={handleNextPage} disabled={currentPage === totalPages} className="px-4 py-2 bg-gray-200 text-black rounded disabled:opacity-50">Next
+                        </button>
+                    </div>
             </CardContent>
-
-
         </Card>
     )
 }
