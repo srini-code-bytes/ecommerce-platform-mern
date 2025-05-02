@@ -102,12 +102,15 @@ app.use("/api/common/feature-images", commonFeatureImagesRouter)
 
 // /api/auth/registerUser -> registerUser
 // /api/auth/loginUser -> loginUser 
+q
 
 app.get("/", (req, res) => {
   res.send("✅ MERN Backend is Live on AWS EB");
 });
 
-// Run the server
+// Run the servereb deploy
+
+
 app.listen(PORT, () => console.log(`Server is now running on PORT : ${PORT}`));
 
 
