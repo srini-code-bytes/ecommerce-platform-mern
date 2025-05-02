@@ -1,6 +1,8 @@
 // MAIN ENTRY POINT 
 // To connect to the database
 
+const dotenv = require("dotenv"); // To use the environment variables from .env file
+
 // All require are imports
 const express = require("express");
 const mongoose = require("mongoose");
@@ -33,6 +35,8 @@ const shopReviewRouter = require('./routes/shop/review-routes')
 
 const commonFeatureImagesRouter = require('./routes/common/feature-routes')
 
+dotenv.config(); // To use the environment variables from .env file
+
 // Create database connection
 // create a separate file for this and import that file here --better approach
 
@@ -40,7 +44,7 @@ const commonFeatureImagesRouter = require('./routes/common/feature-routes')
 
 mongoose
   .connect(
-    "mongodb+srv://sriniv33613:sriniv336132024@cluster0.vj57d.mongodb.net/eCommerce-db-mern?retryWrites=true&w=majority",
+    process.env.MONGO_URI
   )
   .then(() => console.log("Mongodb is now connected"))
   .catch((error) => console.log("error"));
@@ -51,8 +55,7 @@ const PORT = process.env.PORT || 8080; // Backend server will run on 8080
 // To allow cross-origin requests
 app.use(
   cors({
-    // Mention that you want client side to be running on port 5173
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_HOST_URL, 
     methods: ["GET", "POST", "DELETE", "PUT"],
     allowedHeaders: [
       "Content-Type",
@@ -64,6 +67,9 @@ app.use(
     credentials: true,
   })
 );
+
+
+
 
 //To parse the cookie that we send from frontend
 app.use(cookieParser());
@@ -97,5 +103,12 @@ app.use("/api/common/feature-images", commonFeatureImagesRouter)
 // /api/auth/registerUser -> registerUser
 // /api/auth/loginUser -> loginUser 
 
+app.get("/", (req, res) => {
+  res.send("✅ MERN Backend is Live on AWS EB");
+});
+
 // Run the server
 app.listen(PORT, () => console.log(`Server is now running on PORT : ${PORT}`));
+
+
+
