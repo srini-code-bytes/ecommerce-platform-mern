@@ -43,11 +43,16 @@ dotenv.config(); // To use the environment variables from .env file
 // take the below url from mongodb; make sure to give the password that you created in mongodb
 
 mongoose
-  .connect(
-    process.env.MONGO_URI
-  )
-  .then(() => console.log("Mongodb is now connected"))
-  .catch((error) => console.log("error"));
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
+  .then(() => console.log("✅ MongoDB is connected"))
+  .catch((error) => {
+    console.error("❌ MongoDB connection failed:", error.message);
+    process.exit(1); // So EB knows app failed to start
+  });
+
 
 const app = express(); // CREATE THE EXPRESS APP
 const PORT = process.env.PORT || 8080; // Backend server will run on 8080
@@ -109,6 +114,9 @@ app.get("/", (req, res) => {
 });
 
 // Run the servereb deploy
+
+console.log("✅ Starting Express app on:", process.env.PORT);
+console.log("✅ MONGO_URI:", process.env.MONGO_URI ? "Present" : "Missing");
 
 
 app.listen(PORT, () => console.log(`Server is now running on PORT : ${PORT}`));
