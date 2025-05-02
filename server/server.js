@@ -53,7 +53,6 @@ mongoose
     process.exit(1); // So EB knows app failed to start
   });
 
-
 const app = express(); // CREATE THE EXPRESS APP
 const PORT = process.env.PORT || 8080; // Backend server will run on 8080
 
@@ -107,7 +106,6 @@ app.use("/api/common/feature-images", commonFeatureImagesRouter)
 
 // /api/auth/registerUser -> registerUser
 // /api/auth/loginUser -> loginUser 
-q
 
 app.get("/", (req, res) => {
   res.send("✅ MERN Backend is Live on AWS EB");
