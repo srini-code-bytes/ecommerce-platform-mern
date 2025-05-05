@@ -1,5 +1,5 @@
+import axiosInstance from "@/api/axiosInstance";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
-import axios from "axios";
 
 const initialState = {
     isLoading: false,
@@ -15,7 +15,7 @@ export const getFeatureImages = createAsyncThunk(
     "/common/getFeatureImages",
     async ({currentPage, limit}) => {
         console.log("**async thunkkkk limit**", limit)
-        const response = await axios.get(`http://localhost:8080/api/common/feature-images/get-feature-images?page=${currentPage}&limit=${limit}`);
+        const response = await axiosInstance.get(`/common/feature-images/get-feature-images?page=${currentPage}&limit=${limit}`);
         console.log(" getFeatureImages ===> response.data", response.data)
         return response.data;
     }
@@ -25,7 +25,7 @@ export const addFeatureImage = createAsyncThunk(
     "/common/addFeatureImage",
     async (images, { rejectWithValue }) => {
         try {
-            const response = await axios.post('http://localhost:8080/api/common/feature-images/add-feature-image', { images });
+            const response = await axiosInstance.post('/common/feature-images/add-feature-image', { images });
             console.log("** addFeatureImage ** ", response.data)
 
             if (!response.data.success) {
@@ -42,7 +42,7 @@ export const addFeatureImage = createAsyncThunk(
 export const deleteFeatureImage = createAsyncThunk(
     "/common/deleteFeatureImage",
     async (public_id) => {
-        const response = await axios.delete(`http://localhost:8080/api/common/feature-images/delete-feature-image/${public_id}`)
+        const response = await axiosInstance.delete(`/common/feature-images/delete-feature-image/${public_id}`)
         return response.data;
     }
 )
@@ -88,7 +88,7 @@ const commonSlice = createSlice({
                 state.isLoading = false;
                 state.error = null;
             })
-            .addCase(deleteFeatureImage.fulfilled, (state, action) => {
+            .addCase(deleteFeatureImage.fulfilled, (state) => {
                 state.isLoading = false;
 
             })

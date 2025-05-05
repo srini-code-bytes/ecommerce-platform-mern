@@ -113,7 +113,7 @@ function ProductImageUpload({
       imageFile.forEach((file) => data.append("my_files", file));
 
       const response = await axios.post(
-        "http://localhost:8080/api/admin/products/upload-images",
+        "http://mern-backend-env.eba-m9dkjh3p.us-west-1.elasticbeanstalk.com/api/admin/products/upload-images",
         data
       );
       // setUploadedImageUrl(response.data.result.url);

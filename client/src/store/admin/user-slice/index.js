@@ -1,6 +1,6 @@
 
+import axiosInstance from '@/api/axiosInstance';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
 
 const initialState = {
     usersList: [],
@@ -11,8 +11,8 @@ const initialState = {
 export const getAllUsers = createAsyncThunk(
     "/users/getAllUsers",
     async () => {
-      const result = await axios.get(
-        "http://localhost:8080/api/admin/users/get-all-users"
+      const result = await axiosInstance.get(
+        "/admin/users/get-all-users"
       );
       return result?.data;
     }

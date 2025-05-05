@@ -1,7 +1,6 @@
 
+import axiosInstance from "@/api/axiosInstance";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
-
 
 const initialState = {
     isLoading : false,
@@ -13,12 +12,9 @@ export const getSearchResults = createAsyncThunk('/search/getSearchResults',
 
         console.log(" getSearchResults searchTerm===>", searchTerm)
 
-        // const response = await axios.get(`http://localhost:8080/api/shop/search/${searchTerm}`)
-
-        const response = await axios.get(`http://localhost:8080/api/shop/search?searchTerm=${searchTerm}`)
+        const response = await axiosInstance.get(`/shop/search?searchTerm=${searchTerm}`)
 
         console.log(" getSearchResults response===>", response)
-
         return response.data;
 
     })

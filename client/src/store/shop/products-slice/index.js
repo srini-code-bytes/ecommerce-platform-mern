@@ -1,7 +1,6 @@
 
+import axiosInstance from "@/api/axiosInstance";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
-
 
 const initialState = {
   isLoading: false,
@@ -22,8 +21,8 @@ export const fetchAllFilteredProducts = createAsyncThunk(
     })
     
     console.log("**fetchAllFilteredProducts query====>", query)
-    const result = await axios.get(
-      `http://localhost:8080/api/shop/products/get?${query}`
+    const result = await axiosInstance.get(
+      `/shop/products/get?${query}`
     );
     console.log("result===>", result);
     return result?.data.data;
@@ -36,8 +35,8 @@ export const fetchProductDetails = createAsyncThunk(
   async (id) => {
     console.log("fetchProductDetails ====>", fetchProductDetails)
     
-    const result = await axios.get(
-      `http://localhost:8080/api/shop/products/get/${id}`
+    const result = await axiosInstance.get(
+      `/shop/products/get/${id}`
     );
     console.log("result===>", result);
     return result?.data;
@@ -53,7 +52,7 @@ const shoppingProductsSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchAllFilteredProducts.pending, (state, action) => {
+    builder.addCase(fetchAllFilteredProducts.pending, (state) => {
         state.isLoading = true
     }).addCase(fetchAllFilteredProducts.fulfilled, (state, action) => {
         console.log("shoppingProductsSlice fulfilled action.payload", action.payload);
@@ -64,12 +63,12 @@ const shoppingProductsSlice = createSlice({
         state.isLoading = false,
         state.productList = [];
     })
-    builder.addCase(fetchProductDetails.pending, (state, action) => {
+    builder.addCase(fetchProductDetails.pending, (state) => {
       state.isLoading = true
   }).addCase(fetchProductDetails.fulfilled, (state, action) => {
       state.isLoading = true,
       state.productDetails = action.payload.data;
-  }).addCase(fetchProductDetails.rejected, (state, action) => {
+  }).addCase(fetchProductDetails.rejected, (state) => {
       state.isLoading = false,
       state.productDetails = null;
   })

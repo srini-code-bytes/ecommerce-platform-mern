@@ -1,6 +1,5 @@
+import axiosInstance from "@/api/axiosInstance";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
-
 
 const initialState = {
     isLoading: false,
@@ -10,9 +9,7 @@ const initialState = {
 export const addProductReview = createAsyncThunk('/review/addProductReview',
     async (reviewData) => {
         console.log("reviewData", reviewData)
-
-        const response = await axios.post(`http://localhost:8080/api/shop/review/add-review`, reviewData)
-
+        const response = await axiosInstance.post(`/shop/review/add-review`, reviewData)
         return response.data;
 
     }
@@ -20,8 +17,7 @@ export const addProductReview = createAsyncThunk('/review/addProductReview',
 
 export const getProductReviews = createAsyncThunk('/review/getProductReviews',
     async (productId) => {
-
-        const response = await axios.get(`http://localhost:8080/api/shop/review/${productId}`)
+        const response = await axiosInstance.get(`/shop/review/${productId}`)
         return response.data;
     }
 )
@@ -42,7 +38,5 @@ const shoppingReviewSlice = createSlice({
         })
     },
 });
-
-
 
 export default shoppingReviewSlice.reducer;

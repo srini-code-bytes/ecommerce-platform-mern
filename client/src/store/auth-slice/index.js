@@ -1,5 +1,5 @@
+import axiosInstance from "@/api/axiosInstance";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
 
 const initialState = {
   isAuthenticated: false,
@@ -11,8 +11,8 @@ export const registerUser = createAsyncThunk(
   "/auth/register",
 
   async (formData) => {
-    const response = await axios.post(
-      "http://localhost:8080/api/auth/register",
+    const response = await axiosInstance.post(
+      "/auth/register",
       formData,
       {
         withCredentials: true,
@@ -27,8 +27,8 @@ export const loginUser = createAsyncThunk(
   "/auth/login",
 
   async (formData) => {
-    const response = await axios.post(
-      "http://localhost:8080/api/auth/login",
+    const response = await axiosInstance.post(
+      "/auth/login",
       formData,
       {
         withCredentials: true,
@@ -42,8 +42,8 @@ export const loginUser = createAsyncThunk(
 export const logoutUser = createAsyncThunk(
   "/auth/logout",
 
-  async (formData) => {
-    const response = await axios.post("http://localhost:8080/api/auth/logout", {}, {
+  async () => {
+    const response = await axiosInstance.post("/auth/logout", {}, {
       withCredentials: true,
     });
 
@@ -54,9 +54,9 @@ export const logoutUser = createAsyncThunk(
 export const checkAuth = createAsyncThunk(
   "/auth/checkauth",
 
-  async (formData) => {
-    const response = await axios.get(
-      "http://localhost:8080/api/auth/check-auth",
+  async () => {
+    const response = await axiosInstance.get(
+      "/auth/check-auth",
       {
         withCredentials: true,
         headers: {
@@ -76,11 +76,11 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setUser: (state, action) => {},
+    setUser: () => {},
   },
   extraReducers: (builder) => {
     builder
-      .addCase(registerUser.pending, (state, action) => {
+      .addCase(registerUser.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(registerUser.fulfilled, (state, action) => {
@@ -88,12 +88,12 @@ const authSlice = createSlice({
         state.user = action.payload;
         state.isAuthenticated = false;
       })
-      .addCase(registerUser.rejected, (state, action) => {
+      .addCase(registerUser.rejected, (state) => {
         state.isLoading = false;
         state.user = null;
         state.isAuthenticated = false;
       })
-      .addCase(loginUser.pending, (state, action) => {
+      .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
@@ -101,12 +101,12 @@ const authSlice = createSlice({
         state.user = action.payload.success ? action.payload.user : null;
         state.isAuthenticated = action.payload.success;
       })
-      .addCase(loginUser.rejected, (state, action) => {
+      .addCase(loginUser.rejected, (state) => {
         state.isLoading = false;
         state.user = null;
         state.isAuthenticated = false;
       })
-      .addCase(checkAuth.pending, (state, action) => {
+      .addCase(checkAuth.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(checkAuth.fulfilled, (state, action) => {
@@ -114,12 +114,12 @@ const authSlice = createSlice({
         state.user = action.payload.success ? action.payload.user : null;
         state.isAuthenticated = action.payload.success ? true : false;
       })
-      .addCase(checkAuth.rejected, (state, action) => {
+      .addCase(checkAuth.rejected, (state) => {
         state.isLoading = false;
         state.user = null;
         state.isAuthenticated = false;
       })
-      .addCase(logoutUser.fulfilled, (state, action) => {
+      .addCase(logoutUser.fulfilled, (state) => {
         state.isLoading = false;
         state.user = null;
         state.isAuthenticated = false;
