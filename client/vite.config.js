@@ -1,14 +1,13 @@
-import path from "path"
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
 
-// https://vite.dev/config/
 export default defineConfig({
+  base: "/", // ✅ sets correct path for CloudFront/S3
   plugins: [react()],
-  // for shadcn
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
-})
+});
