@@ -72,9 +72,6 @@ app.use(
   })
 );
 
-
-
-
 //To parse the cookie that we send from frontend
 app.use(cookieParser());
 
