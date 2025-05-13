@@ -61,3 +61,25 @@ Contains packages for backend development:
     "start": "server.js", -----> ENTRY POINT
     "dev": "nodemon server.js" ----> RUN THE SERVER AUTOMATICALLY(to get updated data); say which file to run
   },
+
+🌐 Backend Deployment (Node.js + Express)
+
+Step 1: Navigate to the backend
+cd server
+
+Step 2: Initialize Elastic Beanstalk
+eb init
+# Select region (e.g. us-west-1)
+# Choose platform: Node.js
+# Set up SSH if needed (optional)
+
+Step 3: Create the environment
+eb create backend-env
+
+Step 4: Deploy
+eb deploy
+
+Step 5: After deployment
+Verify the live backend URL on POSTMAN.
+
+Update your frontend .env to use this backend URL.

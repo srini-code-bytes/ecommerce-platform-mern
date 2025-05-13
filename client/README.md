@@ -47,5 +47,77 @@ Outlines the steps for both the backend and frontend setup in a structured and t
 	•	Mentioning the creation of the Search.jsx component and mapping it via a route in App.jsx is straightforward and easy to follow.
 	•	The URL example (http://localhost:5173/shop/search) connects all the steps and provides a clear way to test the functionality.
 
+// AWS deployment
 
+🚀 MERN App Deployment to AWS (Frontend + Backend Separately via Elastic Beanstalk)
+
+This project uses:
+
+Frontend: React (with Vite)
+
+Backend: Node.js + Express
+
+Deployment: AWS Elastic Beanstalk (EB CLI)
+
+Hosting: Frontend & Backend deployed in separate Beanstalk environments
+
+📦 Prerequisites
+
+✅ Install the following tools before proceeding:
+
+1. AWS CLI
+brew install awscli  # on macOS
+aws configure         # provide AWS access key, secret, region (e.g. us-west-1)
+
+2. EB CLI
+pip3 install awsebcli --upgrade --user
+# Add to PATH if needed
+echo 'export PATH=$HOME/Library/Python/3.9/bin:$PATH' >> ~/.zshrc && source ~/.zshrc
+
+🎨 Frontend Deployment (React + Vite)
+Step 1: Navigate to the frontend
+cd client
+
+Step 2: Build the frontend
+npm install
+npm run build
+
+Step 3: Update package.json
+Make sure this exists in package.json:
+
+"scripts": {
+  "start": "vite preview --host 0.0.0.0 --port $PORT"
+}
+
+Step 4: Initialize EB CLI
+eb init
+# Choose region and Node.js platform again
+
+Step 5: Create frontend environment
+eb create frontend-env
+
+Step 6: Deploy frontend
+eb deploy
+
+🔥 EB CLI handles everything based on npm run build + npm start.
+
+🛠 Common Post-Deployment Fixes
+CORS: On the backend, set allowed origin to your frontend’s deployed URL:
+
+app.use(
+  cors({
+    origin: "http://my-mern-frontend-env.eba-ppfc5c3i.us-west-1.elasticbeanstalk.com",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
+Cookie Issues: If using credentials: true, ensure your client makes requests with withCredentials: true.
+
+Now the app is:
+
+Frontend hosted on EB: http://my-mern-frontend-env.eba-ppfc5c3i.us-west-1.elasticbeanstalk.com
+
+Backend hosted on EB: http://mern-backend-env.eba-m9dkjh3p.us-west-1.elasticbeanstalk.com 
 
