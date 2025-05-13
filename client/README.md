@@ -94,7 +94,7 @@ eb init
 # Choose region and Node.js platform again
 
 Step 5: Create frontend environment
-eb create frontend-env
+eb create my-mern-frontend-env 
 
 Step 6: Deploy frontend
 eb deploy
@@ -104,6 +104,8 @@ eb deploy
 🛠 Common Post-Deployment Fixes
 CORS: On the backend, set allowed origin to your frontend’s deployed URL:
 
+server.js 
+
 app.use(
   cors({
     origin: "http://my-mern-frontend-env.eba-ppfc5c3i.us-west-1.elasticbeanstalk.com",
@@ -112,6 +114,12 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+app.options("*", cors({
+  origin: process.env.FRONTEND_HOST_URL,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 
 Cookie Issues: If using credentials: true, ensure your client makes requests with withCredentials: true.
 

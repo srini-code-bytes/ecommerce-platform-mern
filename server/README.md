@@ -74,7 +74,7 @@ eb init
 # Set up SSH if needed (optional)
 
 Step 3: Create the environment
-eb create backend-env
+eb create mern-backend-env
 
 Step 4: Deploy
 eb deploy
