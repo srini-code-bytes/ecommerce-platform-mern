@@ -63,14 +63,17 @@ app.use(
     methods: ["GET", "POST", "DELETE", "PUT"],
     allowedHeaders: [
       "Content-Type",
-      "Authorization",
-      "Cache-Control",
-      "Expires",
-      "Pragma",
+      "Authorization"
     ],
     credentials: true,
   })
 );
+
+app.options("*", cors({
+  origin: process.env.FRONTEND_HOST_URL,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 
 //To parse the cookie that we send from frontend
 app.use(cookieParser());
@@ -103,12 +106,6 @@ app.use("/api/common/feature-images", commonFeatureImagesRouter)
 
 // /api/auth/registerUser -> registerUser
 // /api/auth/loginUser -> loginUser 
-
-app.get("/", (req, res) => {
-  res.send("✅ MERN Backend is Live on AWS EB");
-});
-
-// Run the servereb deploy
 
 console.log("✅ Starting Express app on:", process.env.PORT);
 console.log("✅ MONGO_URI:", process.env.MONGO_URI ? "Present" : "Missing");
