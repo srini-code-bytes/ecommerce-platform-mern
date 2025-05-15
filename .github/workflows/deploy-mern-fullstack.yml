@@ -1,0 +1,78 @@
+name: Deploy MERN Fullstack to AWS Elastic Beanstalk
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-fullstack:
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      FRONTEND_APP_NAME: ${{ secrets.EB_FRONTEND_APP }}
+      FRONTEND_ENV_NAME: ${{ secrets.EB_FRONTEND_ENV }}
+      BACKEND_APP_NAME: ${{ secrets.EB_BACKEND_APP }}
+      BACKEND_ENV_NAME: ${{ secrets.EB_BACKEND_ENV }}
+
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Frontend build & deploy
+      - name: Setup Node.js for Frontend
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install frontend dependencies
+        run: |
+          cd client
+          npm install
+
+      - name: Build frontend
+        run: |
+          cd client
+          npm run build
+
+      - name: Zip frontend build
+        run: |
+          cd client
+          zip -r ../frontend-app-dist.zip dist
+
+      - name: Upload & deploy frontend
+        run: |
+          aws s3 cp frontend-app-dist.zip s3://$FRONTEND_APP_NAME/$GITHUB_SHA.zip
+          aws elasticbeanstalk create-application-version \
+            --application-name $FRONTEND_APP_NAME \
+            --version-label $GITHUB_SHA \
+            --source-bundle S3Bucket=$FRONTEND_APP_NAME,S3Key=$GITHUB_SHA.zip
+          aws elasticbeanstalk update-environment \
+            --environment-name $FRONTEND_ENV_NAME \
+            --version-label $GITHUB_SHA
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ env.AWS_REGION }}
+
+      # Backend build & deploy
+      - name: Zip backend app
+        run: |
+          cd server
+          zip -r ../backend-app.zip .
+
+      - name: Upload & deploy backend
+        run: |
+          aws s3 cp backend-app.zip s3://$BACKEND_APP_NAME/$GITHUB_SHA.zip
+          aws elasticbeanstalk create-application-version \
+            --application-name $BACKEND_APP_NAME \
+            --version-label $GITHUB_SHA \
+            --source-bundle S3Bucket=$BACKEND_APP_NAME,S3Key=$GITHUB_SHA.zip
+          aws elasticbeanstalk update-environment \
+            --environment-name $BACKEND_ENV_NAME \
+            --version-label $GITHUB_SHA
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ env.AWS_REGION }}
