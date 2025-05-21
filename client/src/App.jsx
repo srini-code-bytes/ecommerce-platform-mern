@@ -26,6 +26,14 @@ import SearchProducts from "./pages/shopping-view/search"
 function App() {
 
   const {isAuthenticated, user, isLoading} = useSelector(state => state.auth)
+  const authorizedUser = JSON.parse(localStorage.getItem("authorized"));
+  console.log('authorizedUser : ', authorizedUser);
+  // takes from local storage; if not authenticated then takes from check auth
+  const isUserAuthenticated = authorizedUser?.isAuthenticated ? authorizedUser.isAuthenticated : isAuthenticated;
+  const isUser = authorizedUser?.user ? authorizedUser.user : user;
+  console.log('isUserAuthenticated : ', isUserAuthenticated);
+  console.log('isUser : ', isUser);
+
   const dispatch = useDispatch();
 
   useEffect(()=>{
@@ -42,12 +50,12 @@ function App() {
 
       <Routes>
         <Route path="/" element={
-          <CheckAuth isAuthenticated={isAuthenticated} user={user}>
+          <CheckAuth isAuthenticated={isUserAuthenticated} user={isUser}>
         </CheckAuth>
         }>
         </Route>
         <Route path="/auth" element={
-          <CheckAuth isAuthenticated={isAuthenticated} user={user}>
+          <CheckAuth isAuthenticated={isUserAuthenticated} user={isUser}>
             <AuthLayout />
           </CheckAuth>
         }>
@@ -57,7 +65,7 @@ function App() {
         </Route>
 
         <Route path="/admin" element={
-          <CheckAuth isAuthenticated={isAuthenticated} user={user}>
+          <CheckAuth isAuthenticated={isUserAuthenticated} user={isUser}>
           <AdminLayout  />
         </CheckAuth>
         }>
@@ -70,7 +78,7 @@ function App() {
         </Route>
 
         <Route path="/shop" element={
-          <CheckAuth isAuthenticated={isAuthenticated} user={user}>
+          <CheckAuth isAuthenticated={isUserAuthenticated} user={isUser}>
             <ShoppingLayout />
             {/* <AuthLayout /> */}
           </CheckAuth>

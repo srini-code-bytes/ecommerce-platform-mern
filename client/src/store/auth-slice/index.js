@@ -100,6 +100,13 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.user = action.payload.success ? action.payload.user : null;
         state.isAuthenticated = action.payload.success;
+        localStorage.setItem(
+          "authorized",
+          JSON.stringify({
+            isAuthenticated: action.payload.success,
+            user: action.payload.user,
+          })
+        );
       })
       .addCase(loginUser.rejected, (state) => {
         state.isLoading = false;
@@ -123,6 +130,7 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.user = null;
         state.isAuthenticated = false;
+        localStorage.removeItem("authorized");
       });
   },
 });

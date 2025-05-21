@@ -291,5 +291,9 @@ Stores additional metadata, likely related to product promotions.
 	•	src/store/ – Likely for state management.
 	•	API Calls: Uses Axios for frontend-backend communication.
 
+# Session Management
+
+
+
 
 

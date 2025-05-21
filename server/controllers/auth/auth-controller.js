@@ -76,7 +76,17 @@ const loginUser = async (req, res) => {
       { expiresIn: "60m" }
     );
 
-    res.cookie("token", token, { httpOnly: true, secure: false }).json({
+    const user = {
+      email: checkUser.email,
+      role: checkUser.role,
+      id: checkUser.id,
+      userName : checkUser.userName,
+      token: token,
+    };
+
+    // Sending user data in cookies
+
+    res.cookie("token", token , { httpOnly: true, secure: false, sameSite : "Lax", maxAge : 24*60*60*1000}).json({
       success: true,
       message: "Logged in successfully",
       user: {
@@ -86,6 +96,7 @@ const loginUser = async (req, res) => {
         userName : checkUser.userName
       },
     });
+
   } catch (e) {
     console.log(e);
     res.status(500).json({
