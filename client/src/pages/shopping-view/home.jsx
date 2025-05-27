@@ -28,6 +28,7 @@ function ShoppingHome() {
     const { user } = useSelector(state => state.auth)
 
     const { featureImageList } = useSelector((state) => state.commonFeature)
+    console.log("featureImageList ====>", featureImageList)
 
     const dispatch = useDispatch()
 
@@ -88,6 +89,10 @@ function ShoppingHome() {
         { id: "h&m", label: "H&M", icon: Heater },
     ]
 
+    useEffect(() => {
+        dispatch(getFeatureImages({ currentPage: 1, limit: 5 }))
+    }, [dispatch])
+
     // Runs every time featureImageList changes
     useEffect(() => {
         const interval = setInterval(() => {
@@ -96,6 +101,7 @@ function ShoppingHome() {
         // If we navigate to another page, we need to clear the interval
         return () => clearInterval(interval)
     }, [featureImageList])
+
 
     useEffect(() => {
         dispatch(fetchAllFilteredProducts({ filterParams: {}, sortParams: 'price-low-to-high' }))
@@ -109,15 +115,14 @@ function ShoppingHome() {
 
     }, [productDetails])
 
-    useEffect(() => {
-        dispatch(getFeatureImages())
-    }, [])
 
 
     return (
         <div className="flex flex-col min-h-screen">
-            <div className="relative w-full
-            h-[600px] overflow-hidden">
+            {/* <div className="relative w-full
+            h-[600px] overflow-hidden"> */}
+            <div className="relative w-screen
+            h-screen border-4 border-white box-border overflow-hidden">
                 {/* {slides.map((slide, index) => (
                     <img src={slide}
                         key={index}
@@ -125,9 +130,11 @@ function ShoppingHome() {
                     />
                 ))} */}
                 {featureImageList && featureImageList.length > 0 ? featureImageList.map((featureImage, index) => (
-                    <img src={featureImage?.image}
+                    <img src={featureImage?.url}
                         key={index}
-                        className={` ${index == currentSlide ? 'opacity-100' : 'opacity-0'} absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000`}
+                        className={` ${index == currentSlide ? 'opacity-100' : 'opacity-0 pointer-events-none'} absolute top-0 left-0 w-full h-auto object-cover transition-opacity duration-2000`}
+                        // className={` ${index == currentSlide ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'} ...`}
+
                     />
                 )) : null}
                 <Button variant="outline" size="icon"

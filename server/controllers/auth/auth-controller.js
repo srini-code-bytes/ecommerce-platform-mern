@@ -73,7 +73,7 @@ const loginUser = async (req, res) => {
         userName: checkUser.userName,
       },
       process.env.CLIENT_SECRET_KEY,
-      { expiresIn: "30s" }
+      { expiresIn: "30h" }
     );
 
     // Sending user data in cookies
@@ -83,7 +83,7 @@ const loginUser = async (req, res) => {
         httpOnly: true,
         secure: false,
         sameSite: "Lax",
-        maxAge: 30 * 1000,
+        maxAge: 30 * 60 * 60 * 1000,
       })
       .json({
         success: true,
