@@ -3,7 +3,6 @@ const {
   registerUser,
   loginUser,
   logoutUser,
-  middleware,
   authMiddleware,
 } = require("../../controllers/auth/auth-controller");
 

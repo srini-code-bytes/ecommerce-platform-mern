@@ -10,9 +10,10 @@ const {
   deleteProduct,
 } = require("../../controllers/admin/products-controller");
 const multer = require("multer");
+const { authMiddleware } = require("../../controllers/auth/auth-controller");
 
 // const { upload } = require("../../helpers/cloudinary");
-const upload = multer({storage : multer.memoryStorage()})
+const upload = multer({ storage: multer.memoryStorage() });
 
 const router = express.Router();
 
@@ -27,14 +28,14 @@ const router = express.Router();
 // );
 
 router.post(
-  "/upload-images",
-  // upload.array("my_files", 10), 
+  "/upload-images", authMiddleware,
+  // upload.array("my_files", 10),
   uploadImage
-)
+);
 
-router.post("/add", addProduct);
-router.put("/edit/:id", editProduct);
-router.delete("/delete/:id", deleteProduct);
-router.get("/get", fetchAllProducts);
+router.post("/add", authMiddleware, addProduct);
+router.put("/edit/:id", authMiddleware, editProduct);
+router.delete("/delete/:id", authMiddleware, deleteProduct);
+router.get("/get", authMiddleware, fetchAllProducts);
 
 module.exports = router;

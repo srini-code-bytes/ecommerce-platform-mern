@@ -56,30 +56,36 @@ mongoose
 const app = express(); // CREATE THE EXPRESS APP
 const PORT = process.env.PORT || 8080; // Backend server will run on 8080
 
-// To allow cross-origin requests
-app.use(
-  cors({
-    origin: process.env.FRONTEND_HOST_URL, 
-    methods: ["GET", "POST", "DELETE", "PUT"],
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization"
-    ],
-    credentials: true,
-  })
-);
-
-app.options("*", cors({
-  origin: process.env.FRONTEND_HOST_URL,
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
-}));
-
 //To parse the cookie that we send from frontend
 app.use(cookieParser());
 
 // To get the response from backend in standard json format
 app.use(express.json());
+
+
+// To allow cross-origin requests
+app.use(
+  cors({
+    // origin: process.env.FRONTEND_HOST_URL, 
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "DELETE", "PUT"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "Cookie"
+    ],
+    credentials: true,
+  })
+);
+
+
+
+app.options("*", cors({
+  // origin: process.env.FRONTEND_HOST_URL,
+  origin: "http://localhost:5173",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 
 app.use("/api/auth", authRouter);
 
@@ -106,6 +112,8 @@ app.use("/api/common/feature-images", commonFeatureImagesRouter)
 
 // /api/auth/registerUser -> registerUser
 // /api/auth/loginUser -> loginUser 
+
+// API designed to write things to the
 
 console.log("✅ Starting Express app on:", process.env.PORT);
 console.log("✅ MONGO_URI:", process.env.MONGO_URI ? "Present" : "Missing");

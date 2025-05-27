@@ -9,7 +9,7 @@ const registerUser = async (req, res) => {
   console.log(req);
   try {
     const checkUser = await User.findOne({ email });
-   
+
     if (checkUser) {
       return res.json({
         success: false,
@@ -40,7 +40,7 @@ const registerUser = async (req, res) => {
 //login
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
- 
+
   try {
     const checkUser = await User.findOne({ email });
     console.log("**checkUser**", checkUser);
@@ -70,33 +70,31 @@ const loginUser = async (req, res) => {
         id: checkUser.id,
         role: checkUser.role,
         email: checkUser.email,
-        userName : checkUser.userName
+        userName: checkUser.userName,
       },
-      "CLIENT_SECRET_KEY",
-      { expiresIn: "60m" }
+      process.env.CLIENT_SECRET_KEY,
+      { expiresIn: "30s" }
     );
-
-    const user = {
-      email: checkUser.email,
-      role: checkUser.role,
-      id: checkUser.id,
-      userName : checkUser.userName,
-      token: token,
-    };
 
     // Sending user data in cookies
 
-    res.cookie("token", token , { httpOnly: true, secure: false, sameSite : "Lax", maxAge : 24*60*60*1000}).json({
-      success: true,
-      message: "Logged in successfully",
-      user: {
-        email: checkUser.email,
-        role: checkUser.role,
-        id: checkUser.id,
-        userName : checkUser.userName
-      },
-    });
-
+    res
+      .cookie("token", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "Lax",
+        maxAge: 30 * 1000,
+      })
+      .json({
+        success: true,
+        message: "Logged in successfully",
+        user: {
+          email: checkUser.email,
+          role: checkUser.role,
+          id: checkUser.id,
+          userName: checkUser.userName,
+        },
+      });
   } catch (e) {
     console.log(e);
     res.status(500).json({
@@ -120,18 +118,25 @@ const logoutUser = (req, res) => {
 //like when we refresh the page
 
 const authMiddleware = async (req, res, next) => {
+  console.log("Auth middleware called");
+  console.log("Cookies: ", req.cookies);
   const token = req.cookies.token; //getting from cookies
-  if (!token)
+  console.log("Token from cookies:", token);
+  if (!token) {
+    console.log("No token found");
     return res.status(401).json({
       success: false,
       message: "Unauthorized user",
     });
+  }
 
   try {
-    const decoded = jwt.verify(token, "CLIENT_SECRET_KEY");
+    const decoded = jwt.verify(token, process.env.CLIENT_SECRET_KEY);
+    console.log("Token decoded:", decoded);
     req.user = decoded;
     next();
   } catch (error) {
+    console.log("Token verification failed:", error.message);
     res.status(401).json({
       success: false,
       message: "Unauthorised user!",

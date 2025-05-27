@@ -59,11 +59,6 @@ export const checkAuth = createAsyncThunk(
       "/auth/check-auth",
       {
         withCredentials: true,
-        headers: {
-          "Cache-Control":
-            "no-store, no-cache, must-revalidate, proxy-revalidate",
-          Expires: "0",
-        },
       }
     );
 
@@ -120,6 +115,13 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.user = action.payload.success ? action.payload.user : null;
         state.isAuthenticated = action.payload.success ? true : false;
+        localStorage.setItem(
+          "authorized",
+          JSON.stringify({
+            isAuthenticated: action.payload.success,
+            user: action.payload.user,
+          })
+        );
       })
       .addCase(checkAuth.rejected, (state) => {
         state.isLoading = false;
@@ -131,6 +133,7 @@ const authSlice = createSlice({
         state.user = null;
         state.isAuthenticated = false;
         localStorage.removeItem("authorized");
+        // window.location.href = "/auth/login";
       });
   },
 });
