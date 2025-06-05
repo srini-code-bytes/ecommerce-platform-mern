@@ -49,7 +49,7 @@ mongoose
   })
   .then(() => console.log("MongoDB is connected"))
   .catch((error) => {
-    console.error("❌ MongoDB connection failed:", error.message);
+    console.error("MongoDB connection failed:", error.message);
     process.exit(1); // So EB knows app failed to start
   });
 
@@ -66,8 +66,8 @@ app.use(express.json());
 // To allow cross-origin requests
 app.use(
   cors({
-    // origin: process.env.FRONTEND_HOST_URL, 
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_HOST_URL, 
+    // origin: "http://localhost:5173",
     methods: ["GET", "POST", "DELETE", "PUT"],
     allowedHeaders: [
       "Content-Type",
