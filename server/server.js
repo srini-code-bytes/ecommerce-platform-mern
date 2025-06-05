@@ -47,7 +47,7 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true
   })
-  .then(() => console.log("✅ MongoDB is connected"))
+  .then(() => console.log("MongoDB is connected"))
   .catch((error) => {
     console.error("❌ MongoDB connection failed:", error.message);
     process.exit(1); // So EB knows app failed to start
@@ -115,8 +115,8 @@ app.use("/api/common/feature-images", commonFeatureImagesRouter)
 
 // API designed to write things to the
 
-console.log("✅ Starting Express app on:", process.env.PORT);
-console.log("✅ MONGO_URI:", process.env.MONGO_URI ? "Present" : "Missing");
+console.log("Starting Express app on:", process.env.PORT);
+console.log("MONGO_URI:", process.env.MONGO_URI ? "Present" : "Missing");
 
 
 app.listen(PORT, () => console.log(`Server is now running on PORT : ${PORT}`));
