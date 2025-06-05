@@ -77,6 +77,8 @@ const loginUser = async (req, res) => {
     );
 
     // Sending user data in cookies
+    console.log("Token generated:", token);
+    console.log("process.env.CLIENT_SECRET_KEY", process.env.CLIENT_SECRET_KEY)
 
     res
       .cookie("token", token, {
