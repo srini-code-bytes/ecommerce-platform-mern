@@ -28,7 +28,6 @@ function DeleteConfirmationModal({ isOpen, onClose, onConfirm, isDeleting, setDe
     return (
         <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50'>
             <Draggable handle='.modal-header'>
-                {/* <div className='bg-white p-5 rounded-lg shadow-lg relative w-[20vw] h-[15vh] max-w-[90%] flex flex-col justify-center items-center'> */}
                 <div className='bg-white p-5 rounded-lg shadow-lg relative  flex flex-col justify-center items-center'>
                     <div className='modal-header w-full cursor-move text-center'>
                         <h3 className='text-lg font-bold mb-4'>Confirm deletion</h3>

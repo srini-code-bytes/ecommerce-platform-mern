@@ -16,8 +16,6 @@ function UserCartWrapper({ cartItems, setopenCartSheet }) {
 
         : 0
 
-
-
     console.log("cartItems====>", cartItems)
 
     return <SheetContent className="sm:max-w-md back bg-white">
@@ -47,7 +45,7 @@ function UserCartWrapper({ cartItems, setopenCartSheet }) {
         <Button onClick={() => {
             navigate('/shop/checkout')
             setopenCartSheet(false)
-        }} className="w-full bg-black text-white rounded-[10px] hover:bg-gray-800 hover:shadow-lg transition-all duration-200 mt-4">
+        }} className="w-full bg-black text-white rounded-[10px] hover:bg-gray-800 hover:shadow-lg transition-all duration-200 mt-4" disabled={cartItems?.length === 0}>
             Checkout
         </Button>
 

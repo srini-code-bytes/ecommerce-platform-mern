@@ -229,6 +229,7 @@ const deleteProduct = async (req, res) => {
     } else {
       return res.status(200).json({
         success: true,
+        data: deleteProduct,
         message: "Product deleted successfully",
       });
     }

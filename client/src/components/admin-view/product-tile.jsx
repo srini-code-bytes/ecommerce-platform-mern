@@ -14,7 +14,7 @@ function AdminProductTile({
       <img
         src={product?.image}
         alt={product?.title || "Product Image"}
-        className="w-full h-[700px] object-cover bg-white"
+        className="w-[440px] h-[440px] object-cover bg-white"
       />
 
       {/* Overlay on hover */}

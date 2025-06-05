@@ -186,10 +186,11 @@ export function ProductDetailsDialog({ open, setOpen, productDetails }) {
               }
 
             </div>
-
+            
+            { (!reviews || reviews.length === 0) && 
             <div className="mt-10 flex-col flex-gap-2">
               <Label>Write a review</Label>
-              <div className="flex gap-1">
+              <div className="flex gap-1 mt-2 mb-2">
                 <StarRatingComponent rating={rating} handleRatingChange={handleRatingChange} />
               </div>
               <Input name="reviewMsg" value={reviewMsg}
@@ -197,6 +198,7 @@ export function ProductDetailsDialog({ open, setOpen, productDetails }) {
                 placeholder="Write a review..." />
               <Button onClick={handleAddReview} disabled={reviewMsg.trim() === ""} className=" bg-black text-white rounded-[10px] hover:bg-gray-800 hover:shadow-lg transition-all duration-200 mt-2">Submit</Button>
             </div>
+            } 
           </div>
         </div>
       </DialogContent>

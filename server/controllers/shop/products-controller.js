@@ -7,7 +7,7 @@ const getFilteredProducts = async (req, res) => {
 
     let filters = {};
 
-    if (category.length) {
+    if (category.length && category !== "products") {
       filters.category = { $in: category.split(",") };
     }
 
@@ -16,21 +16,26 @@ const getFilteredProducts = async (req, res) => {
     }
 
     let sort = {};
+    console.log("Sort By:", sortBy);
 
     switch (sortBy) {
       case "price-lowtohigh":
+        console.log("Inside price-lowtohigh");
         sort.price = 1;
         break;
 
       case "price-hightolow":
+        console.log("Inside price-hightolow");
         sort.price = -1;
         break;
 
       case "title-atoz":
+        console.log("Inside title-atoz");
         sort.title = 1;
         break;
 
       case "title-ztoa":
+        console.log("Inside title-ztoa");
         sort.title = -1;
         break;
 
@@ -38,7 +43,11 @@ const getFilteredProducts = async (req, res) => {
         sort.price = 1;
     }
 
+    console.log("Filters:", filters);
+    console.log("Sort:", sort);
+
     const products = await Product.find(filters).sort(sort);
+    // console.log(products);
 
     res.status(200).json({
       success: true,

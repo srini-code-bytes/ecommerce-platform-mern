@@ -33,8 +33,11 @@ const initialFormData = {
 };
 
 const AdminProducts = () => {
-  const { page, hasMore, status, productList } = useSelector((state) => state.adminProducts);
-  const [openCreateProductsDialog, setOpenCreateProductsDialog] = useState(false);
+  const { page, hasMore, status, productList } = useSelector(
+    (state) => state.adminProducts
+  );
+  const [openCreateProductsDialog, setOpenCreateProductsDialog] =
+    useState(false);
   const [formData, setFormData] = useState(initialFormData);
   const [imageFile, setImageFile] = useState(null);
   // has the image : uploadedImageUrl
@@ -54,38 +57,39 @@ const AdminProducts = () => {
     console.log("getCurrentProductId===>", getCurrentProductId);
 
     try {
-      const data = await dispatch(deleteProduct(getCurrentProductId));
-      if (data?.payload?.success) {
-        console.log("without resetProducts");
-        // dispatch(resetProducts());
-        dispatch(fetchAllProducts(page));
-        showSnackbar({
-          message: "Product deleted successfully!",
-          severity: "success"
-        })
-      }
+      dispatch(deleteProduct(getCurrentProductId));
+      console.log("without resetProducts");
+      showSnackbar({
+        message: "Product deleted successfully!",
+        severity: "success",
+      });
     } catch (error) {
       console.error("Error deleting product:", error);
       showSnackbar({
         message: "Failed to delete the product.",
         severity: "error",
       });
-
     }
   }
 
   useEffect(() => {
     dispatch(fetchAllProducts(page));
-    console.log("inside useEffect pageeeee****", page)
+    console.log("inside useEffect pageeeee****", page);
   }, [page]);
 
+  useEffect(() => {
+    return () => {
+      // Reset the products state when the component unmounts
+      dispatch(resetProducts());
+    }
+  }, [dispatch]);
 
   console.log("productList ===> ", productList);
   console.log("uploadedImageUrl ===>", uploadedImageUrl);
 
   const handleLoadMore = () => {
     dispatch(incrementPage());
-  }
+  };
 
   async function onSubmit(event) {
     event.preventDefault();
@@ -94,37 +98,33 @@ const AdminProducts = () => {
       let data;
 
       if (currentEditedId !== null) {
-        data = await dispatch(editProduct({ id: currentEditedId, formData }));
-        console.log(data, "edit");
-
-
-        if (data?.payload?.success) {
-          setFormData(initialFormData);
-          setOpenCreateProductsDialog(false);
-          setCurrentEditedId(null);
-        }
+        const payload = {
+          ...formData,
+          image: uploadedImageUrl?.[0]?.url,
+        };
+        data = dispatch(
+          editProduct({ id: currentEditedId, formData: payload })
+        );
+        console.log(data, "** edit data **");
+        setFormData(initialFormData);
+        setOpenCreateProductsDialog(false);
+        setCurrentEditedId(null);
       } else {
-        data = await dispatch(
+        data = dispatch(
           addNewProduct({
             ...formData,
             image: uploadedImageUrl?.[0]?.url,
           })
         );
         console.log(data, "add");
-
-        if (data?.payload?.success) {
-          setOpenCreateProductsDialog(false);
-          setImageFile(null);
-          setFormData(initialFormData);
-          showSnackbar({
-            message: "Product added successfully!",
-            severity: "success",
-          });
-        }
+        setOpenCreateProductsDialog(false);
+        setImageFile(null);
+        setFormData(initialFormData);
+        showSnackbar({
+          message: "Product added successfully!",
+          severity: "success",
+        });
       }
-
-      dispatch(resetProducts());
-      dispatch(fetchAllProducts(page));
 
     } catch (error) {
       console.error("Product submit error:", error);
@@ -134,7 +134,6 @@ const AdminProducts = () => {
       });
     }
   }
-
 
   console.log("formData", formData);
 
@@ -152,14 +151,14 @@ const AdminProducts = () => {
       <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
         {productList && productList.length > 0
           ? productList.map((productItem) => (
-            <AdminProductTile
-              setFormData={setFormData}
-              setOpenCreateProductsDialog={setOpenCreateProductsDialog}
-              setCurrentEditedId={setCurrentEditedId}
-              product={productItem}
-              handleDelete={handleDelete}
-            />
-          ))
+              <AdminProductTile
+                setFormData={setFormData}
+                setOpenCreateProductsDialog={setOpenCreateProductsDialog}
+                setCurrentEditedId={setCurrentEditedId}
+                product={productItem}
+                handleDelete={handleDelete}
+              />
+            ))
           : null}
       </div>
       <Sheet
@@ -198,15 +197,15 @@ const AdminProducts = () => {
           </div>
         </SheetContent>
       </Sheet>
-      {
-        status === 'loading' && <div className="text-center">Loading...</div>
-      }
-      {
-        hasMore && status !== 'loading' &&
-        <button onClick={handleLoadMore} className="bg-black text-white px-4 py-2 rounded-[5px] hover:bg-gray-800 mt-4">
+      {status === "loading" && <div className="text-center">Loading...</div>}
+      {hasMore && status !== "loading" && (
+        <button
+          onClick={handleLoadMore}
+          className="bg-black text-white px-4 py-2 rounded-[5px] hover:bg-gray-800 mt-4"
+        >
           Load More
         </button>
-      }
+      )}
     </>
   );
 };

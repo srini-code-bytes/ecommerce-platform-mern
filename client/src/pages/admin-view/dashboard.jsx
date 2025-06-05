@@ -7,6 +7,12 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 function AdminDashboard() {
+  // where does this variable imageFile go?
+  // imageFile is used to store the file selected by the user for upload
+  // uploadedImageUrl is used to store the URL of the uploaded image
+  // imagePreview is used to show the preview of the image before uploading
+  // imageLoadingState is used to show the loading state while the image is being uploaded
+  
   const [imageFile, setImageFile] = useState([]);
   const [uploadedImageUrl, setUploadedImageUrl] = useState([]);
   const [imagePreview, setImagePreview] = useState([]); //For previewing the image
@@ -152,7 +158,7 @@ function AdminDashboard() {
             <img
               src={featureImgItem.url}
               alt="Feature Image"
-              className="w-full h-[300px] object-cover rounded-t-lg"
+              className="w-full h-[500px] object-cover rounded-t-lg"
             />
             <button onClick={() => setDeleteImageId(featureImgItem.public_id)}
               className="absolute top-2 right-2 bg-red-500 text-white px-1 py-1 rounded"

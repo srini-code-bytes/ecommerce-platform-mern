@@ -38,6 +38,7 @@ function ShoppingListing() {
 
   // shopProducts -- check in store
   const { productList, productDetails } = useSelector((state) => state.shopProducts);
+  console.log("productList===>", productList);
   // why?
   const { user } = useSelector(state => state.auth)
   
@@ -68,6 +69,7 @@ function ShoppingListing() {
     console.log("searchParams====>", searchParams);
     const indexOfCurrentSection =
       Object.keys(copyFilters).indexOf(getSectionId);
+    console.log("getSectionId===>", getSectionId);
 
     // if no filter is added for that category
     if (indexOfCurrentSection == -1) {
@@ -128,6 +130,7 @@ function ShoppingListing() {
 
   useEffect(() => {
     if(categorySearchParam === "products"){
+      console.log(" API CALL categorySearchParam === products");
       dispatch(fetchAllFilteredProducts({ sortParams: sort }));
     }
   }, [categorySearchParam]);
@@ -141,6 +144,7 @@ function ShoppingListing() {
 
   useEffect(() => {
     if (filters !== null && sort !== null && categorySearchParam !== "products")
+      console.log(" API CALL filters, sort ===>", filters, sort);
       dispatch(fetchAllFilteredProducts({ filterParams: filters, sortParams: sort })); //Shopping view
   }, [dispatch, sort, filters]);
 
@@ -156,7 +160,7 @@ function ShoppingListing() {
           <h2 className="text-lg font-extrabold mr-2">All Products</h2>
           <div className="flex items-center gap-3">
             <span className="text-muted-foreground">
-              {productList.length} Products
+              {productList?.length} Products
             </span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
