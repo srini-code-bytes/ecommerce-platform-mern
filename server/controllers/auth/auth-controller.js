@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../../models/User");
-
+const authService = require("../../services/auth/auth-service");
 //register
 
 const registerUser = async (req, res) => {
@@ -78,14 +78,15 @@ const loginUser = async (req, res) => {
 
     // Sending user data in cookies
     console.log("Token generated:", token);
-    console.log("process.env.CLIENT_SECRET_KEY", process.env.CLIENT_SECRET_KEY)
+    console.log("process.env.CLIENT_SECRET_KEY", process.env.CLIENT_SECRET_KEY);
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // true only in prod
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // allow cross-origin in prod
-      maxAge: 30 * 60 * 60 * 1000,
-    })
+    res
+      .cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production", // true only in prod
+        sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // allow cross-origin in prod
+        maxAge: 30 * 60 * 60 * 1000,
+      })
       .json({
         success: true,
         message: "Logged in successfully",
@@ -112,6 +113,57 @@ const logoutUser = (req, res) => {
     success: true,
     message: "Logged out successfully.",
   });
+};
+
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const result = await authService.sendOtp(email);
+    res.status(200).json({
+      success: true,
+      message: result.message,
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      success: false,
+      message: "Some error occured",
+    });
+  }
+};
+
+const verifyOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    const result = await authService.verifyOtp(email, otp);
+    res.status(200).json({
+      success: true,
+      message: result.message,
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      success: false,
+      message: "Some error occured",
+    });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    const { email, newPassword } = req.body;
+    const result = await authService.resetPassword(email, newPassword);
+    res.status(200).json({
+      success: true,
+      message: result.message,
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      success: false,
+      message: "Some error occured",
+    });
+  }
 };
 
 //auth middleware
@@ -145,4 +197,12 @@ const authMiddleware = async (req, res, next) => {
   }
 };
 
-module.exports = { registerUser, loginUser, logoutUser, authMiddleware };
+module.exports = {
+  registerUser,
+  loginUser,
+  logoutUser,
+  forgotPassword,
+  verifyOtp,
+  resetPassword,
+  authMiddleware,
+};

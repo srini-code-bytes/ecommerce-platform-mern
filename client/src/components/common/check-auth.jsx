@@ -24,7 +24,9 @@ function CheckAuth({ isAuthenticated, user, children }) {
     &&
     !(
       location.pathname.includes("/login") ||
-      location.pathname.includes("/register")
+      location.pathname.includes("/register") ||
+      location.pathname.includes("/forgot-password") ||
+      location.pathname.includes("/verify-otp")
     )
   ) {
     return <Navigate to="/auth/login" />;
@@ -32,7 +34,9 @@ function CheckAuth({ isAuthenticated, user, children }) {
 
   if (
     isAuthenticated && (location.pathname.includes("/login") ||
-      location.pathname.includes("/register"))
+      location.pathname.includes("/register") ||
+    location.pathname.includes("/forgot-password") ||
+    location.pathname.includes("/verify-otp"))
   ) {
     if (user?.role === "admin") {
       return <Navigate to="/admin/dashboard" />;

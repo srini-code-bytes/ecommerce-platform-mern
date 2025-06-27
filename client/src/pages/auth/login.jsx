@@ -33,20 +33,20 @@ export const AuthLogin = () => {
       }
     });
   }
-  return (
-    <div className="mx-auto w-full max-w-md space-y-6">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          Sign in to your account
-        </h1>
-        {/* <p className="mt-2">Already have an account</p> */}
-        <p>
-          <span className="font-medium ml-2 text-primary">
-            Don't have an account?
-          </span>
 
+  return (
+    <div className="mx-auto w-full max-w-md space-y-8 p-8 bg-white shadow-lg rounded-lg">
+      <div className="text-center space-y-4">
+        <h1 className="text-4xl font-extrabold tracking-tight text-gray-900">
+          Welcome Back!
+        </h1>
+        <p className="text-sm text-gray-600">
+          Sign in to your account to continue enjoying our services.
+        </p>
+        <p className="text-sm">
+          <span className="text-gray-600">Don't have an account?</span>
           <Link
-            className="font-medium ml-2 text-primary underline"
+            className="font-medium ml-2 text-blue-600 hover:text-blue-500 underline"
             to="/auth/register"
           >
             Sign Up
@@ -60,6 +60,22 @@ export const AuthLogin = () => {
         setFormData={setFormData}
         onSubmit={onSubmit}
       />
+      <p className="text-center text-sm text-gray-500 mt-4">
+        <Link
+          className="text-blue-600 hover:text-blue-500 underline"
+          to="/auth/forgot-password"
+        >
+          Forgot Password?
+        </Link>
+      </p>
+      <div className="text-center text-sm text-gray-500 mt-6">
+        <span
+          className="hover:text-gray-700 cursor-pointer"
+          title="Built with ❤️ by Srini"
+        >
+          Built with <span className="text-red-600">❤️</span> by Srini | E-Mart
+        </span>
+      </div>
     </div>
   );
 };

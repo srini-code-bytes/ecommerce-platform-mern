@@ -12,15 +12,14 @@ import shopSearchSlice from "./shop/search-slice"
 import shopReviewSlice from "./shop/review-slice"
 import commonFeatureSlice from "./common-slice"
 import AllUsersSlice from "./admin/user-slice"
+import forgotPasswordSlice from "./forgot-password-slice";
 
 export const store = configureStore({
-
-
   //Combine reducers into a global reducer
   reducer: {
     auth: authReducer,
     adminProducts: adminProductsSlice,
-    adminAllUsers : AllUsersSlice,
+    adminAllUsers: AllUsersSlice,
     shopProducts: shopProductsSlice,
     shopCart: shopCartSlice,
     shopAddress: shopAddressSlice,
@@ -29,8 +28,9 @@ export const store = configureStore({
     shopSearch: shopSearchSlice,
     shopReview: shopReviewSlice,
     commonFeature: commonFeatureSlice,
+    forgotPassword: forgotPasswordSlice
   },
-  devTools : process.env.NODE_ENV !== 'production'
+  devTools: process.env.NODE_ENV !== "production",
 });
 
 export default store;

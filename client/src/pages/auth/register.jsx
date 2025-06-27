@@ -24,33 +24,34 @@ export const AuthRegister = () => {
       console.log("data ===> ", data);
       if (data?.payload && data?.payload?.success) {
         showSnackbar({
-          message : data?.payload.message,
-          severity : "success"
-        })
+          message: data?.payload.message,
+          severity: "success",
+        });
         navigate("/auth/login");
       } else {
         showSnackbar({
           message: data?.payload.message,
-          severity: "error"
-        })
+          severity: "error",
+        });
       }
     });
   }
   console.log(formData);
 
   return (
-    <div className="mx-auto w-full max-w-md space-y-6">
+    <div className="mx-auto w-full max-w-md space-y-8 p-6 bg-white shadow-lg rounded-lg">
       <div className="text-center">
-        <h1 className="text-3xl tracking-tight text-foreground">
-          Create new account
+        <h1 className="text-3xl font-bold tracking-tight text-gray-800">
+          Create New Account
         </h1>
-        <p className="mt-2">Already have an account?
-        <Link
-          className="font-medium ml-2 text-primary underline"
-          to="/auth/login"
-        >
-          Login
-        </Link>
+        <p className="mt-2 text-sm text-gray-600">
+          Already have an account?{" "}
+          <Link
+            className="font-medium text-primary hover:underline"
+            to="/auth/login"
+          >
+            Login
+          </Link>
         </p>
       </div>
       <CommonForm

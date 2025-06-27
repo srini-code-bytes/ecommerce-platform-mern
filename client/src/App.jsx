@@ -22,6 +22,8 @@ import { checkAuth } from "./store/auth-slice";
 import { Skeleton } from "@/components/ui/skeleton";
 import PaymentSuccessPage from "./pages/shopping-view/payment-success";
 import SearchProducts from "./pages/shopping-view/search";
+import ForgotPassword from "./pages/auth/forgot-password";
+import VerifyOtp from "./pages/auth/verify-otp";
 
 function App() {
   const { isAuthenticated, user, isLoading } = useSelector(
@@ -71,6 +73,9 @@ function App() {
         >
           <Route path="login" element={<AuthLogin />} />
           <Route path="register" element={<AuthRegister />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="verify-otp" element={<VerifyOtp />} />
+
         </Route>
 
         <Route

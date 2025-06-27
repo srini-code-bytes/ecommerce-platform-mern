@@ -11,7 +11,8 @@ function CommonForm({
   setFormData,
   onSubmit,
   buttonText,
-  isBtnDisabled
+  isBtnDisabled,
+  hideButton = false,
 }) {
   //formData -- manage each and every value
   function renderInputsByComponentType(getControlItem) {
@@ -23,6 +24,7 @@ function CommonForm({
         element = (
           <Input
             name={getControlItem.name}
+            disabled={getControlItem.disabled}
             placeholder={getControlItem.placeholder}
             id={getControlItem.name}
             type={getControlItem.type}
@@ -74,6 +76,7 @@ function CommonForm({
             placeholder={getControlItem.placeholder}
             id={getControlItem.name}
             type={getControlItem.type}
+            disabled={getControlItem.disabled}
             value={value}
             onChange={(event) =>
               setFormData({
@@ -93,6 +96,7 @@ function CommonForm({
             placeholder={getControlItem.placeholder}
             id={getControlItem.name}
             type={getControlItem.type}
+            disabled={getControlItem.disabled}
             onChange={(event) =>
               setFormData({
                 ...formData,
@@ -116,9 +120,9 @@ function CommonForm({
           </div>
         ))}
       </div>
-      <Button disabled={isBtnDisabled} type="submit" className="mt-4 w-full bg-black text-white">
+      {!hideButton && <Button disabled={isBtnDisabled} type="submit" className="mt-4 w-full bg-black text-white">
         {buttonText || "Submit"}
-      </Button>
+      </Button>}
     </form>
   );
 }
