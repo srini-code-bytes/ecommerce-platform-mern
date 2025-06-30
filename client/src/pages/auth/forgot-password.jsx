@@ -59,7 +59,7 @@ const ForgotPassword = () => {
   }, [passwords]);
 
   // Submit email to generate OTP
-  const onSubmit = (event) => {
+  const onSubmit = async (event) => {
     event.preventDefault();
 
     if (!isValidEmail(formData.email)) {
@@ -71,7 +71,8 @@ const ForgotPassword = () => {
     }
 
     try {
-      dispatch(forgotPassword(formData));
+      await dispatch(forgotPassword(formData)).unwrap();
+      // dispatch(forgotPassword(formData));
       showSnackbar({
         message: "OTP sent to your email",
         severity: "success",

@@ -1,5 +1,5 @@
 
-const { sendEmail } = require("../../helpers/send-email");
+const sendEmail = require("../../helpers/send-email");
 const User = require("../../models/User");
 const bcrypt = require("bcryptjs");
 

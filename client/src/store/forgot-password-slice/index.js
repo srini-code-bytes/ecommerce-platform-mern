@@ -67,6 +67,7 @@ export const resetPassword = createAsyncThunk(
 const forgotPasswordSlice = createSlice({
   name: "forgot-password",
   initialState,
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(forgotPassword.pending, (state) => {

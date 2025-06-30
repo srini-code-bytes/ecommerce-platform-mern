@@ -8,6 +8,7 @@ const {
   verifyOtp,
   resetPassword,
 } = require("../../controllers/auth/auth-controller");
+const otpRateLimiter = require("../../helpers/rate-limiter");
 
 const router = express.Router();
 
@@ -15,7 +16,7 @@ const router = express.Router();
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.post("/logout", logoutUser);
-router.post("/forgot-password", forgotPassword);
+router.post("/forgot-password", otpRateLimiter, forgotPassword);
 router.post("/verify-otp", verifyOtp);
 router.post("/reset-password", resetPassword);
 
