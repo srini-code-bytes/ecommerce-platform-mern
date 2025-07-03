@@ -24,6 +24,7 @@ import PaymentSuccessPage from "./pages/shopping-view/payment-success";
 import SearchProducts from "./pages/shopping-view/search";
 import ForgotPassword from "./pages/auth/forgot-password";
 import VerifyOtp from "./pages/auth/verify-otp";
+import TawkLoader from "./components/common/tawk-loader";
 
 function App() {
   const { isAuthenticated, user, isLoading } = useSelector(
@@ -51,7 +52,7 @@ function App() {
 
   return (
     <div className="flex flex-col overflow-hidden bg-white">
-      {/* <h1>Header component</h1> */}
+      <TawkLoader />
 
       <Routes>
         <Route
@@ -75,7 +76,6 @@ function App() {
           <Route path="register" element={<AuthRegister />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
           <Route path="verify-otp" element={<VerifyOtp />} />
-
         </Route>
 
         <Route

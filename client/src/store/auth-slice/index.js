@@ -133,7 +133,12 @@ const authSlice = createSlice({
         state.user = null;
         state.isAuthenticated = false;
         localStorage.removeItem("authorized");
-        // window.location.href = "/auth/login";
+        // const existingScript = document.querySelector(
+        //   `script[src="https://embed.tawk.to/6863f473260e9d190d99d9b6/1iv375oqp"]`
+        // );
+        // if (existingScript) {
+        //   existingScript.remove();
+        // }
       });
   },
 });
