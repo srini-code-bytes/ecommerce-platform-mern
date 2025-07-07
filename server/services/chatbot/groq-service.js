@@ -21,12 +21,11 @@ const getGroqReply = async (userMessage) => {
     const response = await axios.post(
       "https://api.groq.com/openai/v1/chat/completions",
       {
-        model: "mixtral-8x7b-32768",
+        model: "mixtral-8x7b",
         messages: [
-          { role: "system", content: "You are a helpful AI support assistant." },
-          { role: "user", content: userMessage },
+          { role: "system", content: "You are a helpful assistant." },
+          { role: "user", content: message },
         ],
-        temperature: 0.7,
       },
       {
         headers: {
@@ -35,8 +34,6 @@ const getGroqReply = async (userMessage) => {
         },
       }
     );
-
-
 
     return response.data.choices[0].message.content;
   } catch (error) {
