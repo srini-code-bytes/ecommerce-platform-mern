@@ -16,7 +16,7 @@ const getGroqReply = async (userMessage) => {
       },
       {
         headers: {
-          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+          Authorization: `Bearer ${process.env.GROQ_MERN_API_KEY}`,
           "Content-Type": "application/json",
         },
       }
