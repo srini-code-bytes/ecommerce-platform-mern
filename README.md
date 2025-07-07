@@ -227,5 +227,10 @@ Located in the `server/` folder, the backend is built with Node.js and Express.j
 
 ---
 
+To check Backend API logs:
+https://dashboard.render.com/web/srv-d0jknhruibrs738q4umg/logs
+
+
+
 
 

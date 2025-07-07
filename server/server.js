@@ -112,7 +112,6 @@ app.use("/api/shop/review", shopReviewRouter);
 
 app.use("/api/common/feature-images", commonFeatureImagesRouter)
 // Chatbot routes
-// app.use("/api/chatbot", chatbotRoutes);
 app.use("/api/chatbot", chatbotRoutes); // Updated to use the new tawk-routes.js
 
 
