@@ -3,6 +3,9 @@ import { useSelector } from "react-redux";
 
 const TawkLoader = () => {
   const { user } = useSelector((state) => state.auth);
+  console.log("Current user from Redux store: ", user);
+  const { cartItems } = useSelector(state => state.shopCart)
+  console.log("Current cart items from Redux store: ", cartItems);
 
   const authorizedUser = JSON.parse(localStorage.getItem("authorized"));
   console.log("authorizedUser from TAWK : ", authorizedUser);
@@ -44,6 +47,8 @@ const TawkLoader = () => {
             {
               name: user?.name || "Guest",
               email: user?.email || "guest@example.com",
+              cartItems: cartItems?.items?.length || 0,
+              currentPage : window.location.pathname
             },
             function (error) {
               if (error) console.error("Tawk.to error:", error);
