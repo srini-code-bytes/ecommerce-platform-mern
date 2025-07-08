@@ -37,7 +37,7 @@ const getGroqReply = async (userMessage) => {
 
     return response.data.choices[0].message.content;
   } catch (error) {
-    console.error("GroqService Error:", error.response?.data || error.message);
+    console.error("GroqService Error:", error.response?.data || error);
     throw new Error("Groq API failed");
   }
 };
