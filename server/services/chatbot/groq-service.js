@@ -24,7 +24,7 @@ const getGroqReply = async (userMessage) => {
         model: "mixtral-8x7b",
         messages: [
           { role: "system", content: "You are a helpful assistant." },
-          { role: "user", content: message },
+          { role: "user", content: userMessage },
         ],
       },
       {
@@ -34,6 +34,7 @@ const getGroqReply = async (userMessage) => {
         },
       }
     );
+    console.log("Received response from Groq:", response);
 
     return response.data.choices[0].message.content;
   } catch (error) {
