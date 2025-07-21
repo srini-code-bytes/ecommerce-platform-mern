@@ -16,7 +16,7 @@ const authRouter = require("./routes/auth/auth-routes");
 const { registerUser } = require("./controllers/auth/auth-controller");
 
 // const chatbotRoutes = require("./routes/chatbot/chatbot-routes");
-const chatbotRoutes = require("./routes/chatbot/tawk-routes"); // Updated to use the new tawk-routes.js
+const chatbotRoutes = require("./routes/chatbot/chatbot"); // Updated to use the new tawk-routes.js
 
 const adminProductsRouter = require("./routes/admin/products-routes");
 
@@ -111,8 +111,8 @@ app.use("/api/shop/search", shopSearchRouter);
 app.use("/api/shop/review", shopReviewRouter);
 
 app.use("/api/common/feature-images", commonFeatureImagesRouter)
-// Chatbot routes
-app.use("/api/chatbot", chatbotRoutes); // Updated to use the new tawk-routes.js
+
+app.use("/api/chatbot", chatbotRoutes); 
 
 
 // /api/auth/registerUser -> registerUser
