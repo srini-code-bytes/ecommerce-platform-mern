@@ -2,14 +2,14 @@ import axiosInstance from "@/api/axiosInstance";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  isLoading: false,
-  reply: "",
-  error: null,
-  usage: {
-    prompt: 0,
-    completion: 0,
-    total: 0,
-  },
+    isLoading: false,
+    reply: "",
+    error: null,
+    usage: {
+        prompt: 0,
+        completion: 0,
+        total: 0,
+    },
 };
 
 const getGrokReply = createAsyncThunk(

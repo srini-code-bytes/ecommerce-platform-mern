@@ -10,8 +10,10 @@ const getGroqReply = async (userMessage) => {
       throw new Error("Invalid user message.");
     }
 
+    // Make the API request to Groq
     const response = await axios.post(
       "https://api.groq.com/openai/v1/chat/completions",
+      // Request body for Groq API
       {
         model: "llama3-8b-8192",
         messages: [
@@ -21,6 +23,7 @@ const getGroqReply = async (userMessage) => {
         max_tokens: 100,
         temperature: 0.7,
       },
+      // Headers for the request
       {
         headers: {
           Authorization: `Bearer ${process.env.GROQ_MERN_API_KEY}`,

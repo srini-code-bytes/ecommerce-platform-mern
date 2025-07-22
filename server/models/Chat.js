@@ -19,7 +19,7 @@ const MessageSchema = new mongoose.Schema(
   { _id: false } // Disable _id for messages to keep it simple
 );
 
-const ChatSchema = new mongoose.Schema(
+const ChatSchema = new mongoose.Schema( // Chat schema to store chat sessions
   {
     sessionId: {
       type: String,

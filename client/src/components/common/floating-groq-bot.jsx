@@ -7,24 +7,26 @@ const FloatingGroqBot = () => {
   const [messages, setMessages] = useState([]);
   const [chatInput, setChatInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const chatEndRef = useRef(null);
+  const chatEndRef = useRef(null); // Reference to scroll to the bottom of the chat
   const dispatch = useDispatch();
-  const sessionId = "12345";
-  const { user } = useSelector(state => state.auth)
+  const sessionId = "12345"; // Would be fetched from local storage later
+  const { user } = useSelector((state) => state.auth);
+  console.log("User data: ", user)
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    sendMessage(); // Needs to be implemented
+    e.preventDefault(); // Prevent default form submission behavior
+    sendMessage();
   };
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]); // messages is your message list
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" }); // Scroll to the bottom when messages change
+  }, [messages]);
 
   const sendMessage = async () => {
     if (!chatInput.trim()) return; // To avoid sending empty messages
 
     const userMessage = {
+      // Create user message object
       sender: "user",
       text: chatInput,
     };
@@ -33,29 +35,41 @@ const FloatingGroqBot = () => {
     setChatInput("");
     setLoading(true);
 
+    // // Adds a fake typing message from the chatbot
+    // setMessages((prev) => [
+    //   ...prev,
+    //   { sender: "chatbot", text: "Groq is typing...", typing: true },
+    // ]);
+
     try {
       const payload = {
-        sessionId : sessionId,
+        // Prepare payload for Groq API
+        sessionId: sessionId,
         userId: user?.id || "Guest",
-        userMessage : chatInput.trim()
-      }
-      const response = dispatch(
-        getGrokReply(payload) // Assuming getGrokReply is an async thunk action
-      );
+        userMessage: chatInput.trim(),
+      };
+
+      const response = await dispatch(getGrokReply(payload)).unwrap();
 
       console.log(" Response from Groq:", response);
 
-      const chatbotMessage = {
-        sender: "chatbot",
-        text: response.payload.reply || "No reply from Groq API",
-        tokens: response.payload.usage?.total || 0, // Assuming usage is part of the response
-      };
+      // Removes the fake message once API response is received
+      // setMessages((prev) => prev.filter((msg) => !msg.typing));
 
-      setMessages((prevMessages) => [...prevMessages, chatbotMessage]); // Add chatbot reply to chat
-      console.log("Chatbot reply:", response.payload.reply);
-      console.log("Tokens used:", response.payload.usage?.total || 0);
+      // const chatbotMessage = {
+      //   sender: "chatbot",
+      //   text: response.payload.reply || "No reply from Groq API",
+      //   tokens: response.payload.usage?.total || 0, // Assuming usage is part of the response
+      //   timestamp: response.payload.timestamp
+      // };
+
+      // setMessages((prevMessages) => [...prevMessages, chatbotMessage]); // Add chatbot reply to chat
+      setMessages(response.messages);
+      // console.log("Tokens used:", response.payload.usage?.total || 0);
     } catch (e) {
       console.error("Error chatting with Groq:", e);
+
+      setMessages((prev) => prev.filter((msg)=> !msg.typing));
       setMessages((prevMessages) => [
         ...prevMessages,
         {
@@ -107,7 +121,17 @@ const FloatingGroqBot = () => {
                     ? "bg-blue-100 text-blue-800 self-end"
                     : "bg-gray-100 text-gray-800 self-start"
                 }`}
-              >
+              > 
+              {msg.sender === "chatbot" && (
+                <div className="text-xl text-gray-500 mb-1">
+                  🤖
+                </div>
+              )}
+              {msg.sender === "user" && (
+                <div className="text-xl text-blue-500 mb-1">
+                  👤 
+                </div>
+              )}
                 {msg.text}
                 {msg.tokens && (
                   <div className="text-xs text-gray-500 mt-1">

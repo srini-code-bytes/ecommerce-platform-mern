@@ -1,6 +1,9 @@
 const express = require("express");
 const { getGroqReply } = require("../../services/chatbot/groq-service");
-const { handleMessage, getChatSession } = require("../../controllers/chatbot/chatbot-controller");
+const {
+  handleMessage,
+  getChatSession,
+} = require("../../controllers/chatbot/chatbot-controller");
 const router = express.Router();
 
 // Route to handle frontend Groq requests
@@ -21,7 +24,5 @@ router.post("/groq", async (req, res) => {
 
 router.post("/chat/handleGroqReply", handleMessage);
 router.get("/chat/:sessionId", getChatSession);
-
-
 
 module.exports = router;
