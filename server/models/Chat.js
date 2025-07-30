@@ -11,6 +11,11 @@ const MessageSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    tokens: {
+      prompt: { type: Number, default: 0 },
+      completion: { type: Number, default: 0 },
+      total: { type: Number, default: 0 },
+    },
     timestamp: {
       type: Date,
       default: Date.now,
@@ -24,7 +29,7 @@ const ChatSchema = new mongoose.Schema( // Chat schema to store chat sessions
     sessionId: {
       type: String,
       required: true,
-      index: true
+      index: true,
     },
     userId: {
       type: String,

@@ -20,6 +20,7 @@ const getGroqReply = async (userMessage) => {
           { role: "system", content: "You are a helpful assistant." },
           { role: "user", content: userMessage },
         ],
+        stream: false,
         max_tokens: 100,
         temperature: 0.7,
       },
@@ -32,17 +33,17 @@ const getGroqReply = async (userMessage) => {
       }
     );
 
-    return response.data.choices[0].message.content || "No reply from Groq API";
-    // const usage = response.data.usage; // Usage data for tokens
+    const reply = response.data.choices[0].message.content || "No reply from Groq API";
+    const usage = response.data.usage || {}; // Usage data for tokens
 
-    // return {
-    //   reply,
-    //   // tokens: {
-    //   //   prompt: usage?.prompt_tokens || 0,
-    //   //   completion: usage?.completion_tokens || 0,
-    //   //   total: usage?.total_tokens || 0,
-    //   // },
-    // };
+    return {
+      reply,
+      tokens: {
+        prompt: usage?.prompt_tokens || 0,
+        completion: usage?.completion_tokens || 0,
+        total: usage?.total_tokens || 0,
+      },
+    };
   } catch (error) {
     console.error("GroqService Error:", error.response?.data || error);
     throw new Error("Groq API failed");

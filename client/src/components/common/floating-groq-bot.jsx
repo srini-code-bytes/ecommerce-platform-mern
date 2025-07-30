@@ -1,6 +1,7 @@
-import { getGrokReply } from "@/store/chatbot-slice";
+import { getChatSession, getGrokReply } from "@/store/chatbot-slice";
 import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { v4 as uuidv4 } from "uuid";
 
 const FloatingGroqBot = () => {
   const [open, setOpen] = useState(false);
@@ -9,18 +10,71 @@ const FloatingGroqBot = () => {
   const [loading, setLoading] = useState(false);
   const chatEndRef = useRef(null); // Reference to scroll to the bottom of the chat
   const dispatch = useDispatch();
-  const sessionId = "12345"; // Would be fetched from local storage later
+  const [sessionId, setSesssionId] = useState("");
   const { user } = useSelector((state) => state.auth);
-  console.log("User data: ", user)
+  console.log("User data: ", user);
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent default form submission behavior
     sendMessage();
   };
 
+  const formatTime = (isoTime) => {
+    return new Date(isoTime).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  // Function to simulate typing effect for chatbot replies at 50 ms
+  const typeReply = (fullText, onUpdate, onComplete, speed = 50) => {
+    let index = 0;
+    const interval = setInterval(() => {
+      if (index <= fullText.length) {
+        onUpdate(fullText.slice(0, index));
+        index++;
+      } else {
+        clearInterval(interval); // Stop the timer once we have revealed the whole response
+        if (onComplete) {
+          onComplete();
+        }
+      }
+    }, speed); // 20 ms per character
+  };
+
+  useEffect(() => {
+    const initSession = async () => {
+      let existingSessionId = JSON.parse(localStorage.getItem("chatSessionId"));
+      console.log("existingSessionId", existingSessionId);
+
+      if (!existingSessionId) {
+        existingSessionId = uuidv4();
+        localStorage.setItem(
+          "chatSessionId",
+          JSON.stringify(existingSessionId)
+        );
+      }
+
+      try {
+        if (existingSessionId) {
+          const data = await dispatch(
+            getChatSession(existingSessionId)
+          ).unwrap();
+          console.log("Chat data: ", data);
+          setMessages(data.messages || []);
+        }
+      } catch (e) {
+        console.error("Error fetching the chat session:", e);
+        throw new Error("Failed to fetch chat session");
+      }
+      setSesssionId(existingSessionId);
+    };
+    initSession();
+  }, []);
+
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" }); // Scroll to the bottom when messages change
-  }, [messages]);
+  }, [messages, open]);
 
   const sendMessage = async () => {
     if (!chatInput.trim()) return; // To avoid sending empty messages
@@ -32,14 +86,15 @@ const FloatingGroqBot = () => {
     };
 
     setMessages((prevMessages) => [...prevMessages, userMessage]); // Add user message to chat
-    setChatInput("");
-    setLoading(true);
 
-    // // Adds a fake typing message from the chatbot
-    // setMessages((prev) => [
-    //   ...prev,
-    //   { sender: "chatbot", text: "Groq is typing...", typing: true },
-    // ]);
+    // Show Grow is typing...
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { sender: "chatbot", text: "Groq is typing...", typing: true },
+    ]);
+
+    setChatInput("");
+    setLoading(true); // Set loading state to true always prior to API call
 
     try {
       const payload = {
@@ -52,24 +107,36 @@ const FloatingGroqBot = () => {
       const response = await dispatch(getGrokReply(payload)).unwrap();
 
       console.log(" Response from Groq:", response);
+      console.log("Tokens used:", response?.payload?.usage?.total)
 
-      // Removes the fake message once API response is received
-      // setMessages((prev) => prev.filter((msg) => !msg.typing));
+      const chatbotReply = response?.messages?.[
+        response?.messages?.length - 1
+      ] || { text: "Sorry, I couldn't process your message at the moment." };
 
-      // const chatbotMessage = {
-      //   sender: "chatbot",
-      //   text: response.payload.reply || "No reply from Groq API",
-      //   tokens: response.payload.usage?.total || 0, // Assuming usage is part of the response
-      //   timestamp: response.payload.timestamp
-      // };
+      if (chatbotReply) {
+        let chunkText = "";
+        typeReply(chatbotReply.text, (chunk) => {
+          chunkText = chunk;
+          setMessages((prev) => {
+            const updated = [...prev]; 
+            const lastIndex = updated.length - 1; 
 
-      // setMessages((prevMessages) => [...prevMessages, chatbotMessage]); // Add chatbot reply to chat
-      setMessages(response.messages);
+            if (updated[lastIndex]?.sender === "chatbot") {
+              updated[lastIndex].text = chunkText; 
+            } else {
+              updated.push({
+                sender: "chatbot",
+                text: chunkText,
+              });
+            }
+            return updated;
+          });
+        });
+      }
       // console.log("Tokens used:", response.payload.usage?.total || 0);
     } catch (e) {
       console.error("Error chatting with Groq:", e);
-
-      setMessages((prev) => prev.filter((msg)=> !msg.typing));
+      setMessages((prev) => prev.filter((msg) => !msg.typing));
       setMessages((prevMessages) => [
         ...prevMessages,
         {
@@ -87,7 +154,9 @@ const FloatingGroqBot = () => {
     <>
       {/* Toggle button */}
       <div
-        onClick={() => setOpen(!open)}
+        onClick={() => {
+          setOpen(!open);
+        }}
         className="fixed bottom-4 right-4 bg-red-800 text-white p-3 rounded-full shadow-lg cursor-pointer hover:bg-blue-700 transition-colors z-[1000]"
       >
         💬
@@ -116,26 +185,23 @@ const FloatingGroqBot = () => {
             {messages.map((msg, index) => (
               <div
                 key={index}
-                className={`p-2 rounded-lg ${
+                className={`relative px-4 py-2 rounded-2xl text-sm shadow-md max-w-[95%] whitespace-pre-wrap break-words ${
                   msg.sender === "user"
-                    ? "bg-blue-100 text-blue-800 self-end"
-                    : "bg-gray-100 text-gray-800 self-start"
+                    ? "bg-green-100 text-black self-end"
+                    : "bg-white text-black self-start border border-gray-200"
                 }`}
-              > 
-              {msg.sender === "chatbot" && (
-                <div className="text-xl text-gray-500 mb-1">
-                  🤖
-                </div>
-              )}
-              {msg.sender === "user" && (
-                <div className="text-xl text-blue-500 mb-1">
-                  👤 
-                </div>
-              )}
-                {msg.text}
+              >
+                {msg.sender === "chatbot" && <div className="text-xl">🤖</div>}
+                {msg.sender === "user" && <div className="text-xl">👤</div>}
+                <div className="p-2">{msg.text}</div>
                 {msg.tokens && (
                   <div className="text-xs text-gray-500 mt-1">
                     Tokens: {msg.tokens}
+                  </div>
+                )}
+                {msg.timestamp && (
+                  <div className="absolute bottom-1 right-2 text-[10px] text-gray-500">
+                    {formatTime(msg.timestamp)}
                   </div>
                 )}
               </div>

@@ -15,7 +15,7 @@ const handleMessage = async (req, res) => {
 
     const newMessages = [
       { sender: "user", text: userMessage, timestamp: new Date() },
-      { sender: "chatbot", text: groqResponse, timestamp: new Date() },
+      { sender: "chatbot", text: groqResponse.reply, tokens: groqResponse.tokens, timestamp: new Date() },
     ]; // Save the chat session with the new messages
 
     let chat = await Chat.findOne({ sessionId }); // Find existing chat session by sessionId

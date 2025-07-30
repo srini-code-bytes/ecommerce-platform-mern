@@ -1,4 +1,4 @@
-// MAIN ENTRY POINT 
+// MAIN ENTRY POINT
 // To connect to the database
 
 const dotenv = require("dotenv"); // To use the environment variables from .env file
@@ -20,23 +20,23 @@ const chatbotRoutes = require("./routes/chatbot/chatbot"); // Updated to use the
 
 const adminProductsRouter = require("./routes/admin/products-routes");
 
-const shopProductsRouter = require('./routes/shop/products-routes')
+const shopProductsRouter = require("./routes/shop/products-routes");
 
-const shopCartRouter = require('./routes/shop/cart-routes')
+const shopCartRouter = require("./routes/shop/cart-routes");
 
-const shopAddressRouter = require('./routes/shop/address-routes')
+const shopAddressRouter = require("./routes/shop/address-routes");
 
-const shopOrderRouter = require('./routes/shop/order-routes')
+const shopOrderRouter = require("./routes/shop/order-routes");
 
-const adminOrderRouter = require('./routes/admin/order-routes')
+const adminOrderRouter = require("./routes/admin/order-routes");
 
-const adminUsersRouter = require("./routes/admin/user-routes")
+const adminUsersRouter = require("./routes/admin/user-routes");
 
-const shopSearchRouter = require('./routes/shop/search-routes')
+const shopSearchRouter = require("./routes/shop/search-routes");
 
-const shopReviewRouter = require('./routes/shop/review-routes')
+const shopReviewRouter = require("./routes/shop/review-routes");
 
-const commonFeatureImagesRouter = require('./routes/common/feature-routes')
+const commonFeatureImagesRouter = require("./routes/common/feature-routes");
 
 dotenv.config(); // To use the environment variables from .env file
 
@@ -48,7 +48,7 @@ dotenv.config(); // To use the environment variables from .env file
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
   })
   .then(() => console.log("MongoDB is connected"))
   .catch((error) => {
@@ -65,30 +65,26 @@ app.use(cookieParser());
 // To get the response from backend in standard json format
 app.use(express.json());
 
-
 // To allow cross-origin requests
 app.use(
   cors({
-    origin: process.env.FRONTEND_HOST_URL, 
+    origin: process.env.FRONTEND_HOST_URL,
     // origin: "http://localhost:5173",
     methods: ["GET", "POST", "DELETE", "PUT"],
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "Cookie"
-    ],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
     credentials: true,
   })
 );
 
-
-
-app.options("*", cors({
-  // origin: process.env.FRONTEND_HOST_URL,
-  origin: "http://localhost:5173",
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
-}));
+app.options(
+  "*",
+  cors({
+    // origin: process.env.FRONTEND_HOST_URL,
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
 app.use("/api/auth", authRouter);
 
@@ -110,21 +106,16 @@ app.use("/api/shop/search", shopSearchRouter);
 
 app.use("/api/shop/review", shopReviewRouter);
 
-app.use("/api/common/feature-images", commonFeatureImagesRouter)
+app.use("/api/common/feature-images", commonFeatureImagesRouter);
 
-app.use("/api/chatbot", chatbotRoutes); 
-
+app.use("/api/chatbot", chatbotRoutes);
 
 // /api/auth/registerUser -> registerUser
-// /api/auth/loginUser -> loginUser 
+// /api/auth/loginUser -> loginUser
 
 // API designed to write things to the
 
 console.log("Starting Express app on:", process.env.PORT);
 console.log("MONGO_URI:", process.env.MONGO_URI ? "Present" : "Missing");
 
-
 app.listen(PORT, () => console.log(`Server is now running on PORT : ${PORT}`));
-
-
-
