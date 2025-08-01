@@ -6,9 +6,9 @@ const initialState = {
   reply: "",
   error: null,
   usage: {
-    prompt: 0,
-    completion: 0,
-    total: 0,
+    prompt: 0, //  Tokens used in the input sent to the model
+    completion: 0, // Tokens generated in the response
+    total: 0, // Sum of `prompt` + `completion` 
   },
 };
 

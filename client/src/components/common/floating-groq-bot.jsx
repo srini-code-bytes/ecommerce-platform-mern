@@ -107,7 +107,6 @@ const FloatingGroqBot = () => {
       const response = await dispatch(getGrokReply(payload)).unwrap();
 
       console.log(" Response from Groq:", response);
-      console.log("Tokens used:", response?.payload?.usage?.total)
 
       const chatbotReply = response?.messages?.[
         response?.messages?.length - 1
@@ -118,22 +117,26 @@ const FloatingGroqBot = () => {
         typeReply(chatbotReply.text, (chunk) => {
           chunkText = chunk;
           setMessages((prev) => {
-            const updated = [...prev]; 
-            const lastIndex = updated.length - 1; 
+            const updated = [...prev];
+            const lastIndex = updated.length - 1;
 
             if (updated[lastIndex]?.sender === "chatbot") {
-              updated[lastIndex].text = chunkText; 
+              updated[lastIndex].text = chunkText;
+              updated[lastIndex].tokens = response?.messages[lastIndex]?.tokens;
+              updated[lastIndex].timestamp =
+                response?.messages[lastIndex]?.timestamp;
             } else {
               updated.push({
                 sender: "chatbot",
                 text: chunkText,
+                tokens: response?.messages[(messages, length - 1)]?.tokens,
+                timestamp: response?.messages[messages.length - 1]?.timestamp,
               });
             }
             return updated;
           });
         });
       }
-      // console.log("Tokens used:", response.payload.usage?.total || 0);
     } catch (e) {
       console.error("Error chatting with Groq:", e);
       setMessages((prev) => prev.filter((msg) => !msg.typing));
@@ -164,8 +167,8 @@ const FloatingGroqBot = () => {
 
       {/* Chat window */}
       {open && (
-        <div className="fixed bottom-16 right-4 w-96 bg-white shadow-lg rounded-lg border border-gray-200 z-[1000]">
-          <div className="p-4 border-b border-gray-200 bg-gray-50 rounded-t-lg relative">
+        <div className="fixed bottom-16 h-[600px] right-4 bg-white shadow-xl rounded-2xl border border-gray-200 z-[1000]">
+          <div className="p-4 border-b border-gray-200 bg-gray-50 rounded-t-2xl relative">
             <h3 className="text-lg font-semibold text-gray-800">
               Groq Assistant
             </h3>
@@ -181,36 +184,45 @@ const FloatingGroqBot = () => {
           </div>
 
           {/* Chat messages area */}
-          <div className="p-4 h-64 overflow-y-auto space-y-4">
+          <div className="p-4 overflow-y-auto space-y-4 h-[500px]">
             {messages.map((msg, index) => (
+              // <div
+              //   key={index}
+              //   className={`relative px-4 py-2 rounded-2xl text-sm shadow-md max-w-[95%] whitespace-pre-wrap break-words ${
+              //     msg.sender === "user"
+              //       ? "bg-green-100 text-black self-end"
+              //       : "bg-white text-black self-start border border-gray-200"
+              //   }`}
+              // >
               <div
                 key={index}
-                className={`relative px-4 py-2 rounded-2xl text-sm shadow-md max-w-[95%] whitespace-pre-wrap break-words ${
+                className={`p-2 rounded-2xl shadow-sm max-w-xs sm:max-w-md text-sm 
+                ${
                   msg.sender === "user"
-                    ? "bg-green-100 text-black self-end"
-                    : "bg-white text-black self-start border border-gray-200"
+                    ? "bg-blue-100 text-blue-900 self-end"
+                    : "bg-gray-100 text-gray-800 self-start"
                 }`}
               >
-                {msg.sender === "chatbot" && <div className="text-xl">🤖</div>}
-                {msg.sender === "user" && <div className="text-xl">👤</div>}
-                <div className="p-2">{msg.text}</div>
-                {msg.tokens && (
-                  <div className="text-xs text-gray-500 mt-1">
-                    Tokens: {msg.tokens}
-                  </div>
+                {msg.sender === "chatbot" && (
+                  <div className="text-base font-mono">🤖 {msg.text}</div>
                 )}
-                {msg.timestamp && (
-                  <div className="absolute bottom-1 right-2 text-[10px] text-gray-500">
-                    {formatTime(msg.timestamp)}
-                  </div>
+                {msg.sender === "user" && (
+                  <div className="text-base font-mono">🧑 {msg.text}</div>
                 )}
+                {/* <div className="p-2">{msg.text}</div> */}
+                <div className="text-xs text-gray-400 mt-1 text-right">
+                  {msg.timestamp && <div>{formatTime(msg.timestamp)}</div>}
+                  {msg.sender === "chatbot" && msg.tokens && (
+                    <div>🧠 Tokens: {msg.tokens.total}</div>
+                  )}
+                </div>
               </div>
             ))}
             {/* Scroll to bottom */}
             <div ref={chatEndRef} />
           </div>
 
-          <form onSubmit={handleSubmit} className="p-2 flex gap-2 border-t">
+          <form onSubmit={handleSubmit} className="p-2 flex gap-2 border-t bottom-0 w-[100%] absolute bg-white">
             <input
               type="text"
               className="flex-1 border rounded p-1 text-sm"
@@ -220,10 +232,16 @@ const FloatingGroqBot = () => {
             />
             <button
               type="submit"
-              className="bg-blue-600 text-white px-3 py-1 rounded text-sm"
               disabled={loading}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition 
+              ${
+                loading
+                  ? "bg-blue-400 cursor-not-allowed opacity-70"
+                  : "bg-blue-600 hover:bg-blue-700 active:scale-95 cursor-pointer"
+              } 
+              text-white`}
             >
-              {loading ? "..." : "Send"}
+              {loading ? "Sending..." : "Send"}
             </button>
           </form>
         </div>
