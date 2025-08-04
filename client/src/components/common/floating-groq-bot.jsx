@@ -2,9 +2,12 @@ import { getChatSession, getGrokReply } from "@/store/chatbot-slice";
 import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
+import MinimizedBot from "./minimized-bot";
+import MaximizedBot from "./maximized-bot";
 
 const FloatingGroqBot = () => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false); // State to control the visibility of the chatbot
+  const [fullScreen, setFullScreen] = useState(false); // State to toggle full screen mode
   const [messages, setMessages] = useState([]);
   const [chatInput, setChatInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,7 +30,7 @@ const FloatingGroqBot = () => {
   };
 
   // Function to simulate typing effect for chatbot replies at 50 ms
-  const typeReply = (fullText, onUpdate, onComplete, speed = 50) => {
+  const typeReply = (fullText, onUpdate, onComplete, speed = 20) => {
     let index = 0;
     const interval = setInterval(() => {
       if (index <= fullText.length) {
@@ -155,99 +158,24 @@ const FloatingGroqBot = () => {
 
   return (
     <>
-      {/* Toggle button */}
-      <div
-        onClick={() => {
-          setOpen(!open);
-        }}
-        className="fixed bottom-4 right-4 bg-red-800 text-white p-3 rounded-full shadow-lg cursor-pointer hover:bg-blue-700 transition-colors z-[1000]"
-      >
-        💬
-      </div>
-
-      {/* Chat window */}
+      {!open && <MinimizedBot onOpen={() => setOpen(true)} />}
       {open && (
-        <div className="fixed bottom-16 h-[600px] right-4 bg-white shadow-xl rounded-2xl border border-gray-200 z-[1000]">
-          <div className="p-4 border-b border-gray-200 bg-gray-50 rounded-t-2xl relative">
-            <h3 className="text-lg font-semibold text-gray-800">
-              Groq Assistant
-            </h3>
-            <button
-              onClick={() => {
-                console.log("Close button clicked:");
-                setOpen(false);
-              }}
-              className="absolute top-2 right-2 text-black px-2 py-1 rounded z-[1000]"
-            >
-              X
-            </button>
-          </div>
-
-          {/* Chat messages area */}
-          <div className="p-4 overflow-y-auto space-y-4 h-[500px]">
-            {messages.map((msg, index) => (
-              // <div
-              //   key={index}
-              //   className={`relative px-4 py-2 rounded-2xl text-sm shadow-md max-w-[95%] whitespace-pre-wrap break-words ${
-              //     msg.sender === "user"
-              //       ? "bg-green-100 text-black self-end"
-              //       : "bg-white text-black self-start border border-gray-200"
-              //   }`}
-              // >
-              <div
-                key={index}
-                className={`p-2 rounded-2xl shadow-sm max-w-xs sm:max-w-md text-sm 
-                ${
-                  msg.sender === "user"
-                    ? "bg-blue-100 text-blue-900 self-end"
-                    : "bg-gray-100 text-gray-800 self-start"
-                }`}
-              >
-                {msg.sender === "chatbot" && (
-                  <div className="text-base font-mono">🤖 {msg.text}</div>
-                )}
-                {msg.sender === "user" && (
-                  <div className="text-base font-mono">🧑 {msg.text}</div>
-                )}
-                {/* <div className="p-2">{msg.text}</div> */}
-                <div className="text-xs text-gray-400 mt-1 text-right">
-                  {msg.timestamp && <div>{formatTime(msg.timestamp)}</div>}
-                  {msg.sender === "chatbot" && msg.tokens && (
-                    <div>🧠 Tokens: {msg.tokens.total}</div>
-                  )}
-                </div>
-              </div>
-            ))}
-            {/* Scroll to bottom */}
-            <div ref={chatEndRef} />
-          </div>
-
-          <form onSubmit={handleSubmit} className="p-2 flex gap-2 border-t bottom-0 w-[100%] absolute bg-white">
-            <input
-              type="text"
-              className="flex-1 border rounded p-1 text-sm"
-              placeholder="Ask something..."
-              value={chatInput}
-              onChange={(e) => setChatInput(e.target.value)}
-            />
-            <button
-              type="submit"
-              disabled={loading}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition 
-              ${
-                loading
-                  ? "bg-blue-400 cursor-not-allowed opacity-70"
-                  : "bg-blue-600 hover:bg-blue-700 active:scale-95 cursor-pointer"
-              } 
-              text-white`}
-            >
-              {loading ? "Sending..." : "Send"}
-            </button>
-          </form>
-        </div>
+        <MaximizedBot
+          fullScreen={fullScreen}
+          setFullScreen={setFullScreen}
+          messages={messages}
+          chatInput={chatInput}
+          setChatInput={setChatInput}
+          handleSubmit={handleSubmit}
+          loading={loading}
+          formatTime={formatTime}
+          chatEndRef={chatEndRef}
+          onClose={() => setOpen(false)}
+        />
       )}
     </>
   );
+  
 };
 
 export default FloatingGroqBot;
