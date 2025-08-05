@@ -15,7 +15,7 @@ export function SnackbarProvider({children}){
 
 
 const showSnackbar = useCallback(
-    ({message, severity = "info", autoHiddenDuration = 3000}) => {
+    ({message, severity = "info", autoHiddenDuration = 2000}) => {
         setSnackbarData({
             open : true,
             message,
@@ -37,8 +37,8 @@ return (
     <SnackbarContext.Provider value={{showSnackbar, hideSnackbar}}>
         {children}
         <Snackbar open={snackbarData.open} autoHideDuration={snackbarData.autoHiddenDuration} 
-        onClose={hideSnackbar} anchorOrigin={{ vertical : "bottom", horizontal : "right"}}>
-            <Alert onClose={hideSnackbar} severity={snackbarData.severity} sx={{ width : "100%"}}>
+        onClose={hideSnackbar} anchorOrigin={{ vertical : "top", horizontal : "right"}}>
+            <Alert onClose={hideSnackbar} severity={snackbarData.severity} sx={{ width : "250px", height: "50px"}}>
                 {snackbarData.message}
             </Alert>
 

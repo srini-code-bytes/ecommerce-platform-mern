@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 import MinimizedBot from "./minimized-bot";
 import MaximizedBot from "./maximized-bot";
+import { useSnackbar } from "@/context/SnackbarContext";
 
 const FloatingGroqBot = () => {
   const [open, setOpen] = useState(false); // State to control the visibility of the chatbot
@@ -13,8 +14,9 @@ const FloatingGroqBot = () => {
   const [loading, setLoading] = useState(false);
   const chatEndRef = useRef(null); // Reference to scroll to the bottom of the chat
   const dispatch = useDispatch();
-  const [sessionId, setSesssionId] = useState("");
+  const [sessionId, setSessionId] = useState("");
   const { user } = useSelector((state) => state.auth);
+  const { showSnackbar } = useSnackbar();
   console.log("User data: ", user);
 
   const handleSubmit = async (e) => {
@@ -70,7 +72,7 @@ const FloatingGroqBot = () => {
         console.error("Error fetching the chat session:", e);
         throw new Error("Failed to fetch chat session");
       }
-      setSesssionId(existingSessionId);
+      setSessionId(existingSessionId);
     };
     initSession();
   }, []);
@@ -156,14 +158,18 @@ const FloatingGroqBot = () => {
     }
   };
 
-  const handleNewSession = () => {
+  const handleNewSession = () => { 
     const newChatSessionId = uuidv4();
     localStorage.removeItem("chatSessionId");
     localStorage.setItem("chatSessionId", JSON.stringify(newChatSessionId));
-    setSesssionId(newChatSessionId)
+    setSessionId(newChatSessionId)
     setMessages([])
     setChatInput("")
     setOpen(true)
+    showSnackbar({
+      message: "New Chat started!",
+      severity: "success",
+    });
   }
 
   return (

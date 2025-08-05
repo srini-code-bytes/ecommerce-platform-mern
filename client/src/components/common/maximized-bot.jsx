@@ -24,10 +24,10 @@ const MaximizedBot = ({
       <h3 className="text-lg font-semibold text-gray-800">Groq Assistant</h3>
       <button
         onClick={handleNewSession}
-        disabled={loading}
+        disabled={loading || messages.length === 0}
         title="Start new chat"
         className={`absolute top-3 right-16 inline-flex items-center gap-2 px-2 py-1 border rounded-full text-sm font-medium shadow-sm transition-all ${
-          loading
+          loading || messages.length === 0
             ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
             : "bg-white text-blue-700 border-blue-500 hover:bg-blue-0"
         }`}
@@ -60,7 +60,7 @@ const MaximizedBot = ({
         <div
           key={index}
           className={`p-2 rounded-2xl shadow-sm max-w-xs ${
-            fullScreen ? "max-w-[100rem]" : "sm:max-w-md"
+            fullScreen ? "max-w-[95vw]" : "sm:max-w-md"
           } w-auto text-sm 
                 ${
                   msg.sender === "user"
@@ -68,10 +68,25 @@ const MaximizedBot = ({
                     : "bg-gray-100 text-gray-800 self-start"
                 }`}
         >
-          {msg.sender === "chatbot" && (
+          {/* {msg.sender === "chatbot" && (
             <div className="text-base font-mono">🤖 {msg.text}</div>
           )}
           {msg.sender === "user" && (
+            <div className="text-base font-mono">🧑 {msg.text}</div>
+          )} */}
+
+          {msg.sender === "chatbot" ? (
+            <div className="flex items-start justify-between gap-2">
+              <div className="text-base font-mono">🤖 {msg.text}</div>
+              <button
+                onClick={() => navigator.clipboard.writeText(msg.text)}
+                className="text-gray-500 hover:text-gray-700 transition-colors"
+                title="Copy to clipboard"
+              >
+                📋
+              </button>
+            </div>
+          ) : (
             <div className="text-base font-mono">🧑 {msg.text}</div>
           )}
 
