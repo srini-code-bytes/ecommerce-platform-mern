@@ -1,4 +1,4 @@
-import { Fullscreen } from "lucide-react";
+import { FilePlus, Fullscreen } from "lucide-react";
 import React from "react";
 
 const MaximizedBot = ({
@@ -12,18 +12,35 @@ const MaximizedBot = ({
   chatEndRef,
   fullScreen,
   setFullScreen,
+  handleNewSession,
 }) => (
   <div
     className={`fixed bottom-16 right-4 bg-white shadow-xl rounded-2xl border
-       border-gray-200 transition-all duration-300 ease-in-out z-[1000] ${fullScreen ? "top-0 left-0 w-full h-[100vh]" : "w-[400px] right-4" }`}
+       border-gray-200 transition-all duration-300 ease-in-out z-[1000] ${
+         fullScreen ? "top-0 left-0 w-full h-[100vh]" : "w-[400px] right-4"
+       }`}
   >
     <div className="p-4 border-b border-gray-200 bg-gray-50 rounded-t-2xl relative">
       <h3 className="text-lg font-semibold text-gray-800">Groq Assistant</h3>
       <button
+        onClick={handleNewSession}
+        disabled={loading}
+        title="Start new chat"
+        className={`absolute top-3 right-16 inline-flex items-center gap-2 px-2 py-1 border rounded-full text-sm font-medium shadow-sm transition-all ${
+          loading
+            ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+            : "bg-white text-blue-700 border-blue-500 hover:bg-blue-0"
+        }`}
+      >
+        <FilePlus size={16} />
+        New Chat
+      </button>
+
+      <button
         onClick={() => setFullScreen(!fullScreen)}
         className="absolute top-2 right-2 text-black px-2 py-1 rounded z-[1000] mr-6 text-lg"
       >
-        {fullScreen ? "⇲" : "⛶" }
+        {fullScreen ? "⇲" : "⛶"}
       </button>
       <button
         onClick={onClose}
@@ -34,13 +51,17 @@ const MaximizedBot = ({
     </div>
 
     {/* Chat messages area */}
-    <div className={`p-4 overflow-y-auto space-y-4 transition-all duration-300 ease-in-out ${fullScreen ? "w-auto h-[90vh]" : "h-[500px]"
-    }`}
+    <div
+      className={`p-4 overflow-y-auto space-y-4 transition-all duration-300 ease-in-out ${
+        fullScreen ? "w-auto h-[90vh]" : "h-[500px]"
+      }`}
     >
       {messages.map((msg, index) => (
         <div
           key={index}
-          className={`p-2 rounded-2xl shadow-sm max-w-xs ${fullScreen ? "max-w-[100rem]" : "sm:max-w-md"} w-auto text-sm 
+          className={`p-2 rounded-2xl shadow-sm max-w-xs ${
+            fullScreen ? "max-w-[100rem]" : "sm:max-w-md"
+          } w-auto text-sm 
                 ${
                   msg.sender === "user"
                     ? "bg-blue-100 text-blue-900 self-end"

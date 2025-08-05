@@ -156,11 +156,22 @@ const FloatingGroqBot = () => {
     }
   };
 
+  const handleNewSession = () => {
+    const newChatSessionId = uuidv4();
+    localStorage.removeItem("chatSessionId");
+    localStorage.setItem("chatSessionId", JSON.stringify(newChatSessionId));
+    setSesssionId(newChatSessionId)
+    setMessages([])
+    setChatInput("")
+    setOpen(true)
+  }
+
   return (
     <>
       {!open && <MinimizedBot onOpen={() => setOpen(true)} />}
       {open && (
         <MaximizedBot
+          handleNewSession={handleNewSession}
           fullScreen={fullScreen}
           setFullScreen={setFullScreen}
           messages={messages}
