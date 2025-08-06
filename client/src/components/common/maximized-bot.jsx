@@ -52,29 +52,22 @@ const MaximizedBot = ({
 
     {/* Chat messages area */}
     <div
-      className={`p-4 overflow-y-auto space-y-4 transition-all duration-300 ease-in-out ${
-        fullScreen ? "w-auto h-[90vh]" : "h-[500px]"
+      className={`p-4 overflow-y-auto space-y-4 transition-all duration-300 ease-in-out  ${
+        fullScreen ? "w-auto h-[95vh] pb-[70px]" : "h-[500px] pb-[48px]"
       }`}
     >
       {messages.map((msg, index) => (
         <div
           key={index}
-          className={`p-2 rounded-2xl shadow-sm max-w-xs ${
-            fullScreen ? "max-w-[95vw]" : "sm:max-w-md"
-          } w-auto text-sm 
+          className={`p-2 rounded-2xl shadow-sm ${
+            fullScreen ? "max-w-[90vw]" : "sm:max-w-md"
+          }
                 ${
                   msg.sender === "user"
                     ? "bg-blue-100 text-blue-900 self-end"
                     : "bg-gray-100 text-gray-800 self-start"
                 }`}
         >
-          {/* {msg.sender === "chatbot" && (
-            <div className="text-base font-mono">🤖 {msg.text}</div>
-          )}
-          {msg.sender === "user" && (
-            <div className="text-base font-mono">🧑 {msg.text}</div>
-          )} */}
-
           {msg.sender === "chatbot" ? (
             <div className="flex items-start justify-between gap-2">
               <div className="text-base font-mono">🤖 {msg.text}</div>
