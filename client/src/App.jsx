@@ -25,6 +25,7 @@ import SearchProducts from "./pages/shopping-view/search";
 import ForgotPassword from "./pages/auth/forgot-password";
 import VerifyOtp from "./pages/auth/verify-otp";
 import FloatingGroqBot from "./components/common/floating-groq-bot";
+import { useThemeContext } from "./context/ThemeContext";
 
 function App() {
   const { isAuthenticated, user, isLoading } = useSelector(
@@ -49,9 +50,10 @@ function App() {
   if (isLoading) return <Skeleton className="w-[800px] bg-black h-[600px]" />;
 
   console.log(isLoading, user);
+  const { mode, toggleMode } = useThemeContext();
 
   return (
-    <div className="flex flex-col overflow-hidden bg-white">
+    <div className={`flex flex-col overflow-hidden ${mode === "light" ? "bg-white text-black" : "bg-gray-900 text-white"} min-h-screen`}>
       <FloatingGroqBot />
 
       <Routes>

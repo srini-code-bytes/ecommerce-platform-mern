@@ -10,17 +10,17 @@ export function SnackbarProvider({children}){
         open : false,
         message : "",
         severity : "info",
-        autoHiddenDuration : 3000
+        autoHideDuration : 3000
     })
 
 
 const showSnackbar = useCallback(
-    ({message, severity = "info", autoHiddenDuration = 2000}) => {
+    ({message, severity = "info", autoHideDuration = 2000}) => {
         setSnackbarData({
             open : true,
             message,
             severity,
-            autoHiddenDuration
+            autoHideDuration
         })
     },[]
 )
@@ -36,8 +36,19 @@ const hideSnackbar = useCallback(() => {
 return (
     <SnackbarContext.Provider value={{showSnackbar, hideSnackbar}}>
         {children}
-        <Snackbar open={snackbarData.open} autoHideDuration={snackbarData.autoHiddenDuration} 
-        onClose={hideSnackbar} anchorOrigin={{ vertical : "top", horizontal : "right"}}>
+        <Snackbar 
+        open={snackbarData.open} 
+        autoHideDuration={snackbarData.autoHideDuration}
+        onClose={hideSnackbar} 
+        anchorOrigin={{ vertical : "top", horizontal : "right"}}
+        sx={{
+            top : "70px",
+            "& .MuiPaper-root" : {
+                boxShadow : "none",
+                width: "fit-content"
+            }
+        }}
+        >
             <Alert onClose={hideSnackbar} severity={snackbarData.severity} sx={{ width : "250px", height: "50px"}}>
                 {snackbarData.message}
             </Alert>

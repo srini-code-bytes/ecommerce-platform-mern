@@ -1,28 +1,36 @@
-import { getChatSession, getGrokReply } from "@/store/chatbot-slice";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 import MinimizedBot from "./minimized-bot";
 import MaximizedBot from "./maximized-bot";
 import { useSnackbar } from "@/context/SnackbarContext";
+import { getChatSession, getGrokReply } from "@/store/chatbot-slice";
+
+const IDLE_SECONDS = 10;
+const ACTIVITY_EVENTS = ["mousemove", "keydown", "touchstart", "click"];
 
 const FloatingGroqBot = () => {
-  const [open, setOpen] = useState(false); // State to control the visibility of the chatbot
-  const [fullScreen, setFullScreen] = useState(false); // State to toggle full screen mode
+  const [open, setOpen] = useState(true);
+  const [fullScreen, setFullScreen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [chatInput, setChatInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const chatEndRef = useRef(null); // Reference to scroll to the bottom of the chat
-  const dispatch = useDispatch();
   const [sessionId, setSessionId] = useState("");
+  const [countdown, setCountdown] = useState(IDLE_SECONDS);
+  const [sessionTimeOut, setSessionTimeOut] = useState(false);
+
+  const countdownRef = useRef(null); // holds the setInterval id for the countdown
+  const chatEndRef = useRef(null); // ref to scroll to bottom
+
+  // Refs to avoid stale closures
+  const sessionIdRef = useRef(""); // session ID
+  const countdownActiveRef = useRef(false); // whether the countdown is active
+  const listenersAttachedRef = useRef(false); // Are event listeners attached
+  const debounceIdRef = useRef(null); // Debounce timer ID
+
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { showSnackbar } = useSnackbar();
-  console.log("User data: ", user);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
-    sendMessage();
-  };
 
   const formatTime = (isoTime) => {
     return new Date(isoTime).toLocaleTimeString([], {
@@ -31,7 +39,13 @@ const FloatingGroqBot = () => {
     });
   };
 
-  // Function to simulate typing effect for chatbot replies at 50 ms
+  const formatCountdown = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+  };
+
+  // ---- Typing effect helper ----
   const typeReply = (fullText, onUpdate, onComplete, speed = 20) => {
     let index = 0;
     const interval = setInterval(() => {
@@ -39,18 +53,135 @@ const FloatingGroqBot = () => {
         onUpdate(fullText.slice(0, index));
         index++;
       } else {
-        clearInterval(interval); // Stop the timer once we have revealed the whole response
-        if (onComplete) {
-          onComplete();
-        }
+        clearInterval(interval);
+        onComplete?.();
       }
-    }, speed); // 20 ms per character
+    }, speed);
   };
 
+  // ---- Idle timer helpers ----
+  const clearDebounce = () => {
+    if (debounceIdRef.current) {
+      clearTimeout(debounceIdRef.current);
+      debounceIdRef.current = null;
+    }
+  };
+
+  const clearIntervalSafe = () => {
+    if (countdownRef.current) {
+      clearInterval(countdownRef.current);
+      countdownRef.current = null;
+    }
+  };
+
+  const resetCountdownNumber = () => {
+    setCountdown(IDLE_SECONDS);
+  };
+
+  const stopIdleTimer = () => {
+    countdownActiveRef.current = false;
+
+    if (listenersAttachedRef.current) {
+      ACTIVITY_EVENTS.forEach((e) => window.removeEventListener(e, onActivity));
+      listenersAttachedRef.current = false;
+    }
+
+    clearDebounce();
+    clearIntervalSafe();
+  };
+
+  /* ---- Start idle timer ----
+   1. Stop any existing timer 
+   2. If there is no session id or if the session has timed out then return
+   3. Set countdownActiveRef to true
+   4. If event listeners are not attached, attach them and set the flag
+   5. Reset the timer
+   */
+  const startIdleTimer = () => {
+    stopIdleTimer(); //
+    if (!sessionIdRef.current || sessionTimeOut) return;
+
+    countdownActiveRef.current = true;
+
+    if (!listenersAttachedRef.current) {
+      ACTIVITY_EVENTS.forEach((e) => window.addEventListener(e, onActivity));
+      listenersAttachedRef.current = true;
+    }
+
+    resetTimer();
+  };
+
+  const handleSessionTimeout = () => {
+    stopIdleTimer();
+
+    localStorage.removeItem("chatSessionId");
+    setSessionTimeOut(true);
+    setCountdown(0);
+    setMessages([]);
+    setChatInput("");
+
+    showSnackbar({
+      message:
+        "Sorry, your chat session ended. Please click on the New Chat button.",
+      severity: "error",
+      autoHideDuration: null,
+      persist: true,
+    });
+  };
+
+  /* ---- Activity handler ----
+  1. If countdown is active, debounce a call to resetTimer() by 200 ms
+  */
+  const onActivity = () => {
+    if (!countdownActiveRef.current) return;
+    clearDebounce();
+    debounceIdRef.current = setTimeout(resetTimer, 200);
+  };
+
+  /* ---- Reset timer ----
+  1. If countdown is not active, or if session has timed out, or if there is no session id then return
+  2. Reset the countdown number -> setCountdown(IDLE_SECONDS)
+  3. Clear any existing interval clearIntervalSafe()
+  4. Start a new interval that decrements the countdown by 1 second and when it hits 0, then call
+  handleSessionTimeout()
+  */
+  const resetTimer = () => {
+    if (
+      !countdownActiveRef.current ||
+      sessionTimeOut ||
+      !sessionIdRef.current
+    ) {
+      return;
+    }
+
+    resetCountdownNumber();
+    clearIntervalSafe();
+
+    countdownRef.current = setInterval(() => {
+      setCountdown((prev) => {
+        console.log("*** My countdown ***", prev);
+        if (!countdownActiveRef.current) return prev;
+        if (prev <= 1) {
+          clearIntervalSafe();
+          handleSessionTimeout();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  // ---- Init session ----
   useEffect(() => {
     const initSession = async () => {
-      let existingSessionId = JSON.parse(localStorage.getItem("chatSessionId"));
-      console.log("existingSessionId", existingSessionId);
+      let existingSessionId = null;
+      try {
+        existingSessionId = JSON.parse(
+          localStorage.getItem("chatSessionId") || "null"
+        );
+      } catch {
+        existingSessionId = null;
+      }
 
       if (!existingSessionId) {
         existingSessionId = uuidv4();
@@ -65,88 +196,122 @@ const FloatingGroqBot = () => {
           const data = await dispatch(
             getChatSession(existingSessionId)
           ).unwrap();
-          console.log("Chat data: ", data);
-          setMessages(data.messages || []);
+          setMessages(data?.messages || []);
+          setSessionTimeOut(false);
+
+          setCountdown(IDLE_SECONDS);
         }
       } catch (e) {
         console.error("Error fetching the chat session:", e);
-        throw new Error("Failed to fetch chat session");
+        setMessages([]);
       }
+
       setSessionId(existingSessionId);
+      sessionIdRef.current = existingSessionId;
+
+      startIdleTimer();
     };
+
     initSession();
-  }, []);
+    return () => {
+      stopIdleTimer();
+    };
+  }, [dispatch]);
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" }); // Scroll to the bottom when messages change
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, open]);
 
+  useEffect(() => {
+    sessionIdRef.current = sessionId;
+
+    if (!sessionId || sessionTimeOut) {
+      stopIdleTimer();
+    } else {
+      startIdleTimer();
+    }
+  }, [sessionId, sessionTimeOut]);
+
+  // ---- Send message handler ----
+  /*
+  1. Ignore blank input; call resetTimer() to keep session alive
+  2. Push user message to messages
+  3. Push a bot placeholder: { sender:"chatbot", text:"Groq is typing...", typing:true }
+  4. Clear input + set loading=true
+  5. Build payload { sessionId: sessionIdRef.current, userId, userMessage }
+  6. dispatch(getGrokReply(payload)).unwrap()
+  7. Take the last message from response as the bot reply (or fallback text)
+  8. Use typeReply() to gradually replace the placeholder with streamed chunks:
+     - onUpdate(chunk): replace the last bot message (or add one) with the current partial text; add tokens/timestamp if provided
+     - onComplete: scroll into view
+  9. catch: remove .typing message and show an error message
+  10. finally: loading=false, scroll again
+  */
   const sendMessage = async () => {
-    if (!chatInput.trim()) return; // To avoid sending empty messages
+    if (!chatInput.trim()) return;
 
-    const userMessage = {
-      // Create user message object
-      sender: "user",
-      text: chatInput,
-    };
+    resetTimer();
 
-    setMessages((prevMessages) => [...prevMessages, userMessage]); // Add user message to chat
+    const userMessage = { sender: "user", text: chatInput };
+    setMessages((prev) => [...prev, userMessage]);
 
-    // Show Grow is typing...
-    setMessages((prevMessages) => [
-      ...prevMessages,
+    setMessages((prev) => [
+      ...prev,
       { sender: "chatbot", text: "Groq is typing...", typing: true },
     ]);
 
     setChatInput("");
-    setLoading(true); // Set loading state to true always prior to API call
+    setLoading(true);
 
     try {
       const payload = {
-        // Prepare payload for Groq API
-        sessionId: sessionId,
+        sessionId: sessionIdRef.current,
         userId: user?.id || "Guest",
-        userMessage: chatInput.trim(),
+        userMessage: userMessage.text,
       };
 
       const response = await dispatch(getGrokReply(payload)).unwrap();
 
-      console.log(" Response from Groq:", response);
+      const reply = response?.messages?.[response?.messages?.length - 1] || {
+        text: "Sorry, I couldn't process your message at the moment.",
+      };
 
-      const chatbotReply = response?.messages?.[
-        response?.messages?.length - 1
-      ] || { text: "Sorry, I couldn't process your message at the moment." };
-
-      if (chatbotReply) {
-        let chunkText = "";
-        typeReply(chatbotReply.text, (chunk) => {
-          chunkText = chunk;
+      typeReply(
+        reply.text,
+        (chunk) => {
           setMessages((prev) => {
             const updated = [...prev];
             const lastIndex = updated.length - 1;
 
             if (updated[lastIndex]?.sender === "chatbot") {
-              updated[lastIndex].text = chunkText;
-              updated[lastIndex].tokens = response?.messages[lastIndex]?.tokens;
-              updated[lastIndex].timestamp =
-                response?.messages[lastIndex]?.timestamp;
+              updated[lastIndex] = {
+                ...updated[lastIndex],
+                text: chunk,
+                tokens: reply?.tokens,
+                timestamp: reply?.timestamp,
+                typing: false,
+              };
             } else {
               updated.push({
                 sender: "chatbot",
-                text: chunkText,
-                tokens: response?.messages[(messages, length - 1)]?.tokens,
-                timestamp: response?.messages[messages.length - 1]?.timestamp,
+                text: chunk,
+                tokens: reply?.tokens,
+                timestamp: reply?.timestamp,
+                typing: false,
               });
             }
             return updated;
           });
-        });
-      }
+        },
+        () => {
+          chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        }
+      );
     } catch (e) {
       console.error("Error chatting with Groq:", e);
-      setMessages((prev) => prev.filter((msg) => !msg.typing));
-      setMessages((prevMessages) => [
-        ...prevMessages,
+      setMessages((prev) => prev.filter((m) => !m.typing));
+      setMessages((prev) => [
+        ...prev,
         {
           sender: "chatbot",
           text: "Sorry, I couldn't process your message at the moment.",
@@ -154,27 +319,57 @@ const FloatingGroqBot = () => {
       ]);
     } finally {
       setLoading(false);
-      chatEndRef.current?.scrollIntoView({ behavior: "smooth" }); // Scroll to the bottom after sending a message
+      chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   };
 
-  const handleNewSession = () => { 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    sendMessage();
+  };
+
+  /* 
+  1. Kill timers/listeners
+  2. Generate a new uuid, save it to localStorage
+  3. Update sessionId + sessionIdRef
+  4. Clear timeout flag, messages, input, and reset countdown
+  5. Reopen the widget and restart the idle timer
+  6. Show success snackbar
+  */
+  const handleNewSession = () => {
+    stopIdleTimer();
     const newChatSessionId = uuidv4();
-    localStorage.removeItem("chatSessionId");
     localStorage.setItem("chatSessionId", JSON.stringify(newChatSessionId));
-    setSessionId(newChatSessionId)
-    setMessages([])
-    setChatInput("")
-    setOpen(true)
+
+    setSessionId(newChatSessionId);
+    sessionIdRef.current = newChatSessionId;
+
+    setSessionTimeOut(false);
+
+    setMessages([]);
+    setChatInput("");
+    setCountdown(IDLE_SECONDS);
+    setOpen(true);
+
+    startIdleTimer();
+
     showSnackbar({
       message: "New Chat started!",
       severity: "success",
     });
-  }
+  };
 
   return (
     <>
-      {!open && <MinimizedBot onOpen={() => setOpen(true)} />}
+      {!open && (
+        <MinimizedBot
+          onOpen={() => {
+            setOpen(true);
+            resetTimer();
+          }}
+        />
+      )}
+
       {open && (
         <MaximizedBot
           handleNewSession={handleNewSession}
@@ -188,11 +383,14 @@ const FloatingGroqBot = () => {
           formatTime={formatTime}
           chatEndRef={chatEndRef}
           onClose={() => setOpen(false)}
+          sessionTimeOut={sessionTimeOut}
+          handleSessionTimeout={handleSessionTimeout}
+          countdown={countdown}
+          formatCountdown={formatCountdown}
         />
       )}
     </>
   );
-  
 };
 
 export default FloatingGroqBot;
