@@ -6,7 +6,7 @@ import MaximizedBot from "./maximized-bot";
 import { useSnackbar } from "@/context/SnackbarContext";
 import { getChatSession, getGrokReply } from "@/store/chatbot-slice";
 
-const IDLE_SECONDS = 10;
+const IDLE_SECONDS = 100;
 const ACTIVITY_EVENTS = ["mousemove", "keydown", "touchstart", "click"];
 
 const FloatingGroqBot = () => {
@@ -59,7 +59,12 @@ const FloatingGroqBot = () => {
     }, speed);
   };
 
-  // ---- Idle timer helpers ----
+  // ---- Debounce and interval helpers ----
+  /*
+  Clear the debounce timer if it exists
+  */
+  // This is used to prevent multiple calls to resetTimer() in quick succession
+  // when the user is active (e.g., typing, moving the mouse)
   const clearDebounce = () => {
     if (debounceIdRef.current) {
       clearTimeout(debounceIdRef.current);
@@ -67,6 +72,11 @@ const FloatingGroqBot = () => {
     }
   };
 
+  /*
+  Clear the interval if it exists
+  */
+  // This is used to stop the countdown when the session times out or when the user becomes active again
+  // to prevent multiple intervals running at the same time
   const clearIntervalSafe = () => {
     if (countdownRef.current) {
       clearInterval(countdownRef.current);
@@ -78,6 +88,10 @@ const FloatingGroqBot = () => {
     setCountdown(IDLE_SECONDS);
   };
 
+  // ---- Stop idle timer ----
+  /*
+  Shut down the countdown and event listeners
+  */
   const stopIdleTimer = () => {
     countdownActiveRef.current = false;
 
@@ -111,6 +125,13 @@ const FloatingGroqBot = () => {
     resetTimer();
   };
 
+  // ---- Handle session timeout ----
+  /*
+  1. Stop the idle timer 
+  2. Remove the session ID from localStorage
+  3. Flip sessionTimeOut = true, zero the countdown, clear messages/input
+  4. Show a persistent snackbar instructing to start a new chat
+  */
   const handleSessionTimeout = () => {
     stopIdleTimer();
 
@@ -224,13 +245,18 @@ const FloatingGroqBot = () => {
 
   useEffect(() => {
     sessionIdRef.current = sessionId;
+    if (!user) {
+      setOpen(false);
+      stopIdleTimer();
+      return;
+    }
 
     if (!sessionId || sessionTimeOut) {
       stopIdleTimer();
     } else {
       startIdleTimer();
     }
-  }, [sessionId, sessionTimeOut]);
+  }, [user, sessionId, sessionTimeOut]);
 
   // ---- Send message handler ----
   /*
@@ -384,7 +410,6 @@ const FloatingGroqBot = () => {
           chatEndRef={chatEndRef}
           onClose={() => setOpen(false)}
           sessionTimeOut={sessionTimeOut}
-          handleSessionTimeout={handleSessionTimeout}
           countdown={countdown}
           formatCountdown={formatCountdown}
         />

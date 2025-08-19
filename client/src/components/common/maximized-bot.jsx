@@ -1,6 +1,7 @@
 import { useThemeContext } from "@/context/ThemeContext";
 import { FilePlus, Fullscreen } from "lucide-react";
-import React from "react";
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
 
 const MaximizedBot = ({
   messages,
@@ -15,17 +16,19 @@ const MaximizedBot = ({
   setFullScreen,
   handleNewSession,
   sessionTimeOut,
-  handleSessionTimeout,
   countdown,
   formatCountdown,
 }) => {
   const { mode, toggleMode } = useThemeContext();
+
   return (
     <div
-      className={`fixed bottom-16 right-4 bg-white shadow-xl rounded-2xl border
+      className={`fixed bottom-16 right-4  shadow-xl rounded-2xl border
        border-gray-200 transition-all duration-300 ease-in-out z-[1000] ${
          fullScreen ? "top-0 left-0 w-full h-[100vh]" : "w-[500px] right-4"
-       }`}
+       }
+        ${mode === "light" ? "bg-white text-black" : "bg-black text-white"}
+       `}
     >
       <div className="p-4 border-b border-gray-200 bg-gray-50 rounded-t-2xl relative transition-all duration-300 ease-in-out">
         <div className="flex">
@@ -33,10 +36,18 @@ const MaximizedBot = ({
             Groq Assistant
           </h3>
 
+          <button
+            onClick={toggleMode}
+            title="Toggle Light/Dark mode"
+            className="ml-1 text-xl"
+          >
+            {mode === "light" ? "☀️" : "🌙"}
+          </button>
+
           {!sessionTimeOut && (
             <span
               className={`text-sm text-red-600 mt-[4px] transition-all duration-300 ease-in-out ${
-                fullScreen ? "ml-[1240px]" : "ml-[45px]"
+                fullScreen ? "ml-[1210px]" : "ml-[18px]"
               }`}
             >
               ⏳ {formatCountdown(countdown)}
@@ -54,9 +65,6 @@ const MaximizedBot = ({
         >
           <FilePlus size={12} />
           New Chat
-        </button>
-        <button onClick={toggleMode} title="Toggle Light/Dark mode">
-          {mode === "light" ? "🌙" : "☀️"}
         </button>
 
         <button
@@ -124,7 +132,7 @@ const MaximizedBot = ({
       >
         <input
           type="text"
-          className="flex-1 border rounded p-1 text-sm"
+          className="flex-1 border rounded p-1 text-sm text-black"
           placeholder="Ask something..."
           value={chatInput}
           onChange={(e) => setChatInput(e.target.value)}

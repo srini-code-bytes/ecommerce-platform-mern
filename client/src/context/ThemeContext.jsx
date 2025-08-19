@@ -9,7 +9,7 @@ export const CustomThemeProvider = ({ children }) => {
 
   useEffect(() => {
     localStorage.setItem("mode", mode);
-  }, [mode])
+  }, [mode]);
 
   const theme = useMemo(
     () =>
@@ -40,7 +40,7 @@ export const CustomThemeProvider = ({ children }) => {
                   main: "#ce93d8",
                 },
                 background: {
-                  default: "#121212",
+                  default: "#000000",
                   paper: "#1e1e1e",
                 },
               }),
@@ -75,4 +75,4 @@ export const CustomThemeProvider = ({ children }) => {
 // Custom hook to use the ThemeContext and access theme state and toggle function
 export const useThemeContext = () => {
   return useContext(ThemeContext);
-}
+};

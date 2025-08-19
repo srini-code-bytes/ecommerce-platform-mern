@@ -3,7 +3,14 @@ import { Label } from "@radix-ui/react-label";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { useThemeContext } from "@/context/ThemeContext";
 
 function CommonForm({
   formControls,
@@ -15,6 +22,7 @@ function CommonForm({
   hideButton = false,
 }) {
   //formData -- manage each and every value
+  const { mode } = useThemeContext();
   function renderInputsByComponentType(getControlItem) {
     console.log(getControlItem.options);
     let element = null;
@@ -57,11 +65,10 @@ function CommonForm({
             <SelectContent className="bg-white">
               {getControlItem.options && getControlItem.options.length > 0
                 ? getControlItem.options.map((optionItem) => (
-                  <SelectItem
-                    key={optionItem.id}
-                    value={optionItem.id}
-                  >{optionItem.label}</SelectItem>
-                ))
+                    <SelectItem key={optionItem.id} value={optionItem.id}>
+                      {optionItem.label}
+                    </SelectItem>
+                  ))
                 : null}
             </SelectContent>
           </Select>
@@ -115,14 +122,28 @@ function CommonForm({
       <div className="flex flex-col gap-3">
         {formControls.map((controlItem) => (
           <div className="grid w-full gap-1.5" key={controlItem.name}>
-            <Label className="mb-1 font-semibold">{controlItem.label}</Label>
+            <Label
+              className={` mb-1 font-semibold ${
+                mode === "light" ? "bg-white text-black" : "bg-black text-white"
+              }
+            `}
+            >
+              {controlItem.label}
+            </Label>
+
             {renderInputsByComponentType(controlItem)}
           </div>
         ))}
       </div>
-      {!hideButton && <Button disabled={isBtnDisabled} type="submit" className="mt-4 w-full bg-black text-white">
-        {buttonText || "Submit"}
-      </Button>}
+      {!hideButton && (
+        <Button
+          disabled={isBtnDisabled}
+          type="submit"
+          className="mt-4 w-full bg-black text-white"
+        >
+          {buttonText || "Submit"}
+        </Button>
+      )}
     </form>
   );
 }
