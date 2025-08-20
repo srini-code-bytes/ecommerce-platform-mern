@@ -43,17 +43,18 @@ const MaximizedBot = ({
           >
             {mode === "light" ? "☀️" : "🌙"}
           </button>
-
-          {!sessionTimeOut && (
-            <span
-              className={`text-sm text-red-600 mt-[4px] transition-all duration-300 ease-in-out ${
-                fullScreen ? "ml-[1210px]" : "ml-[18px]"
-              }`}
-            >
-              ⏳ {formatCountdown(countdown)}
-            </span>
-          )}
         </div>
+
+        {!sessionTimeOut && (
+          <div
+            className={
+              "hidden sm:inline-flex absolute top-[19px] right-[215px] items-center py-1 text-sm text-red-600 transition-all duration-300 ease-in-out"
+            }
+          >
+            ⏳ {formatCountdown(countdown)}
+          </div>
+        )}
+
         <button
           onClick={handleNewSession}
           title="Start new chat"

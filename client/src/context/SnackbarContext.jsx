@@ -5,61 +5,62 @@ import { createContext, useCallback, useContext, useState } from "react";
 const SnackbarContext = createContext();
 
 // CREATE THE PROVIDER COMPONENT
-export function SnackbarProvider({children}){
-    const [snackbarData, setSnackbarData] = useState({
-        open : false,
-        message : "",
-        severity : "info",
-        autoHideDuration : 3000
-    })
+export function SnackbarProvider({ children }) {
+  const [snackbarData, setSnackbarData] = useState({
+    open: false,
+    message: "",
+    severity: "info",
+    autoHideDuration: 3000,
+  });
 
+  const showSnackbar = useCallback(
+    ({ message, severity = "info", autoHideDuration = 2000 }) => {
+      setSnackbarData({
+        open: true,
+        message,
+        severity,
+        autoHideDuration,
+      });
+    },
+    []
+  );
 
-const showSnackbar = useCallback(
-    ({message, severity = "info", autoHideDuration = 2000}) => {
-        setSnackbarData({
-            open : true,
-            message,
-            severity,
-            autoHideDuration
-        })
-    },[]
-)
-
-const hideSnackbar = useCallback(() => {
+  const hideSnackbar = useCallback(() => {
     setSnackbarData((prev) => ({
-        ...prev,
-        open : false
-    }))
-})
+      ...prev,
+      open: false,
+    }));
+  });
 
-
-return (
-    <SnackbarContext.Provider value={{showSnackbar, hideSnackbar}}>
-        {children}
-        <Snackbar 
-        open={snackbarData.open} 
+  return (
+    <SnackbarContext.Provider value={{ showSnackbar, hideSnackbar }}>
+      {children}
+      <Snackbar
+        open={snackbarData.open}
         autoHideDuration={snackbarData.autoHideDuration}
-        onClose={hideSnackbar} 
-        anchorOrigin={{ vertical : "top", horizontal : "right"}}
+        onClose={hideSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
         sx={{
-            top : "70px",
-            "& .MuiPaper-root" : {
-                boxShadow : "none",
-                width: "fit-content"
-            }
+          top: "70px",
+          "& .MuiPaper-root": {
+            boxShadow: "none",
+            width: "fit-content",
+            height: "fit-content",
+          },
         }}
+      >
+        <Alert
+          onClose={hideSnackbar}
+          severity={snackbarData.severity}
+          sx={{ width: "250px", height: "50px" }}
         >
-            <Alert onClose={hideSnackbar} severity={snackbarData.severity} sx={{ width : "250px", height: "50px"}}>
-                {snackbarData.message}
-            </Alert>
-
-        </Snackbar>
-
+          {snackbarData.message}
+        </Alert>
+      </Snackbar>
     </SnackbarContext.Provider>
-)
+  );
 }
 
-export function useSnackbar(){
-    return useContext(SnackbarContext)
+export function useSnackbar() {
+  return useContext(SnackbarContext);
 }
-
