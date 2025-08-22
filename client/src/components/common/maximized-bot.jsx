@@ -1,3 +1,4 @@
+import { useThemeContext } from "@/context/ThemeContext";
 import { FilePlus } from "lucide-react";
 import React from "react";
 
