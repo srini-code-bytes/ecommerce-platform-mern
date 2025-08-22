@@ -140,14 +140,6 @@ const FloatingGroqBot = () => {
     setCountdown(0);
     setMessages([]);
     setChatInput("");
-
-    showSnackbar({
-      message:
-        "Sorry, your chat session ended. Please click on the New Chat button.",
-      severity: "error",
-      autoHideDuration: null,
-      persist: true,
-    });
   };
 
   /* ---- Activity handler ----
@@ -191,6 +183,18 @@ const FloatingGroqBot = () => {
       });
     }, 1000);
   };
+
+  useEffect(() => {
+    if (sessionTimeOut) {
+      if (
+        window.confirm(
+          "Your session has timed out. Do you want to start a new chat?"
+        )
+      ) {
+        handleNewSession();
+      }
+    }
+  }, [sessionTimeOut]);
 
   // ---- Init session ----
   useEffect(() => {

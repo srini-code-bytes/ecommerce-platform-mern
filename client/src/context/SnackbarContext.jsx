@@ -14,7 +14,7 @@ export function SnackbarProvider({ children }) {
   });
 
   const showSnackbar = useCallback(
-    ({ message, severity = "info", autoHideDuration = 2000 }) => {
+    ({ message, severity = "info", autoHideDuration = 5000 }) => {
       setSnackbarData({
         open: true,
         message,

@@ -1,7 +1,5 @@
-import { useThemeContext } from "@/context/ThemeContext";
-import { FilePlus, Fullscreen } from "lucide-react";
-import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { FilePlus } from "lucide-react";
+import React from "react";
 
 const MaximizedBot = ({
   messages,
@@ -23,9 +21,11 @@ const MaximizedBot = ({
 
   return (
     <div
-      className={`fixed bottom-16 right-4  shadow-xl rounded-2xl border
+      className={`fixed bottom-0 right-0  shadow-xl rounded-2xl border
        border-gray-200 transition-all duration-300 ease-in-out z-[1000] ${
-         fullScreen ? "top-0 left-0 w-full h-[100vh]" : "w-[500px] right-4"
+         fullScreen
+           ? "top-0 left-0 w-full h-[100vh]"
+           : "w-[92vw] xs:w-[95vw] sm:w-[480px] md:w-[520px] lg:w-[560px] xl:w-[640px]"
        }
         ${mode === "light" ? "bg-white text-black" : "bg-black text-white"}
        `}
@@ -85,7 +85,9 @@ const MaximizedBot = ({
       {/* Chat messages area */}
       <div
         className={`p-4 overflow-y-auto space-y-4 transition-all duration-300 ease-in-out  ${
-          fullScreen ? "w-auto h-[95vh] pb-[70px]" : "h-[500px] pb-[48px]"
+          fullScreen
+            ? "w-auto h-[calc(100vh-140px)] sm:h-[95vh] pb-[70px]"
+            : "h-[60vh] sm:h-[65vh] md:h-[68vh] lg:h-[70vh] pb-[48px]"
         }`}
       >
         {messages.map((msg, index) => (
